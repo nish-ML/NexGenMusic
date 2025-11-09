@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>MusicGen Studio</title>
+	<style>
+		:root {
+			color-scheme: light dark;
+			font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+		}
+
+		body {
+			margin: 0;
+			background: linear-gradient(135deg, #0d1117, #1f2937);
+			color: #f3f4f6;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		header {
+			background: rgba(15, 23, 42, 0.85);
+			padding: 1.5rem 2rem;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+		}
+
+		header h1 {
+			margin: 0;
+			font-size: 1.75rem;
+		}
+
+		main {
+			flex: 1;
+			width: min(960px, 92vw);
+			margin: 2rem auto 3rem;
+			display: grid;
+			gap: 1.5rem;
+		}
+
+		section {
+			background: rgba(30, 41, 59, 0.8);
+			border-radius: 16px;
+			padding: 1.5rem;
+			box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+			backdrop-filter: blur(8px);
+		}
+
+		section h2 {
+			margin-top: 0;
+			font-size: 1.35rem;
+		}
+
+		form {
+			display: flex;
+			flex-direction: column;
+			gap: 0.75rem;
+		}
+
+		label {
+			display: flex;
+			flex-direction: column;
+			font-size: 0.95rem;
+			gap: 0.35rem;
+		}
+
+		input,
+		textarea {
+			border-radius: 10px;
+			border: 1px solid rgba(148, 163, 184, 0.25);
+			padding: 0.65rem 0.75rem;
+			background: rgba(15, 23, 42, 0.85);
+			color: inherit;
+			transition: border 0.2s, transform 0.2s;
+		}
+
+		input:focus,
+		textarea:focus {
+			outline: none;
+			border-color: #38bdf8;
+			transform: translateY(-1px);
+		}
+
+		button {
+			border: none;
+			border-radius: 9999px;
+			padding: 0.7rem 1.5rem;
+			font-weight: 600;
+			font-size: 0.95rem;
+			cursor: pointer;
+			background: linear-gradient(135deg, #2563eb, #22d3ee);
+			color: #f8fafc;
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
+			align-self: flex-start;
+		}
+
+		button:hover {
+			transform: translateY(-1px) scale(1.01);
+			box-shadow: 0 10px 25px rgba(34, 211, 238, 0.3);
+		}
+
+		#status {
+			border-radius: 12px;
+			padding: 0.9rem 1rem;
+			background: rgba(15, 23, 42, 0.65);
+			border: 1px solid rgba(148, 163, 184, 0.2);
+			font-size: 0.95rem;
+			white-space: pre-line;
+		}
+
+		#history-list {
+			display: grid;
+			gap: 1rem;
+		}
+
+		.history-item {
+			border-radius: 14px;
+			padding: 1rem;
+			background: rgba(15, 23, 42, 0.65);
+			border: 1px solid rgba(148, 163, 184, 0.2);
+			display: grid;
+			gap: 0.5rem;
+		}
+
+		.history-item span {
+			font-size: 0.9rem;
+			color: #cbd5f5;
+		}
+
+		audio {
+			width: 100%;
+			margin-top: 0.5rem;
+		}
+
+		footer {
+			text-align: center;
+			padding: 1.5rem;
+			color: #94a3b8;
+			font-size: 0.9rem;
+		}
+
+		@media (max-width: 720px) {
+			main {
+				margin-top: 1rem;
+			}
+			header {
+				text-align: center;
+			}
+			button {
+				align-self: stretch;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h1>MusicGen Studio</h1>
+		<p>Generate music from text prompts, predict mood and sentiment.</p>
+	</header>
+	<main>
+		<section>
+			<h2>Account</h2>
+			<div style="display: grid; gap: 1.5rem;">
+				<form id="register-form">
+					<h3>Register</h3>
+					<label>
+						Username
+						<input id="register-username" required />
+					</label>
+					<label>
+						Email
+						<input id="register-email" type="email" required />
+					</label>
+					<label>
+						Password
+						<input id="register-password" type="password" required minlength="8" />
+					</label>
+					<button type="submit">Create Account</button>
+				</form>
+
+				<form id="login-form">
+					<h3>Login</h3>
+					<label>
+						Username
+						<input id="login-username" required />
+					</label>
+					<label>
+						Password
+						<input id="login-password" type="password" required />
+					</label>
+					<button type="submit">Sign In</button>
+				</form>
+				<div id="token-status">Not authenticated</div>
+			</div>
+		</section>
+
+		<section>
+			<h2>Generate Music</h2>
+			<form id="generate-form">
+				<label>
+					Prompt
+					<textarea id="prompt" rows="3" placeholder="e.g. dreamy ambient soundscape with soft piano" required></textarea>
+				</label>
+				<label>
+					Duration (seconds)
+					<input id="duration" type="number" min="1" max="30" value="10" />
+				</label>
+				<button type="submit">Generate</button>
+			</form>
+			<div id="current-result" style="margin-top: 1.5rem; display: none;">
+				<h3>Latest Result</h3>
+				<p><strong>Mood:</strong> <span id="result-mood"></span></p>
+				<p><strong>Sentiment:</strong> <span id="result-sentiment"></span></p>
+				<p><strong>Prompt:</strong> <span id="result-prompt"></span></p>
+				<audio id="result-audio" controls></audio>
+				<p><a id="download-link" href="#" download>Download WAV</a></p>
+			</div>
+		</section>
+
+		<section>
+			<div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+				<h2 style="margin: 0;">History</h2>
+				<button id="refresh-history" type="button">Refresh</button>
+			</div>
+			<div id="history-empty" style="margin-top: 1rem; color: #94a3b8;">No generations yet.</div>
+			<div id="history-list"></div>
+		</section>
+
+		<section>
+			<h2>Status</h2>
+			<pre id="status">Awaiting actions...</pre>
+		</section>
+	</main>
+	<footer>
+		Built with Django REST, Facebook MusicGen Small, DistilBERT, and BART MNLI.
+	</footer>
+
+	<script>
+		const statusBox = document.getElementById("status");
+		const tokenStatus = document.getElementById("token-status");
+		const historyList = document.getElementById("history-list");
+		const historyEmpty = document.getElementById("history-empty");
+		const currentResult = document.getElementById("current-result");
+		let accessToken = null;
+
+		function setStatus(message, isError = false) {
+			const timestamp = new Date().toLocaleTimeString();
+			statusBox.textContent = `[${timestamp}] ${message}`;
+			statusBox.style.color = isError ? "#f87171" : "inherit";
+		}
+
+		function setToken(token) {
+			accessToken = token;
+			if (token) {
+				tokenStatus.textContent = "Authenticated";
+				tokenStatus.style.color = "#6ee7b7";
+			} else {
+				tokenStatus.textContent = "Not authenticated";
+				tokenStatus.style.color = "#f87171";
+			}
+		}
+
+	async function apiRequest(path, options = {}) {
+		const headers = options.headers || {};
+		if (accessToken) {
+			headers["Authorization"] = `Bearer ${accessToken}`;
+		}
+		headers["Content-Type"] = "application/json";
+		const response = await fetch(path, { ...options, headers });
+		if (!response.ok) {
+			const text = await response.text();
+			throw new Error(text || `${response.status} ${response.statusText}`);
+		}
+		return response.json();
+	}
+
+	document.getElementById("register-form").addEventListener("submit", async (event) => {
+		event.preventDefault();
+		const payload = {
+			username: document.getElementById("register-username").value.trim(),
+			email: document.getElementById("register-email").value.trim(),
+			password: document.getElementById("register-password").value,
+		};
+		try {
+			const data = await apiRequest("/api/register/", {
+				method: "POST",
+				body: JSON.stringify(payload),
+			});
+			setStatus(`Registered user ${data.username}`);
+		} catch (error) {
+			setStatus(`Registration failed: ${error.message}`, true);
+		}
+	});
+
+	document.getElementById("login-form").addEventListener("submit", async (event) => {
+		event.preventDefault();
+		const payload = {
+			username: document.getElementById("login-username").value.trim(),
+			password: document.getElementById("login-password").value,
+		};
+		try {
+			const data = await apiRequest("/api/login/", {
+				method: "POST",
+				body: JSON.stringify(payload),
+			});
+			setToken(data.access);
+			setStatus("Login successful. Access token stored.");
+		} catch (error) {
+			setStatus(`Login failed: ${error.message}`, true);
+		}
+	});
+
+	document.getElementById("generate-form").addEventListener("submit", async (event) => {
+		event.preventDefault();
+		if (!accessToken) {
+			setStatus("Please log in first.", true);
+			return;
+		}
+		const payload = {
+			prompt: document.getElementById("prompt").value.trim(),
+			duration: parseInt(document.getElementById("duration").value, 10) || 10,
+		};
+		setStatus("Generating music... this can take a moment.");
+		try {
+			const data = await apiRequest("/api/generate/", {
+				method: "POST",
+				body: JSON.stringify(payload),
+			});
+			displayResult(data);
+			await loadHistory();
+			setStatus("Generation complete.");
+		} catch (error) {
+			setStatus(`Generation failed: ${error.message}`, true);
+		}
+	});
+
+	document.getElementById("refresh-history").addEventListener("click", () => {
+		if (!accessToken) {
+			setStatus("Please log in to view history.", true);
+			return;
+		}
+		loadHistory();
+	});
+
+	function displayResult(data) {
+		currentResult.style.display = "block";
+		document.getElementById("result-mood").textContent = data.mood;
+		document.getElementById("result-sentiment").textContent = data.sentiment;
+		document.getElementById("result-prompt").textContent = data.prompt;
+		const audioUrl = data.audio_file.startsWith("http") ? data.audio_file : `${window.location.origin}${data.audio_file}`;
+		const audio = document.getElementById("result-audio");
+		audio.src = audioUrl;
+		audio.load();
+		document.getElementById("download-link").href = audioUrl;
+	}
+
+	async function loadHistory() {
+		if (!accessToken) {
+			historyList.innerHTML = "";
+			historyEmpty.style.display = "block";
+			return;
+		}
+		setStatus("Fetching history...");
+		try {
+			const data = await apiRequest("/api/history/");
+			if (!Array.isArray(data) || data.length === 0) {
+				historyList.innerHTML = "";
+				historyEmpty.style.display = "block";
+			} else {
+				historyEmpty.style.display = "none";
+				historyList.innerHTML = "";
+				for (const item of data) {
+					const audioUrl = item.audio_file.startsWith("http") ? item.audio_file : `${window.location.origin}${item.audio_file}`;
+					const div = document.createElement("div");
+					div.className = "history-item";
+					div.innerHTML = `
+						<span><strong>Prompt:</strong> ${item.prompt}</span>
+						<span><strong>Mood:</strong> ${item.mood} &nbsp; | &nbsp; <strong>Sentiment:</strong> ${item.sentiment}</span>
+						<span><strong>Created:</strong> ${new Date(item.created_at).toLocaleString()}</span>
+					`;
+					const audio = document.createElement("audio");
+					audio.controls = true;
+					audio.src = audioUrl;
+					div.appendChild(audio);
+					const link = document.createElement("a");
+					link.href = audioUrl;
+					link.textContent = "Open file";
+					link.style.color = "#38bdf8";
+					link.target = "_blank";
+					div.appendChild(link);
+					historyList.appendChild(div);
+				}
+			}
+			setStatus("History loaded.");
+		} catch (error) {
+			setStatus(`History fetch failed: ${error.message}`, true);
+		}
+	}
+
+	// Attempt to load history if we already stored a token (future enhancement: persist token)
+	setToken(null);
+	setStatus("Ready.");
+	</script>
+</body>
+
+</html>
+
