@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}MusicGen Studio · Home{% endblock %}
+{% block body_attrs %}data-route="home"{% endblock %}
+{% block content %}
+<section style="display:grid;gap:1.25rem;">
+	<div style="font-size:1.1rem;line-height:1.6;">
+		<p>
+			Welcome to <strong>MusicGen Studio</strong> — describe the vibe you want and generate custom audio on demand.
+			Mood and sentiment analysis reveal how your prompt is interpreted before you download the WAV file.
+		</p>
+		<p>
+			Get started by creating an account, logging in, and visiting the Generate page. Your creations are saved in History and can be replayed anytime.
+		</p>
+	</div>
+	<div style="display:grid;gap:1rem;">
+		<a href="/register/"><button type="button">Create an account</button></a>
+		<a href="/login/"><button type="button" style="background:linear-gradient(135deg,#f97316,#facc15);">Log in</button></a>
+	</div>
+	<div class="status" style="margin-top:1rem;">
+		<strong>Tip:</strong> First generation downloads large AI models (≈2.5GB). Subsequent runs are much faster.
+	</div>
+</section>
+{% endblock %}
+
