@@ -1,0 +1,13 @@
+{
+  "best_accuracy": 0.5294117647058824,
+  "n_epochs": 15,
+  "dataset_size": 422,
+  "classes": [
+    "angry",
+    "fear",
+    "happy",
+    "neutral",
+    "sad"
+  ],
+  "vocabulary_size": 844
+}
