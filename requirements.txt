@@ -1,14 +1,17 @@
-django==5.2.8
-djangorestframework==3.16.1
-djangorestframework-simplejwt==5.5.1
-django-cors-headers==4.9.0
-python-dotenv==1.2.1
-transformers==4.57.1
-accelerate==1.11.0
-torch==2.9.0
-torchvision==0.24.0
-torchaudio==2.9.0
-scipy==1.16.3
-soundfile==0.13.1
-
-
+<<<<<<< HEAD
+Django==5.2.7
+djangorestframework
+djangorestframework-simplejwt
+drf-yasg
+transformers
+torch
+scipy
+=======
+Django==5.2.7
+djangorestframework
+djangorestframework-simplejwt
+drf-yasg
+transformers
+torch
+scipy
+>>>>>>> c25426a0d49250110b7f88b1d3e91981b8699196
