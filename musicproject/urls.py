@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
-from music_app.views import home, history_api, register_api, login_api, register_view, login_view, logout_view
+from music_app.views import home, history_api, register_api, login_api, register_view, login_view, logout_view, spotify_search_api, spotify_recommendations_api, spotify_genres_api, save_spotify_track_api, profile_view, history_view, theme_api
 from django.conf import settings
 from django.conf.urls.static import static
 from drf_yasg.views import get_schema_view
@@ -26,9 +26,16 @@ urlpatterns = [
     path('register/', register_view, name='register'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('profile/', profile_view, name='profile'),
+    path('history/', history_view, name='history'),
     path('api/history/', history_api, name='history_api'),
     path('api/register/', register_api, name='register_api'),
     path('api/login/', login_api, name='login_api'),
+    path('api/theme/', theme_api, name='theme_api'),
+    path('api/spotify/search/', spotify_search_api, name='spotify_search_api'),
+    path('api/spotify/recommendations/', spotify_recommendations_api, name='spotify_recommendations_api'),
+    path('api/spotify/genres/', spotify_genres_api, name='spotify_genres_api'),
+    path('api/spotify/save/', save_spotify_track_api, name='save_spotify_track_api'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

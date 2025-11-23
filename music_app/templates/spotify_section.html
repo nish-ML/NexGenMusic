@@ -1,0 +1,39 @@
+<div class="spotify-section">
+    <h3>🎵 Spotify Music Discovery</h3>
+
+    <div class="spotify-search">
+        <input type="text" id="spotify-query" placeholder="Search for songs, artists, albums...">
+        <select id="spotify-language">
+            <option value="">All Languages</option>
+            <option value="english">English (Taylor Swift, Ed Sheeran, Adele, Bruno Mars, Rihanna, Justin Bieber, Ariana Grande, Eminem, Beyoncé, Michael Bublé)</option>
+            <option value="hindi">Hindi (A.R. Rahman, Kishore Kumar, Lata Mangeshkar, Mohammad Rafi, Asha Bhosle, Sonu Nigam, Shreya Ghoshal, Arijit Singh, Neha Kakkar, Badshah)</option>
+            <option value="tamil">Tamil (A.R. Rahman, Ilaiyaraaja, Anirudh Ravichander, G.V. Prakash Kumar, Harris Jayaraj, Yuvan Shankar Raja, Vijay Antony, D. Imman, Sid Sriram, Chinmayi)</option>
+            <option value="telugu">Telugu (M.M. Keeravani, Devi Sri Prasad, Thaman S, S.S. Thaman, Anoop Rubens, Mani Sharma, S. Thaman, DSP, Vivek Sagar, Bheems Ceciroleo)</option>
+            <option value="bengali">Bengali (Rabindra Sangeet, Kishore Kumar, Arijit Singh, Shreya Ghoshal, Lata Mangeshkar, Hemant Kumar, Manna Dey, Bappi Lahiri, Anupam Roy, Rupankar Bagchi)</option>
+            <option value="marathi">Marathi (Ashok Patki, Avadhoot Gupte, Ajay-Atul, Shreya Ghoshal, Sonu Nigam, Aadesh Shrivastava, Anand Shinde, Vaishali Samant, Suresh Wadkar, Lata Mangeshkar)</option>
+            <option value="gujarati">Gujarati (Karsan Sagathia, Hemu Gadhvi, Falguni Pathak, Udit Narayan, Alka Yagnik, Kumar Sanu, Kavita Krishnamurthy, Sadhana Sargam, Suresh Wadkar, Lata Mangeshkar)</option>
+            <option value="kannada">Kannada (Hamsalekha, V. Harikrishna, Arjun Janya, V. Sridhar, Mano Murthy, Rajesh Krishnan, Sonu Nigam, Shreya Ghoshal, Rajkumar, Dr. Rajkumar)</option>
+            <option value="malayalam">Malayalam (M.G. Radhakrishnan, Raveendran, M. Jayachandran, Vidyasagar, Ilaiyaraaja, A.R. Rahman, Gopi Sundar, Bijibal, Shaan Rahman, Sushin Shyam)</option>
+            <option value="punjabi">Punjabi (Guru Randhawa, Diljit Dosanjh, Badshah, Sidhu Moose Wala, Karan Aujla, Jass Manak, Mankirt Aulakh, Ammy Virk, Bohemia, Gippy Grewal)</option>
+            <option value="urdu">Urdu (Ghulam Ali, Nusrat Fateh Ali Khan, Rahat Fateh Ali Khan, Abida Parveen, Mehdi Hassan, Farida Khanum, Iqbal Bano, Nayyara Noor, Lata Mangeshkar, Asha Bhosle)</option>
+            <option value="odia">Odia (Akhaya Mohanty, Sikandar Alam, Humane Sagar, Bhikari Bal, Arabinda Muduli, Suresh Wadkar, Udit Narayan, Kumar Sanu, Shreya Ghoshal, Sonu Nigam)</option>
+            <option value="assamese">Assamese (Bhupen Hazarika, Zubeen Garg, Papon, Angaraag Mahanta, Jitul Sonowal, Manas Robin, Rupankar Bagchi, Ajoy Phukan, Jayanta Hazarika, Parineeta Borthakur)</option>
+            <option value="maithili">Maithili (Udit Narayan, Mithun Sharma, Shreya Ghoshal, Sonu Nigam, Kumar Sanu, Alka Yagnik, Kavita Krishnamurthy, Sadhana Sargam, Suresh Wadkar, Lata Mangeshkar)</option>
+            <option value="santali">Santali (Traditional Folk Music, Arjun Ch. Hembram, Subodh Hansda, Ganesh Murmu, Somnath Soren, Nilu Soren, Chittaranjan Murmu, Rina Hembram)</option>
+        </select>
+        <button onclick="searchSpotify()">Search</button>
+    </div>
+
+    <div class="mood-buttons">
+        <button class="mood-btn" onclick="getRecommendations('happy')">😊 Happy</button>
+        <button class="mood-btn" onclick="getRecommendations('sad')">😢 Sad</button>
+        <button class="mood-btn" onclick="getRecommendations('energetic')">⚡ Energetic</button>
+        <button class="mood-btn" onclick="getRecommendations('calm')">😌 Calm</button>
+        <button class="mood-btn" onclick="getRecommendations('romantic')">💕 Romantic</button>
+        <button class="mood-btn" onclick="getRecommendations('excited')">🎉 Excited</button>
+    </div>
+
+    <div id="spotify-results" class="track-list">
+        <p style="text-align: center; color: #666;">Choose a mood above or search for tracks to discover music!</p>
+    </div>
+</div>

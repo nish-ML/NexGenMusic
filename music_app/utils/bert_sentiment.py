@@ -1,7 +1,9 @@
+import os
 from transformers import pipeline
 
 # Load fine-tuned sentiment model
-sentiment_classifier = pipeline("sentiment-analysis", model="./sentiment_model")
+model_path = os.path.join(os.path.dirname(__file__), "../../sentiment_model")
+sentiment_classifier = pipeline("sentiment-analysis", model=model_path)
 
 def predict_sentiment(text: str):
     """

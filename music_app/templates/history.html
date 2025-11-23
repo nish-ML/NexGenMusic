@@ -1,0 +1,554 @@
+am{% extends 'base.html' %}
+{% load static %}
+{% load tz %}
+
+{% block title %}History - SynTune AI{% endblock %}
+
+{% block extra_head %}
+<style>
+    .history-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .history-header {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px var(--shadow);
+        margin-bottom: 30px;
+        border: 1px solid var(--border-color);
+        text-align: center;
+    }
+
+    .history-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .history-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .filters-section {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 20px 40px var(--shadow);
+        margin-bottom: 30px;
+        border: 1px solid var(--border-color);
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        align-items: end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-group label {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .filter-group select, .filter-group input {
+        padding: 12px 15px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        background: var(--input-bg);
+        color: var(--text-primary);
+        transition: border-color 0.3s ease;
+    }
+
+    .filter-group select:focus, .filter-group input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 10px;
+        align-items: end;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 2px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+        background: var(--bg-tertiary);
+        transform: translateY(-2px);
+    }
+
+    .history-grid {
+        display: grid;
+        gap: 20px;
+    }
+
+    .history-item {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px var(--shadow);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .history-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 40px var(--shadow-hover);
+    }
+
+    .item-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .item-type {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 1.1rem;
+    }
+
+    .item-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .item-icon.music {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+    }
+
+    .item-icon.spotify {
+        background: var(--spotify-green);
+        color: white;
+    }
+
+    .item-date {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .item-content {
+        margin-bottom: 15px;
+    }
+
+    .item-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+    }
+
+    .item-description {
+        color: var(--text-secondary);
+        line-height: 1.5;
+        margin-bottom: 10px;
+    }
+
+    .item-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .meta-item strong {
+        color: var(--text-primary);
+    }
+
+    .item-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .audio-preview {
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .audio-preview audio {
+        width: 100%;
+        max-width: 300px;
+        border-radius: 8px;
+    }
+
+    .spotify-embed {
+        margin-top: 15px;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px var(--shadow);
+        border: 1px solid var(--border-color);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 40px;
+        padding: 20px;
+    }
+
+    .pagination a, .pagination span {
+        padding: 10px 15px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .pagination a {
+        color: var(--primary-color);
+        border: 1px solid var(--border-color);
+    }
+
+    .pagination a:hover {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .pagination .current {
+        background: var(--primary-color);
+        color: white;
+        border: 1px solid var(--primary-color);
+    }
+
+    @media (max-width: 768px) {
+        .history-container {
+            padding: 0 15px;
+        }
+
+        .history-header {
+            padding: 20px;
+        }
+
+        .history-title {
+            font-size: 1.5rem;
+        }
+
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .item-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .item-meta {
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .item-actions {
+            flex-direction: column;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="history-container">
+    <div class="history-header">
+        <h1 class="history-title">🎵 Your Music History</h1>
+        <p class="history-subtitle">View all your generated music and saved Spotify tracks</p>
+    </div>
+
+    <div class="filters-section">
+        <form method="get" class="filters-form">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="type">Type</label>
+                    <select name="type" id="type">
+                        <option value="">All Types</option>
+                        <option value="generated" {% if request.GET.type == 'generated' %}selected{% endif %}>Generated Music</option>
+                        <option value="spotify" {% if request.GET.type == 'spotify' %}selected{% endif %}>Spotify Saves</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="mood">Mood</label>
+                    <select name="mood" id="mood">
+                        <option value="">All Moods</option>
+                        <option value="happy" {% if request.GET.mood == 'happy' %}selected{% endif %}>Happy</option>
+                        <option value="sad" {% if request.GET.mood == 'sad' %}selected{% endif %}>Sad</option>
+                        <option value="energetic" {% if request.GET.mood == 'energetic' %}selected{% endif %}>Energetic</option>
+                        <option value="calm" {% if request.GET.mood == 'calm' %}selected{% endif %}>Calm</option>
+                        <option value="romantic" {% if request.GET.mood == 'romantic' %}selected{% endif %}>Romantic</option>
+                        <option value="excited" {% if request.GET.mood == 'excited' %}selected{% endif %}>Excited</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="date_from">From Date</label>
+                    <input type="date" name="date_from" id="date_from" value="{{ request.GET.date_from }}">
+                </div>
+                <div class="filter-group">
+                    <label for="date_to">To Date</label>
+                    <input type="date" name="date_to" id="date_to" value="{{ request.GET.date_to }}">
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-filter"></i>
+                    Apply Filters
+                </button>
+                <a href="{% url 'history' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Clear Filters
+                </a>
+            </div>
+        </form>
+    </div>
+
+    {% if history_items %}
+    <div class="history-grid">
+        {% for item in history_items %}
+        <div class="history-item">
+            <div class="item-header">
+                <div class="item-type">
+                    {% if item.type == 'generated' %}
+                    <div class="item-icon music">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <span>Generated Music</span>
+                    {% else %}
+                    <div class="item-icon spotify">
+                        <i class="fab fa-spotify"></i>
+                    </div>
+                    <span>Spotify Track</span>
+                    {% endif %}
+                </div>
+                   <div class="item-date">
+-                       {{ item.created_at|date:"M j, Y g:i A" }}
+-                  </div>
+                    <!-- <div class="item-date">
+                        {{ item.created_at|localtime|date:"M j, Y g:i A" }}
+                    </div> -->
+            </div>
+
+            <div class="item-content">
+                {% if item.type == 'generated' %}
+                <div class="item-title">{{ item.prompt|truncatechars:80 }}</div>
+                <div class="item-description">
+                    Created a {{ item.duration }} second piece based on your description.
+                </div>
+                {% else %}
+                <div class="item-title">{{ item.spotify_track_name }}</div>
+                <div class="item-description">
+                    by {{ item.spotify_artists|join:", " }}
+                </div>
+                {% endif %}
+
+                <div class="item-meta">
+                    {% if item.sentiment %}
+                    <div class="meta-item">
+                        <i class="fas fa-smile"></i>
+                        <span><strong>Sentiment:</strong> {{ item.sentiment }}</span>
+                    </div>
+                    {% endif %}
+                    {% if item.mood %}
+                    <div class="meta-item">
+                        <i class="fas fa-music"></i>
+                        <span><strong>Mood:</strong> {{ item.mood }}</span>
+                    </div>
+                    {% endif %}
+                    {% if item.duration %}
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span><strong>Duration:</strong> {{ item.duration }}s</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="item-actions">
+                {% if item.type == 'generated' and item.music_url %}
+                <button class="btn btn-secondary" onclick="playAudio(this)">
+                    <i class="fas fa-play"></i>
+                    Play Music
+                </button>
+                <a href="{{ item.music_url }}" download class="btn btn-secondary">
+                    <i class="fas fa-download"></i>
+                    Download
+                </a>
+                {% elif item.type == 'spotify' %}
+                <a href="{{ item.spotify_external_url }}" target="_blank" class="btn btn-secondary">
+                    <i class="fab fa-spotify"></i>
+                    Open in Spotify
+                </a>
+                {% endif %}
+            </div>
+
+            {% if item.type == 'generated' and item.music_url %}
+            <div class="audio-preview" style="display: none;">
+                <audio controls>
+                    <source src="{{ item.music_url }}" type="audio/wav">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+            {% elif item.type == 'spotify' %}
+            <div class="spotify-embed">
+                <iframe src="https://open.spotify.com/embed/track/{{ item.spotify_track_id }}?utm_source=generator"
+                        width="100%" height="152" frameBorder="0" allowfullscreen=""
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy">
+                </iframe>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+            <i class="fas fa-chevron-left"></i> Previous
+        </a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+            Next <i class="fas fa-chevron-right"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-music"></i>
+        <h3>No history found</h3>
+        <p>You haven't created any music or saved any tracks yet.</p>
+        <a href="{% url 'home' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Start Creating Music
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function playAudio(button) {
+    const item = button.closest('.history-item');
+    const audioPreview = item.querySelector('.audio-preview');
+
+    if (audioPreview.style.display === 'none') {
+        // Hide all other audio previews
+        document.querySelectorAll('.audio-preview').forEach(preview => {
+            preview.style.display = 'none';
+        });
+        // Reset all play buttons
+        document.querySelectorAll('.btn i.fa-play').forEach(icon => {
+            icon.className = 'fas fa-play';
+        });
+
+        audioPreview.style.display = 'block';
+        button.querySelector('i').className = 'fas fa-pause';
+    } else {
+        audioPreview.style.display = 'none';
+        button.querySelector('i').className = 'fas fa-play';
+    }
+}
+</script>
+{% endblock %}
