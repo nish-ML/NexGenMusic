@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MusicGen - Mood Based Music Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+            color: #333;
+        }
+
+        /* Main container layout */
+        .main-container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 60px;
+        }
+
+        /* Left content (form) */
+        .content {
+            flex: 2;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            width: 250px;
+            font-size: 16px;
+            border: 2px solid #aaa;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        button {
+            background-color: #ff6f91;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-left: 10px;
+        }
+
+        button:hover {
+            background-color: #ff4b77;
+        }
+
+        /* Spinner */
+        .spinner-container {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #ff6f91;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin-left: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar h3 {
+            text-align: center;
+            color: #ff4b77;
+        }
+
+        .record {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: left;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .record p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        audio {
+            width: 100%;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="content">
+            <h2>🎵 Enter Your Mood</h2>
+            <form method="POST" action="{% url 'generate_music' %}" onsubmit="showSpinner()">
+                {% csrf_token %}
+                <input type="text" name="mood" placeholder="How are you feeling today?" required>
+                <button type="submit">Generate Music</button>
+            </form>
+
+            <div class="spinner-container" id="spinnerContainer">
+                <div class="spinner"></div>
+                <div class="loading-text">Generating your personalized music... 🎶</div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+    <h3>🎧 Your Past Records</h3>
+    {% if past_records %}
+        {% for record in past_records %}
+            <div class="record">
+                <p><b>Prompt:</b> {{ record.user_input }}</p>  <!-- Added this line -->
+                <p><b>Mood:</b> {{ record.mood }}</p>
+                <p><b>Sentiment:</b> {{ record.sentiment }}</p>
+                <p><b>Date:</b> {{ record.created_at|date:"M d, Y H:i" }}</p>
+                <audio controls>
+                    <source src="/{{ record.audio_file }}" type="audio/wav">
+                </audio>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No music generated yet.</p>
+    {% endif %}
+</div>
+
+    </div>
+
+    <script>
+        function showSpinner() {
+            document.querySelector("form").style.display = "none";
+            document.getElementById("spinnerContainer").style.display = "block";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<style>
+    .spotify-section {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .spotify-section h3 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .spotify-filters {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .spotify-filters input {
+        flex: 1;
+        padding: 12px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .spotify-filters select {
+        flex: 1;
+        padding: 12px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+        cursor: pointer;
+        max-width: 600px;
+        min-width: 300px;
+        visibility: visible;
+        opacity: 1;
+        width: 100%;
+    }
+
+    .spotify-filters select:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .spotify-filters select option {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .spotify-filters button {
+        padding: 12px 20px;
+        background: #1DB954;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .spotify-filters button:hover {
+        background: #1aa34a;
+    }
+
+    .mood-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+        justify-content: center;
+    }
+
+    .mood-btn {
+        padding: 8px 16px;
+        background: #f8f9fa;
+        border: 2px solid #e1e5e9;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .mood-btn:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+
+    .mood-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+
+    .track-list {
+        display: grid;
+        gap: 15px;
+    }
+
+    .track-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .track-item:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+
+    .track-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        margin-right: 15px;
+        object-fit: cover;
+    }
+
+    .track-info {
+        flex: 1;
+    }
+
+    .track-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .track-artist {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .track-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .track-actions a {
+        padding: 8px 12px;
+        background: #1DB954;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .track-actions a:hover {
+        background: #1aa34a;
+    }
+
+
+
+    .loading {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+    }
+
+    .error {
+        text-align: center;
+        padding: 20px;
+        color: #dc3545;
+        background: #f8d7da;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+
+    /* Dark Mode Overrides for Spotify Section */
+    .dark-mode .spotify-section {
+        background: var(--card-bg);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+    }
+
+    .dark-mode .spotify-section h3 {
+        color: var(--text-primary);
+    }
+
+    .dark-mode .spotify-filters input {
+        background: var(--input-bg);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .dark-mode .spotify-filters select {
+        background: var(--input-bg);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .dark-mode .spotify-filters button {
+        background: var(--spotify-green);
+        color: white;
+        border: none;
+    }
+
+    .dark-mode .spotify-filters button:hover {
+        background: var(--spotify-hover);
+    }
+
+    .dark-mode .mood-btn {
+        background: var(--bg-secondary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .dark-mode .mood-btn:hover,
+    .dark-mode .mood-btn.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .dark-mode .track-item {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .dark-mode .track-item:hover {
+        background: var(--bg-tertiary);
+        transform: translateY(-2px);
+    }
+
+    .dark-mode .track-name {
+        color: var(--text-primary);
+    }
+
+    .dark-mode .track-artist {
+        color: var(--text-secondary);
+    }
+
+    .dark-mode .track-actions a {
+        background: var(--spotify-green);
+        color: white;
+    }
+
+    .dark-mode .track-actions a:hover {
+        background: var(--spotify-hover);
+    }
+
+
+
+    .dark-mode .loading {
+        color: var(--text-secondary);
+    }
+
+    .dark-mode .error {
+        color: var(--error-color);
+        background: rgba(239, 67, 67, 0.3);
+    }
+</style>

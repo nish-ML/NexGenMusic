@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Register - SynTune AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #a0c8f0 0%, #dfeffe 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary, #333);
+        }
+
+        .container {
+            background: var(--card-bg, white);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--primary-color, #667eea);
+        }
+
+        h1 {
+            color: var(--text-primary, #333);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-secondary, #555);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color, #e1e5e9);
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            background: var(--input-bg, white);
+            color: var(--text-primary, #333);
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: var(--btn-bg, linear-gradient(135deg, var(--primary-color, #667eea) 0%, var(--secondary-color, #764ba2) 100%));
+            color: var(--btn-color, white);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .error {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .success {
+            background-color: #efe;
+            color: #363;
+            border: 1px solid #cfc;
+        }
+
+        .links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background: #121212;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode h1 {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .container {
+            background: #2a2a3e;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .form-group label {
+            color: #b0b0b0;
+        }
+
+        body.dark-mode input {
+            background: #3a3a4e;
+            border-color: #4a4a5e;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode input:focus {
+            border-color: #667eea;
+        }
+
+        body.dark-mode .theme-toggle {
+            color: #667eea;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="auth-page">
+    <!-- animated background provided globally by base.html -->
+    <div style="display: flex; justify-content: center; align-items: center; gap: 20px; max-width: 750px; width: 100%; margin: 0 auto; position: relative;">
+        <div class="container" style="width: 50%; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border-radius: 20px;">
+            <h1>Join SynTune AI</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="password2">Confirm Password</label>
+                    <input type="password" id="password2" name="password2" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="btn">Create Account</button>
+            </form>
+            {% if error %}
+                <div class="message error">{{ error }}</div>
+            {% endif %}
+            {% if success %}
+                <div class="message success">{{ success }}</div>
+            {% endif %}
+            <div class="links">
+                <a href="{% url 'login' %}">Already have an account? Login</a><br>
+                <a href="{% url 'home' %}">← Back to Home</a>
+            </div>
+        </div>
+        <div class="logo" aria-hidden="true" style="width: 50%; display: flex; align-items: center; justify-content: center;">
+            {% include 'partials/lottie_player.html' with animation_url='https://assets10.lottiefiles.com/packages/lf20_puciaact.json' width='350px' height='350px' speed='1' loop=True autoplay=True %}
+        </div>
+    </div>
+
+    <script>
+        // Apply theme preference from homepage toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const body = document.body;
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            body.classList.toggle('dark-mode', currentTheme === 'dark');
+        });
+    </script>
+</body>
+</html>

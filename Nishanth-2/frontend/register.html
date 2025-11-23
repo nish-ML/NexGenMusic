@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - NexGenMusic</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<h2>Register</h2>
+<form id="registerForm">
+    <input type="text" placeholder="Username" name="username" required><br>
+    <input type="password" placeholder="Password" name="password" required><br>
+    <button type="submit">Register</button>
+</form>
+<p id="msg"></p>
+<script>
+document.getElementById('registerForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const username = e.target.username.value;
+    const password = e.target.password.value;
+
+    const res = await fetch('http://127.0.0.1:8000/api/register/', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({username, password})
+    });
+    const data = await res.json();
+    if(data.access){
+        localStorage.setItem('token', data.access);
+        window.location.href = 'index.html';
+    } else {
+        document.getElementById('msg').innerText = 'Registration failed';
+    }
+}
+</script>
+</body>
+</html>

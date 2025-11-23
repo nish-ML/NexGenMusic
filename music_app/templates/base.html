@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SynTune AI{% endblock %}</title>
+    {% load static %}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="{% if request.session.theme == 'dark' %}dark-mode{% endif %}">
+    {# animated background removed per user's request #}
+    <nav class="navbar">
+        <div class="nav-container unified-nav">
+            <div class="nav-brand">
+                <a href="{% url 'home' %}">
+                    <i class="fas fa-music"></i>
+                    <span>SynTune AI</span>
+                </a>
+            </div>
+
+            <div class="nav-menu">
+                {% if user.is_authenticated %}
+                <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                {% else %}
+                {% if request.resolver_match.url_name == 'home' %}
+                <a href="#hero-section" class="nav-link section-link" data-section="hero-section">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#about" class="nav-link section-link" data-section="about">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a>
+                <a href="#tutorial" class="nav-link section-link" data-section="tutorial">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Tutorial</span>
+                </a>
+                <a href="#features" class="nav-link section-link" data-section="features">
+                    <i class="fas fa-star"></i>
+                    <span>Features</span>
+                </a>
+                <a href="#inspiration" class="nav-link section-link" data-section="inspiration">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Inspiration</span>
+                </a>
+                <a href="#interactive-games-section" class="nav-link section-link" data-section="interactive-games-section">
+                    <i class="fas fa-gamepad"></i>
+                    <span>Games</span>
+                </a>
+                {% else %}
+                <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#about" class="nav-link section-link" data-section="about">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About</span>
+                </a>
+                <a href="#tutorial" class="nav-link section-link" data-section="tutorial">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Tutorial</span>
+                </a>
+                <a href="#features" class="nav-link section-link" data-section="features">
+                    <i class="fas fa-star"></i>
+                    <span>Features</span>
+                </a>
+                <a href="#inspiration" class="nav-link section-link" data-section="inspiration">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Inspiration</span>
+                </a>
+                <a href="#interactive-games-section" class="nav-link section-link" data-section="interactive-games-section">
+                    <i class="fas fa-gamepad"></i>
+                    <span>Games</span>
+                </a>
+                {% endif %}
+                {% endif %}
+            </div>
+
+            <button id="theme-toggle" class="nav-link theme-toggle" title="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+
+            {% if user.is_authenticated %}
+            <a href="{% url 'history' %}" class="nav-link {% if request.resolver_match.url_name == 'history' %}active{% endif %}">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </a>
+            <a href="{% url 'profile' %}" class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            {% if user.is_staff or user.is_superuser %} 
+            <a href="{% url 'admin:index' %}" class="nav-link admin-link" target="_blank">
+                <i class="fas fa-cog"></i>
+                <span>Admin</span>
+            </a>
+            {% endif %}
+            <div class="user-menu">
+                <button class="user-menu-btn">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span class="user-name">{{ user.username }}</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="user-dropdown">
+                    <a href="{% url 'profile' %}" title="Edit Profile">
+                        <i class="fas fa-user-edit"></i>
+                        Edit Profile
+                    </a>
+                    <a href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="auth-buttons">
+                <a href="{% url 'login' %}" class="btn btn-outline">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-primary">Sign Up</a>
+            </div>
+            {% endif %}
+
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div class="mobile-menu" id="mobile-menu">
+            {% if user.is_authenticated %}
+            <a href="{% url 'home' %}">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{% url 'history' %}">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </a>
+            <a href="{% url 'profile' %}" title="Profile">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+            {% if user.is_staff or user.is_superuser %}
+            <a href="{% url 'admin:index' %}" target="_blank">
+                <i class="fas fa-cog"></i>
+                <span>Admin Panel</span>
+            </a>
+            {% endif %}
+            <a href="{% url 'logout' %}">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Login</span>
+            </a>
+            <a href="{% url 'register' %}">
+                <i class="fas fa-user-plus"></i>
+                <span>Sign Up</span>
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>SynTune AI</h4>
+                    <p>Create unique music based on your mood and descriptions using advanced AI technology.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Features</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Music Generation</a></li>
+                        <li><a href="{% url 'home' %}">Spotify Integration</a></li>
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'history' %}">History Tracking</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 SynTune AI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+            // Apply theme on page load for all pages
+            document.addEventListener('DOMContentLoaded', function() {
+                const body = document.body;
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                body.classList.toggle('dark-mode', currentTheme === 'dark');
+
+                // Theme toggle functionality
+                const themeToggle = document.getElementById('theme-toggle');
+                if (themeToggle) {
+                    const icon = themeToggle.querySelector('i');
+                    updateIcon(currentTheme);
+
+                    themeToggle.addEventListener('click', function() {
+                        const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
+                        body.classList.toggle('dark-mode', newTheme === 'dark');
+                        localStorage.setItem('theme', newTheme);
+                        updateIcon(newTheme);
+
+                        // Save to server if user is authenticated
+                        fetch('/api/theme/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': getCookie('csrftoken')
+                            },
+                            body: JSON.stringify({ theme: newTheme })
+                        }).catch(error => console.log('Theme save failed:', error));
+                    });
+
+                    function updateIcon(theme) {
+                        if (theme === 'dark') {
+                            icon.className = 'fas fa-sun';
+                        } else {
+                            icon.className = 'fas fa-moon';
+                        }
+                    }
+                }
+
+            // Mobile menu toggle
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('active');
+                mobileMenuToggle.querySelector('i').classList.toggle('fa-times');
+                mobileMenuToggle.querySelector('i').classList.toggle('fa-bars');
+            });
+
+            // User dropdown toggle
+            const userMenuBtn = document.querySelector('.user-menu-btn');
+            const userDropdown = document.querySelector('.user-dropdown');
+
+            if (userMenuBtn && userDropdown) {
+                userMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('active');
+                });
+
+                document.addEventListener('click', function() {
+                    userDropdown.classList.remove('active');
+                });
+            }
+
+            // Scroll-spy functionality for section links (only on home page)
+            const sectionLinks = document.querySelectorAll('.section-link');
+            if (sectionLinks.length > 0) {
+                function updateActiveLink() {
+                    const scrollPosition = window.scrollY + 80; // Offset for navbar height
+
+                    sectionLinks.forEach(link => {
+                        const sectionId = link.getAttribute('data-section');
+                        const section = document.getElementById(sectionId);
+
+                        if (section) {
+                            const sectionTop = section.offsetTop;
+                            const sectionHeight = section.offsetHeight;
+                            const sectionBottom = sectionTop + sectionHeight;
+
+                            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                                sectionLinks.forEach(l => l.classList.remove('active'));
+                                link.classList.add('active');
+                            }
+                        }
+                    });
+                }
+
+                // Update active link on scroll
+                window.addEventListener('scroll', updateActiveLink);
+                updateActiveLink(); // Initial call
+
+                // Smooth scrolling for section links
+                sectionLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const sectionId = this.getAttribute('data-section');
+                        const section = document.getElementById(sectionId);
+
+                        if (section) {
+                            const offsetTop = section.offsetTop - 70; // Offset for navbar height
+                            window.scrollTo({
+                                top: offsetTop,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+            }
+        });
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookieItem = cookies[i].trim();
+                    if (cookieItem.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookieItem.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    <!-- Lottie Web Component (LottieFiles) - enables easy animated icons and UI motion -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
