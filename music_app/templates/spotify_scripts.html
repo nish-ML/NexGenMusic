@@ -1,0 +1,191 @@
+<script>
+    function searchSpotify() {
+        const language = document.getElementById('spotify-language').value;
+        const resultsDiv = document.getElementById('spotify-results');
+        resultsDiv.innerHTML = '<div class="loading">Getting recommendations...</div>';
+
+        // Get the mood from the analysis results - look for the mood specifically
+        const moodElements = document.querySelectorAll('.info-item p');
+        let mood = 'calm'; // default
+        for (let elem of moodElements) {
+            const text = elem.textContent.toLowerCase().trim();
+            // Look for mood keywords
+            if (['happy', 'sad', 'energetic', 'calm', 'romantic', 'excited'].includes(text)) {
+                mood = text;
+                break;
+            }
+        }
+
+        let url = `/api/spotify/recommendations/?mood=${encodeURIComponent(mood)}`;
+        if (language) {
+            url += `&language=${encodeURIComponent(language)}`;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.recommendations && data.recommendations.length > 0) {
+                    displayTracks(data.recommendations);
+                } else {
+                    resultsDiv.innerHTML = '<div class="error">No recommendations found</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error getting recommendations:', error);
+                resultsDiv.innerHTML = '<div class="error">Error getting recommendations</div>';
+            });
+    }
+
+    function getRecommendations(mood) {
+        const language = document.getElementById('spotify-language').value;
+        const resultsDiv = document.getElementById('spotify-results');
+        resultsDiv.innerHTML = '<div class="loading">Getting recommendations...</div>';
+
+        let url = `/api/spotify/recommendations/?mood=${encodeURIComponent(mood)}`;
+        if (language) {
+            url += `&language=${encodeURIComponent(language)}`;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.recommendations && data.recommendations.length > 0) {
+                    displayTracks(data.recommendations);
+                } else {
+                    resultsDiv.innerHTML = '<div class="error">No recommendations found</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error getting recommendations:', error);
+                resultsDiv.innerHTML = '<div class="error">Error getting recommendations</div>';
+            });
+    }
+
+    function displayTracks(tracks) {
+        const resultsDiv = document.getElementById('spotify-results');
+        let html = '';
+
+        tracks.forEach(track => {
+            const imageUrl = track.image_url || 'https://via.placeholder.com/60x60?text=No+Image';
+            html += `
+                <div class="track-item">
+                    <img src="${imageUrl}" alt="Album Art" class="track-image" onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'">
+                    <div class="track-info">
+                        <div class="track-name">${track.name}</div>
+                        <div class="track-artist">${track.artists.join(', ')}</div>
+                    </div>
+                    <div class="track-actions">
+                        ${track.preview_url ? `<button onclick="playPreview('${track.preview_url}', this)" class="preview-btn">▶️ Play Preview</button>` : ''}
+                        <iframe src="https://open.spotify.com/embed/track/${track.id}" width="300" height="152" frameborder="0" allowtransparency="true" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        <!-- Removed Save button as per request -->
+                    </div>
+                </div>
+            `;
+        });
+
+        resultsDiv.innerHTML = html;
+    }
+
+    function saveTrack(trackId, trackName, artistsStr, externalUrl, imageUrl) {
+        const artists = artistsStr.split("','");
+        const trackData = {
+            id: trackId,
+            name: trackName,
+            artists: artists,
+            external_url: externalUrl,
+            image_url: imageUrl
+        };
+
+        fetch('/api/spotify/save/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')  // Assuming CSRF token is available
+            },
+            body: JSON.stringify(trackData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+                // Refresh history if needed
+                fetchHistory();
+            } else if (data.error) {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error saving track:', error);
+            alert('Error saving track');
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookieItem = cookies[i].trim();
+                // Note that a NAME=VALUE pair will have spaces
+                // around it, so first stip the whitespace.
+                if (cookieItem.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookieItem.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    let currentAudio = null;
+
+    function playPreview(url, button) {
+        // Stop any currently playing audio
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            // Reset all play buttons
+            document.querySelectorAll('.preview-btn').forEach(btn => {
+                btn.textContent = '▶️ Play Preview';
+            });
+        }
+
+        if (currentAudio && currentAudio.src === url) {
+            // If clicking the same button, just stop
+            currentAudio = null;
+            return;
+        }
+
+        // Play new preview
+        currentAudio = new Audio(url);
+        currentAudio.play();
+        button.textContent = '⏸️ Pause';
+
+        // Handle when audio ends
+        currentAudio.onended = function() {
+            button.textContent = '▶️ Play Preview';
+            currentAudio = null;
+        };
+
+        // Handle pause/play toggle
+        currentAudio.onpause = function() {
+            button.textContent = '▶️ Play Preview';
+        };
+
+        currentAudio.onplay = function() {
+            button.textContent = '⏸️ Pause';
+        };
+    }
+
+    // Allow Enter key in search input
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('spotify-query');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchSpotify();
+                }
+            });
+        }
+    });
+</script>

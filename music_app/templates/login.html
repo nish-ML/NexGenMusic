@@ -1,175 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Music Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - SynTune AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #333;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: transparent; /* background is provided by the 3D canvas */
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary, #333);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow: hidden;
+    }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
+    /* gentle light-mode page gradient to give particles contrast */
+    body:not(.dark-mode) {
+      background: linear-gradient(135deg, #a0c8f0 0%, #dfeffe 100%);
+    }
 
-        .logo {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: #667eea;
-        }
+    body.dark-mode {
+      background: #121212;
+      color: #e0e0e0;
+    }
 
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
+    body.dark-mode .container {
+      background: #2a2a3e;
+      color: #e0e0e0;
+    }
 
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
+    body.dark-mode h1 {
+      color: #e0e0e0;
+    }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: #555;
-        }
+    body.dark-mode .form-group label {
+      color: #b0b0b0;
+    }
 
-        input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 16px;
-            font-family: inherit;
-            transition: border-color 0.3s ease;
-        }
+    body.dark-mode input {
+      background: #3a3a4e;
+      border-color: #4a4a5e;
+      color: #e0e0e0;
+    }
 
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+    body.dark-mode input:focus {
+      border-color: #667eea;
+    }
 
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-        }
+    body.dark-mode .theme-toggle {
+      color: #667eea;
+    }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+      z-index: 2; /* ensure UI sits above the canvas */
+    }
 
-        .btn:active {
-            transform: translateY(0);
-        }
+    .logo {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      color: #667eea;
+    }
 
-        .message {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-        }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
 
-        .error {
-            background-color: #fee;
-            color: #c33;
-            border: 1px solid #fcc;
-        }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
 
-        .success {
-            background-color: #efe;
-            color: #363;
-            border: 1px solid #cfc;
-        }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
+    }
 
-        .links {
-            margin-top: 20px;
-            font-size: 14px;
-        }
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
 
-        .links a {
-            color: #667eea;
-            text-decoration: none;
-            margin: 0 5px;
-        }
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
 
-        .links a:hover {
-            text-decoration: underline;
-        }
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
 
-        @media (max-width: 480px) {
-            .container {
-                margin: 20px;
-                padding: 30px 20px;
-            }
+    .btn:hover {
+      background: var(--btn-hover-bg, linear-gradient(135deg, #5563c1 0%, #653b91 100%));
+      box-shadow: var(--btn-hover-shadow, 0 10px 20px rgba(85, 99, 193, 0.3));
+      transform: translateY(-2px);
+    }
 
-            .logo {
-                font-size: 2rem;
-            }
+    .btn:active {
+      transform: translateY(0);
+    }
 
-            h1 {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+    .message {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .error {
+      background-color: #fee;
+      color: #c33;
+      border: 1px solid #fcc;
+    }
+
+    .success {
+      background-color: #efe;
+      color: #363;
+      border: 1px solid #cfc;
+    }
+
+    .links {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .links a {
+      color: #667eea;
+      text-decoration: none;
+      margin: 0 5px;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 20px;
+        padding: 30px 20px;
+      }
+
+      .logo {
+        font-size: 2rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
-<body>
-    <div class="container">
-        <div class="logo">🎵</div>
-        <h1>Welcome Back</h1>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+<body class="auth-page">
+  <!-- animated background provided globally by base.html -->
+  <div style="display: flex; justify-content: center; align-items: center; gap: 20px; max-width: 750px; width: 100%; margin: 0 auto; position: relative;">
+        <div class="container" style="width: 50%; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); border-radius: 20px;">
+            <h1>Welcome Back</h1>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            {% if error %}
+                <div class="message error">{{ error }}</div>
+            {% endif %}
+            {% if success %}
+                <div class="message success">{{ success }}</div>
+            {% endif %}
+            <div class="links">
+                <a href="{% url 'register' %}">Don't have an account? Register</a><br>
+                <a href="{% url 'home' %}">← Back to Home</a>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            </div>
-            <button type="submit" class="btn">Login</button>
-        </form>
-        {% if error %}
-            <div class="message error">{{ error }}</div>
-        {% endif %}
-        {% if success %}
-            <div class="message success">{{ success }}</div>
-        {% endif %}
-        <div class="links">
-            <a href="{% url 'register' %}">Don't have an account? Register</a><br>
-            <a href="{% url 'home' %}">← Back to Home</a>
+        </div>
+        <div class="logo" aria-hidden="true" style="width: 50%; display: flex; align-items: center; justify-content: center;">
+            {% include 'partials/lottie_player.html' with animation_url='https://assets10.lottiefiles.com/packages/lf20_jcikwtux.json' width='350px' height='350px' speed='1' loop=True autoplay=True %}
         </div>
     </div>
+
+  <script>
+    // Theme toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const body = document.body;
+
+      // Always apply saved theme preference on page load
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      body.classList.toggle('dark-mode', currentTheme === 'dark');
+
+      const themeToggle = document.getElementById('theme-toggle');
+      if (themeToggle) {
+        const icon = themeToggle.querySelector('i');
+        icon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+
+        themeToggle.addEventListener('click', function() {
+          const isDark = body.classList.toggle('dark-mode');
+          const newTheme = isDark ? 'dark' : 'light';
+          localStorage.setItem('theme', newTheme);
+          icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+
+          // Send theme preference to server
+          fetch('/api/theme/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ theme: newTheme })
+          });
+        });
+      }
+    });
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookieItem = cookies[i].trim();
+          if (cookieItem.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookieItem.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  </script>
+  <!-- animated background now provided globally by the partial included in base.html -->
 </body>
 </html>

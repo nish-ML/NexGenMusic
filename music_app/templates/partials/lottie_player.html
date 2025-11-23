@@ -1,0 +1,21 @@
+{% comment %}
+Lottie Player partial template
+Expects context variables:
+- animation_url (string): URL of the Lottie JSON animation
+- width (string): width of the player, e.g. '64px'
+- height (string): height of the player, e.g. '64px'
+- speed (string or number): playback speed (optional)
+- loop (bool): whether to loop the animation (optional)
+- autoplay (bool): whether to autoplay (optional)
+{% endcomment %}
+
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+<lottie-player
+    src="{{ animation_url }}"
+    background="transparent"
+    speed="{{ speed|default:'1' }}"
+    style="width: {{ width|default:'64px' }}; height: {{ height|default:'64px' }};"
+    {% if loop %} loop {% endif %}
+    {% if autoplay %} autoplay {% endif %}>
+</lottie-player>

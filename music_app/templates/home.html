@@ -1,263 +1,1868 @@
+{% extends 'base.html' %}
+{% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+{% block title %}Home - SynTune AI{% endblock %}
+
+{% block extra_head %}
+{% include 'spotify_styles.html' %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+        margin: -40px -20px 40px -20px;
+    }
+
+    .hero-section h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .hero-section p {
+        font-size: 1.3rem;
+        margin-bottom: 30px;
+        opacity: 0.9;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .hero-btn {
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .hero-btn-primary {
+        background: rgba(255,255,255,0.2);
+        color: white;
+        border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .hero-btn-primary:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .hero-btn-secondary {
+        background: var(--spotify-green);
+        color: white;
+        border: 2px solid var(--spotify-green);
+    }
+
+    .hero-btn-secondary:hover {
+        background: #1ed760;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(29, 185, 84, 0.3);
+    }
+
+    .hero-features {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+    }
+
+    .feature-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .feature-item:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .feature-item i {
+        font-size: 2rem;
+        color: white;
+        margin-bottom: 5px;
+    }
+
+    .feature-item span {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .about-section {
+        background: var(--card-bg);
+        border-radius: 24px;
+        padding: 60px 50px;
+        margin-bottom: 40px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent-color), var(--primary-color), var(--secondary-color));
+    }
+
+    .about-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: center;
+    }
+
+    .about-text h2 {
+        color: var(--text-primary);
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .about-text h2::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 2px;
+    }
+
+    .about-text p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 20px;
+    }
+
+    .about-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .about-feature {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .about-feature:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-color);
+    }
+
+    .about-feature i {
+        font-size: 1.8rem;
+        color: var(--primary-color);
+        min-width: 40px;
+    }
+
+    .about-feature .content h4 {
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .about-feature .content p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .about-image {
+        text-align: center;
+        position: relative;
+    }
+
+    .about-image img {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        border-radius: 20px;
+        box-shadow: var(--shadow-xl);
+        border: 3px solid var(--border-color);
+    }
+
+    .tutorial-section {
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--card-bg) 100%);
+        border-radius: 24px;
+        padding: 60px 50px;
+        margin-bottom: 40px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .tutorial-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--secondary-color), var(--accent-color), var(--primary-color));
+    }
+
+    .tutorial-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .tutorial-header h2 {
+        color: var(--text-primary);
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .tutorial-header h2::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+        border-radius: 2px;
+    }
+
+    .tutorial-header p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .tutorial-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        position: relative;
+    }
+
+    .tutorial-step {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-color);
+        position: relative;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        overflow: hidden;
+    }
+
+    .tutorial-step::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .tutorial-step:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary-color);
+    }
+
+    .tutorial-step:hover::before {
+        transform: scaleX(1);
+    }
+
+    .step-number {
+        position: absolute;
+        top: -15px;
+        left: 20px;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.2rem;
+        box-shadow: var(--shadow-md);
+        z-index: 2;
+    }
+
+    .step-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+        text-align: center;
+        display: block;
+    }
+
+    .step-content h3 {
+        color: var(--text-primary);
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .step-content p {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.6;
+        text-align: center;
+    }
+
+    .step-arrow {
+        position: absolute;
+        top: 50%;
+        right: -25px;
+        transform: translateY(-50%);
+        font-size: 2rem;
+        color: var(--primary-color);
+        opacity: 0.5;
+    }
+
+    .tutorial-step:last-child .step-arrow {
+        display: none;
+    }
+
+    .form-card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        padding: 50px;
+        box-shadow: var(--shadow-xl);
+        margin-bottom: 40px;
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+    }
+
+    .form-card h2 {
+        color: var(--text-primary);
+        margin-bottom: 35px;
+        font-size: 2.2rem;
+        text-align: center;
+        font-weight: 700;
+        position: relative;
+    }
+
+    .form-card h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 2px;
+    }
+
+    .form-group {
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-group label i {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+    }
+
+    .form-group:nth-child(1) label i {
+        color: var(--primary-color);
+    }
+
+    .form-group:nth-child(2) label i {
+        color: var(--accent-color);
+    }
+
+    textarea, select {
+        width: 100%;
+        padding: 18px 20px;
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        font-size: 16px;
+        font-family: inherit;
+        background: var(--input-bg);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    textarea:focus, select:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px var(--shadow-glow);
+        transform: translateY(-2px);
+    }
+
+    textarea::placeholder {
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 25px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 40px;
+    }
+
+    .btn-generate, .btn-spotify {
+        padding: 18px 35px;
+        border-radius: 16px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 220px;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-generate::before, .btn-spotify::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-generate:hover::before, .btn-spotify:hover::before {
+        left: 100%;
+    }
+
+    .btn-generate {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-generate:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .btn-spotify {
+        background: var(--spotify-green);
+        color: white;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-spotify:hover {
+        background: var(--spotify-hover);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .result-section {
+        margin-top: 40px;
+    }
+
+    .result-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px var(--shadow);
+        margin-bottom: 30px;
+        border: 1px solid var(--border-color);
+    }
+
+    .result-card h3 {
+        color: var(--text-primary);
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .audio-player {
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .audio-player audio {
+        width: 100%;
+        max-width: 400px;
+        border-radius: 10px;
+    }
+
+    .sentiment-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .sentiment-card {
+        background: var(--bg-secondary);
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+    }
+
+    .sentiment-card .icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .sentiment-card .label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .sentiment-card .value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .spotify-section {
+        margin-top: 40px;
+    }
+
+    .spotify-filters {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .spotify-filters select {
+        padding: 12px 16px;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        background: var(--input-bg);
+        color: var(--text-primary);
+        font-size: 14px;
+        min-width: 150px;
+    }
+
+    .spotify-filters button {
+        padding: 12px 24px;
+        background: var(--spotify-green);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .spotify-filters button:hover {
+        background: #1ed760;
+        transform: translateY(-1px);
+    }
+
+    .track-list {
+        margin-top: 20px;
+    }
+
+    .track-list p {
+        text-align: center;
+        color: var(--text-secondary);
+        font-style: italic;
+    }
+
+    .dark-mode .hero-section {
+        background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+    }
+
+    .dark-mode #theme-toggle {
+        background: rgba(74, 85, 104, 0.8) !important;
+        border: 2px solid rgba(113, 128, 150, 0.6) !important;
+        color: #e2e8f0 !important;
+    }
+
+    .featured-creations-section {
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--card-bg) 50%, var(--bg-secondary) 100%);
+        padding: 80px 0;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .featured-creations-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .featured-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .featured-header h2 {
+        color: var(--text-primary);
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .featured-header h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 2px;
+    }
+
+    .featured-header p {
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .creations-showcase {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 40px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .creation-card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        padding: 30px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .creation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .creation-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary-color);
+    }
+
+    .creation-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .creation-visual {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 25px;
+        position: relative;
+    }
+
+    .creation-waveform {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        height: 60px;
+    }
+
+    .wave-bar {
+        width: 4px;
+        background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+        border-radius: 2px;
+        animation: waveAnimation 2s ease-in-out infinite;
+    }
+
+    .wave-bar:nth-child(1) { height: 20px; animation-delay: 0s; }
+    .wave-bar:nth-child(2) { height: 35px; animation-delay: 0.1s; }
+    .wave-bar:nth-child(3) { height: 50px; animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { height: 30px; animation-delay: 0.3s; }
+    .wave-bar:nth-child(5) { height: 45px; animation-delay: 0.4s; }
+    .wave-bar:nth-child(6) { height: 25px; animation-delay: 0.5s; }
+    .wave-bar:nth-child(7) { height: 40px; animation-delay: 0.6s; }
+    .wave-bar:nth-child(8) { height: 55px; animation-delay: 0.7s; }
+    .wave-bar:nth-child(9) { height: 15px; animation-delay: 0.8s; }
+    .wave-bar:nth-child(10) { height: 35px; animation-delay: 0.9s; }
+
+    @keyframes waveAnimation {
+        0%, 100% { opacity: 0.4; transform: scaleY(0.8); }
+        50% { opacity: 1; transform: scaleY(1); }
+    }
+
+    .creation-mood {
+        font-size: 3rem;
+        opacity: 0.8;
+        animation: moodPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes moodPulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.1); opacity: 1; }
+    }
+
+    .creation-info h4 {
+        color: var(--text-primary);
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+
+    .creation-info p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        text-align: center;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+
+    .creation-meta {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .creation-meta span {
+        background: var(--bg-secondary);
+        color: var(--text-secondary);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 1px solid var(--border-color);
+    }
+
+    .inspiration-section {
+        background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg-secondary) 100%);
+        padding: 80px 0;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .inspiration-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 70% 30%, rgba(34, 197, 94, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 30% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .inspiration-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .inspiration-header h2 {
+        color: var(--text-primary);
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .inspiration-header h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+        border-radius: 2px;
+    }
+
+    .inspiration-header p {
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .inspiration-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .inspiration-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .inspiration-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .inspiration-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary-color);
+    }
+
+    .inspiration-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .inspiration-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+    .inspiration-card:hover .inspiration-icon {
+        transform: scale(1.1);
+    }
+
+    .inspiration-card h4 {
+        color: var(--text-primary);
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .inspiration-card p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .interactive-games-section {
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--card-bg) 50%, var(--bg-secondary) 100%);
+        padding: 80px 0;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .interactive-games-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 30% 70%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 30%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .games-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .games-header h2 {
+        color: var(--text-primary);
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .games-header h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 2px;
+    }
+
+    .games-header p {
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .games-card {
+        background: var(--card-bg);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .games-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .games-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .beat-maker {
+        margin-bottom: 40px;
+    }
+
+    .beat-maker h3 {
+        color: var(--text-primary);
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .instrument-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .instrument-btn {
+        padding: 20px;
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .instrument-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .instrument-btn:hover::before {
+        left: 100%;
+    }
+
+    .instrument-btn:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .instrument-btn.active {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-color: var(--primary-color);
+        animation: pulse 0.6s ease-in-out;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .instrument-btn i {
+        font-size: 2rem;
+        margin-bottom: 5px;
+    }
+
+    .visual-waveform {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        height: 80px;
+        margin: 20px 0;
+        padding: 20px;
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+    }
+
+    .wave-bar {
+        width: 6px;
+        background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+        border-radius: 3px;
+        transition: all 0.3s ease;
+        opacity: 0.3;
+    }
+
+    .wave-bar.active {
+        opacity: 1;
+        animation: wavePulse 0.8s ease-in-out infinite;
+    }
+
+    @keyframes wavePulse {
+        0%, 100% { transform: scaleY(1); opacity: 1; }
+        50% { transform: scaleY(1.5); opacity: 0.8; }
+    }
+
+    .wave-bar:nth-child(1) { height: 20px; animation-delay: 0s; }
+    .wave-bar:nth-child(2) { height: 35px; animation-delay: 0.1s; }
+    .wave-bar:nth-child(3) { height: 50px; animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { height: 30px; animation-delay: 0.3s; }
+    .wave-bar:nth-child(5) { height: 45px; animation-delay: 0.4s; }
+    .wave-bar:nth-child(6) { height: 25px; animation-delay: 0.5s; }
+    .wave-bar:nth-child(7) { height: 40px; animation-delay: 0.6s; }
+    .wave-bar:nth-child(8) { height: 55px; animation-delay: 0.7s; }
+    .wave-bar:nth-child(9) { height: 15px; animation-delay: 0.8s; }
+    .wave-bar:nth-child(10) { height: 35px; animation-delay: 0.9s; }
+    .wave-bar:nth-child(11) { height: 50px; animation-delay: 1.0s; }
+    .wave-bar:nth-child(12) { height: 20px; animation-delay: 1.1s; }
+    .wave-bar:nth-child(13) { height: 45px; animation-delay: 1.2s; }
+    .wave-bar:nth-child(14) { height: 30px; animation-delay: 1.3s; }
+    .wave-bar:nth-child(15) { height: 40px; animation-delay: 1.4s; }
+
+    .play-controls {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .play-btn, .clear-btn {
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .play-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        box-shadow: var(--shadow-md);
+    }
+
+    .play-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .clear-btn {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 2px solid var(--border-color);
+    }
+
+    .clear-btn:hover {
+        background: var(--card-bg);
+        border-color: var(--primary-color);
+    }
+
+    .mood-wheel {
+        margin-top: 40px;
+        padding-top: 40px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .mood-wheel h3 {
+        color: var(--text-primary);
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .wheel-container {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+        cursor: pointer;
+    }
+
+    .mood-wheel-visual {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: conic-gradient(
+            #ff6b6b 0deg 60deg,
+            #4ecdc4 60deg 120deg,
+            #45b7d1 120deg 180deg,
+            #96ceb4 180deg 240deg,
+            #ffeaa7 240deg 300deg,
+            #dda0dd 300deg 360deg
+        );
+        position: relative;
+        transition: transform 0.5s ease-out;
+        box-shadow: var(--shadow-lg);
+        border: 4px solid var(--card-bg);
+    }
+
+    .wheel-pointer {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 20px solid var(--text-primary);
+        z-index: 2;
+    }
+
+    .wheel-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        background: var(--card-bg);
+        border-radius: 50%;
+        border: 3px solid var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        box-shadow: var(--shadow-md);
+    }
+
+    .mood-result {
+        margin-top: 20px;
+        padding: 20px;
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mood-result h4 {
+        color: var(--text-primary);
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+    }
+
+    .mood-result p {
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+    }
+
+    .use-mood-btn {
+        padding: 8px 16px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .use-mood-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+    }
+
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 60px 20px;
+            margin: -20px -20px 40px -20px;
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-            line-height: 1.6;
+        .hero-section h1 {
+            font-size: 2.5rem;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 30px 0;
-        }
-
-        .header h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .header p {
-            color: rgba(255,255,255,0.9);
+        .hero-section p {
             font-size: 1.1rem;
         }
 
-        .auth-section {
-            text-align: center;
-            margin-bottom: 30px;
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
         }
 
-        .auth-section a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
-            margin: 0 5px;
+        .container {
+            padding: 0 15px;
         }
 
-        .auth-section a:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
+        .about-section {
+            padding: 40px 20px;
         }
 
-        .welcome-message {
-            background: rgba(255,255,255,0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            text-align: center;
+        .about-content {
+            grid-template-columns: 1fr;
+            gap: 30px;
         }
 
-        .welcome-message a {
-            color: #ff6b6b;
-            text-decoration: none;
-            font-weight: 500;
+        .about-text h2 {
+            font-size: 2rem;
+        }
+
+        .about-features {
+            grid-template-columns: 1fr;
+        }
+
+        .tutorial-section {
+            padding: 40px 20px;
+        }
+
+        .tutorial-header h2 {
+            font-size: 2rem;
+        }
+
+        .tutorial-steps {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .step-arrow {
+            display: none;
+        }
+
+        .featured-creations-section {
+            padding: 60px 0;
+        }
+
+        .featured-header h2 {
+            font-size: 2.2rem;
+        }
+
+        .creations-showcase {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .creation-card {
+            padding: 25px;
+        }
+
+        .creation-visual {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .creation-waveform {
+            height: 40px;
+        }
+
+        .wave-bar {
+            width: 3px;
+        }
+
+        .creation-mood {
+            font-size: 2.5rem;
+        }
+
+        .inspiration-section {
+            padding: 60px 0;
+        }
+
+        .inspiration-header h2 {
+            font-size: 2.2rem;
+        }
+
+        .inspiration-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .inspiration-card {
+            padding: 25px;
         }
 
         .form-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            padding: 25px;
         }
 
-        .form-group {
-            margin-bottom: 25px;
+        .button-group {
+            flex-direction: column;
+            align-items: center;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #555;
-        }
-
-        textarea {
+        .btn-generate, .btn-spotify {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
-            font-size: 16px;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 100px;
-            transition: border-color 0.3s ease;
+            max-width: 300px;
         }
 
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        .sentiment-grid {
+            grid-template-columns: 1fr;
         }
 
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            max-width: 200px;
+        .spotify-filters {
+            flex-direction: column;
+            align-items: stretch;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .result-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .result-card h3 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        .audio-player {
-            margin: 20px 0;
+        .spotify-filters select {
             width: 100%;
         }
+    }
+</style>
+{% endblock extra_head %}
 
-        .audio-player audio {
-            width: 100%;
-            max-width: 400px;
-        }
+{% block content %}
+{% if not user.is_authenticated %}
+<section class="hero-section" id="hero-section">
+    <div class="hero-content">
+        <h1>🎵 SynTune AI</h1>
+        <p>Transform your emotions into beautiful melodies with cutting-edge AI technology. Create personalized music that resonates with your soul.</p>
 
-        .sentiment-info {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        .info-item {
-            background: #f8f9fa;
-            padding: 15px 25px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .info-item strong {
-            color: #667eea;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .info-item p {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-top: 5px;
-            color: #333;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            .header h1 {
-                font-size: 2.5rem;
-            }
-
-            .form-card {
-                padding: 25px;
-            }
-
-            .sentiment-info {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .info-item {
-                padding: 12px 20px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header class="header">
-            <h1>Music Generator</h1>
-            <p>Create unique music based on your mood and descriptions</p>
-        </header>
-
-        {% if user.is_authenticated %}
-            <div class="welcome-message">
-                <p>Welcome back, <strong>{{ user.username }}</strong>! <a href="{% url 'logout' %}">Logout</a></p>
+        <div class="hero-features">
+            <div class="feature-item">
+                <i class="fas fa-brain"></i>
+                <span>AI-Powered</span>
             </div>
-        {% else %}
-            <div class="auth-section">
-                <a href="{% url 'login' %}">Login</a>
-                <a href="{% url 'register' %}">Register</a>
+            <div class="feature-item">
+                <i class="fas fa-infinity"></i>
+                <span>Unlimited Creation</span>
             </div>
-        {% endif %}
-
-        <div class="form-card">
-            <form method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="text">Describe your music:</label>
-                    <textarea name="text" id="text" placeholder="e.g., happy upbeat electronic music for a party">{{ prompt }}</textarea>
-                </div>
-                <div class="form-group">
-                    <label for="duration">Duration (seconds):</label>
-                    <select name="duration" id="duration" style="width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 12px; font-size: 16px; font-family: inherit;">
-                        <option value="5">5 seconds</option>
-                        <option value="10">10 seconds</option>
-                        <option value="15">15 seconds</option>
-                        <option value="20">20 seconds</option>
-                        <option value="30" selected>30 seconds</option>
-                    </select>
-                </div>
-                <div style="text-align: center;">
-                    <button type="submit" class="btn">Generate Music</button>
-                </div>
-            </form>
+            <div class="feature-item">
+                <i class="fas fa-music"></i>
+                <span>High Quality</span>
+            </div>
         </div>
 
-        {% if music_url %}
+        <div class="hero-buttons">
+            <a href="{% url 'register' %}" class="hero-btn hero-btn-primary">
+                <i class="fas fa-user-plus"></i>
+                Get Started
+            </a>
+            <a href="{% url 'login' %}" class="hero-btn hero-btn-secondary">
+                <i class="fas fa-sign-in-alt"></i>
+                Sign In
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="about-section" id="about">
+    <div class="container">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>About SynTune AI</h2>
+                <p>Welcome to the future of music creation! Our AI-powered platform transforms your emotions, ideas, and descriptions into beautiful, original melodies. Whether you're a musician seeking inspiration, a content creator needing background music, or simply someone who wants to express their feelings through sound, our advanced AI technology makes music creation accessible to everyone.</p>
+                <p>Using cutting-edge machine learning models, we analyze your text descriptions to understand the mood, genre, and style you envision, then generate unique musical compositions that capture your creative vision. From soothing acoustic melodies to energetic electronic beats, our AI composer brings your musical dreams to life.</p>
+
+                <div class="about-features">
+                    <div class="about-feature">
+                        <i class="fas fa-brain"></i>
+                        <div class="content">
+                            <h4>Advanced AI</h4>
+                            <p>State-of-the-art machine learning models trained on diverse musical datasets</p>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-infinity"></i>
+                        <div class="content">
+                            <h4>Unlimited Creativity</h4>
+                            <p>Generate as many compositions as you want, whenever inspiration strikes</p>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-music"></i>
+                        <div class="content">
+                            <h4>High Quality Audio</h4>
+                            <p>Professional-grade music output in multiple formats and durations</p>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-users"></i>
+                        <div class="content">
+                            <h4>Community Driven</h4>
+                            <p>Join thousands of creators sharing their musical journeys</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="about-image">
+                <img src="{% static 'images/music-creation.svg' %}" alt="AI Music Creation Illustration" onerror="this.style.display='none'">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="tutorial-section" id="tutorial">
+    <div class="container">
+        <div class="tutorial-header">
+            <h2>How to Create Music with AI</h2>
+            <p>Follow these simple steps to transform your ideas into beautiful melodies. Our unique interactive guide makes music creation effortless and fun!</p>
+        </div>
+
+        <div class="tutorial-steps">
+            <div class="tutorial-step" onclick="scrollToSection('#about')">
+                <span class="step-number">1</span>
+                <i class="step-icon fas fa-edit"></i>
+                <div class="step-content">
+                    <h3>Learn About AI Music</h3>
+                    <p>Discover how our AI transforms text descriptions into beautiful melodies. Learn about the technology behind music generation.</p>
+                </div>
+                <i class="fas fa-arrow-right step-arrow"></i>
+            </div>
+
+            <div class="tutorial-step" onclick="scrollToSection('#features')">
+                <span class="step-number">2</span>
+                <i class="step-icon fas fa-clock"></i>
+                <div class="step-content">
+                    <h3>Explore Creations</h3>
+                    <p>See examples of AI-generated music across different moods and styles. Get inspired by what others have created.</p>
+                </div>
+                <i class="fas fa-arrow-right step-arrow"></i>
+            </div>
+
+            <div class="tutorial-step" onclick="scrollToSection('#inspiration')">
+                <span class="step-number">3</span>
+                <i class="step-icon fas fa-magic"></i>
+                <div class="step-content">
+                    <h3>Get Inspired</h3>
+                    <p>Use our creative prompts to spark your imagination. Try different genres and moods to find your perfect musical style.</p>
+                </div>
+                <i class="fas fa-arrow-right step-arrow"></i>
+            </div>
+
+
+
+            <div class="tutorial-step" onclick="scrollToSection('#interactive-games-section')">
+                <span class="step-number">5</span>
+                <i class="step-icon fas fa-gamepad"></i>
+                <div class="step-content">
+                    <h3>Play Interactive Games</h3>
+                    <p>Have fun with our beat maker and mood wheel! Create beats and discover new moods to inspire your music.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="featured-creations-section" id="features">
+    <div class="container">
+        <div class="featured-header">
+            <h2>🎵 Featured AI Creations</h2>
+            <p>Discover the amazing music our community has created with AI. Each piece tells a unique story.</p>
+        </div>
+
+        <div class="creations-showcase">
+            <div class="creation-card">
+                <div class="creation-visual">
+                    <div class="creation-waveform">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                    <div class="creation-mood">🌅</div>
+                </div>
+                <div class="creation-info">
+                    <h4>Sunset Serenity</h4>
+                    <p>"A gentle acoustic melody that captures the peaceful feeling of watching the sun set over calm waters."</p>
+                    <div class="creation-meta">
+                        <span class="duration">15s</span>
+                        <span class="genre">Acoustic</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="creation-card">
+                <div class="creation-visual">
+                    <div class="creation-waveform">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                    <div class="creation-mood">⚡</div>
+                </div>
+                <div class="creation-info">
+                    <h4>Electric Dreams</h4>
+                    <p>"High-energy electronic beats perfect for workout sessions or late-night coding marathons."</p>
+                    <div class="creation-meta">
+                        <span class="duration">30s</span>
+                        <span class="genre">Electronic</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="creation-card">
+                <div class="creation-visual">
+                    <div class="creation-waveform">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                    <div class="creation-mood">💖</div>
+                </div>
+                <div class="creation-info">
+                    <h4>Romantic Piano</h4>
+                    <p>"Soft piano melodies that evoke feelings of love and tenderness, perfect for special moments."</p>
+                    <div class="creation-meta">
+                        <span class="duration">20s</span>
+                        <span class="genre">Classical</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="inspiration-section" id="inspiration">
+    <div class="container">
+        <div class="inspiration-header">
+            <h2>✨ Get Inspired</h2>
+            <p>Need help getting started? Try these creative prompts to spark your musical imagination!</p>
+        </div>
+
+        <div class="inspiration-grid">
+            <div class="inspiration-card" onclick="fillPrompt('A mysterious and haunting melody with deep cello and violin, perfect for a thriller movie scene')">
+                <div class="inspiration-icon">🎭</div>
+                <h4>Mysterious Thriller</h4>
+                <p>Deep, haunting tones that build suspense</p>
+            </div>
+
+            <div class="inspiration-card" onclick="fillPrompt('Upbeat pop music with catchy synths and electronic beats, energetic and fun for a party')">
+                <div class="inspiration-icon">🎉</div>
+                <h4>Party Pop</h4>
+                <p>Catchy and energetic, perfect for celebrations</p>
+            </div>
+
+            <div class="inspiration-card" onclick="fillPrompt('Peaceful ambient music with soft pads and gentle melodies, ideal for meditation or relaxation')">
+                <div class="inspiration-icon">🧘</div>
+                <h4>Zen Meditation</h4>
+                <p>Calming and soothing for mindfulness</p>
+            </div>
+
+            <div class="inspiration-card" onclick="fillPrompt('Epic orchestral music with powerful brass and strings, cinematic and dramatic for trailers')">
+                <div class="inspiration-icon">🎬</div>
+                <h4>Cinematic Epic</h4>
+                <p>Grand and dramatic, movie-worthy sound</p>
+            </div>
+
+            <div class="inspiration-card" onclick="fillPrompt('Funky groove with electric guitar riffs and bass, retro 70s vibe for a cool hangout')">
+                <div class="inspiration-icon">🧘</div>
+                <h4>Retro Funk</h4>
+                <p>Groovy and nostalgic, feel-good vibes</p>
+            </div>
+
+            <div class="inspiration-card" onclick="fillPrompt('Dreamy lo-fi hip hop beats with vinyl crackle and soft piano, perfect for studying or chilling')">
+                <div class="inspiration-icon">🎧</div>
+                <h4>Lo-Fi Study</h4>
+                <p>Chill and focused, ideal for concentration</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="interactive-games-section" id="interactive-games-section">
+    <div class="container">
+        <div class="games-header">
+            <h2>🎮 Interactive Music Games</h2>
+            <p>Have fun creating beats and discovering moods! Experiment with different sounds and let your creativity flow.</p>
+        </div>
+
+        <div class="games-card">
+            <div class="beat-maker">
+                <h3><i class="fas fa-drum"></i> Beat Maker</h3>
+                <div class="instrument-buttons">
+                    <button class="instrument-btn" data-instrument="drums">
+                        <i class="fas fa-drum"></i>
+                        <span>Drums</span>
+                    </button>
+                    <button class="instrument-btn" data-instrument="bass">
+                        <i class="fas fa-guitar"></i>
+                        <span>Bass</span>
+                    </button>
+                    <button class="instrument-btn" data-instrument="piano">
+                        <i class="fas fa-music"></i>
+                        <span>Piano</span>
+                    </button>
+                    <button class="instrument-btn" data-instrument="guitar">
+                        <i class="fas fa-guitar"></i>
+                        <span>Guitar</span>
+                    </button>
+                    <button class="instrument-btn" data-instrument="synth">
+                        <i class="fas fa-wave-square"></i>
+                        <span>Synth</span>
+                    </button>
+                    <button class="instrument-btn" data-instrument="strings">
+                        <i class="fas fa-violin"></i>
+                        <span>Strings</span>
+                    </button>
+                </div>
+
+                <div class="visual-waveform">
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                    <div class="wave-bar"></div>
+                </div>
+
+                <div class="play-controls">
+                    <button class="play-btn" id="play-beat">
+                        <i class="fas fa-play"></i>
+                        Play Beat
+                    </button>
+                    <button class="clear-btn" id="clear-beat">
+                        <i class="fas fa-trash"></i>
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <div class="mood-wheel">
+                <h3><i class="fas fa-compass"></i> Mood Wheel</h3>
+                <p>Spin the wheel to discover a random mood and get inspired!</p>
+                <div class="wheel-container">
+                    <div class="mood-wheel-visual" id="mood-wheel">
+                        <div class="wheel-pointer"></div>
+                        <div class="wheel-center">🎯</div>
+                    </div>
+                </div>
+                <div class="mood-result" id="mood-result">
+                    <h4>Selected Mood: <span id="selected-mood">Spin to discover!</span></h4>
+                    <p id="mood-description">Click the wheel to spin and find your creative inspiration.</p>
+                    <button class="use-mood-btn" id="use-mood-btn">Use This Mood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<div class="container">
+    {% if user.is_authenticated %}
+    <div class="form-card" id="generate">
+        <h2>🎨 Create Your Music</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="text">Describe your music:</label>
+                <textarea name="text" id="text" placeholder="e.g., happy upbeat electronic music for a party, calm acoustic guitar melody, energetic rock anthem..." rows="4">{{ prompt }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="duration">Duration:</label>
+                <select name="duration" id="duration">
+                    <option value="5">5 seconds</option>
+                    <option value="10">10 seconds</option>
+                    <option value="15">15 seconds</option>
+                    <option value="20">20 seconds</option>
+                    <option value="30" selected>30 seconds</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button type="submit" name="action" value="generate" class="btn-generate">
+                    <i class="fas fa-magic"></i>
+                    Generate Music
+                </button>
+                <button type="submit" name="action" value="spotify" class="btn-spotify">
+                    <i class="fab fa-spotify"></i>
+                    Discover on Spotify
+                </button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if music_url %}
+    <div class="result-section">
         <div class="result-card">
             <h3>🎧 Your Generated Music</h3>
             <div class="audio-player">
@@ -267,72 +1872,572 @@
                 </audio>
             </div>
         </div>
-        {% endif %}
+    </div>
+    {% endif %}
 
-        {% if sentiment or mood %}
+    {% if sentiment or mood %}
+    <div class="result-section">
         <div class="result-card">
             <h3>📊 Analysis Results</h3>
-            <div class="sentiment-info">
+            <div class="sentiment-grid">
                 {% if sentiment %}
-                <div class="info-item">
-                    <strong>Sentiment</strong>
-                    <p>{{ sentiment }}</p>
+                <div class="sentiment-card">
+                    <div class="icon">🎭</div>
+                    <div class="label">Sentiment</div>
+                    <div class="value">{{ sentiment }}</div>
                 </div>
                 {% endif %}
                 {% if mood %}
-                <div class="info-item">
-                    <strong>Mood</strong>
-                    <p>{{ mood }}</p>
+                <div class="sentiment-card">
+                    <div class="icon">🎵</div>
+                    <div class="label">Mood</div>
+                    <div class="value">{{ mood }}</div>
                 </div>
                 {% endif %}
             </div>
         </div>
-        {% endif %}
-
-        <div class="result-card">
-            <h3>📜 Your History</h3>
-            {% if user.is_authenticated %}
-            <div id="history-container">
-                <p>Loading history...</p>
-            </div>
-            {% else %}
-            <p>Please <a href="{% url 'login' %}">login</a> to view your history.</p>
-            {% endif %}
-        </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchHistory();
-        });
-
-        function fetchHistory() {
-            fetch('/api/history/')
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById('history-container');
-                    if (data.history && data.history.length > 0) {
-                        let html = '<ul style="list-style: none; padding: 0;">';
-                        data.history.forEach(item => {
-                            html += `
-                                <li style="border-bottom: 1px solid #eee; padding: 15px 0;">
-                                    <strong>Prompt:</strong> ${item.prompt}<br>
-                                    <strong>Sentiment:</strong> ${item.sentiment} | <strong>Mood:</strong> ${item.mood}<br>
-                                    <small>Created: ${new Date(item.created_at).toLocaleString()}</small>
-                                    ${item.music_url ? `<br><audio controls style="margin-top: 10px;"><source src="${item.music_url}" type="audio/wav"></audio>` : ''}
-                                </li>
-                            `;
-                        });
-                        html += '</ul>';
-                        container.innerHTML = html;
-                    } else {
-                        container.innerHTML = '<p>No history found.</p>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching history:', error);
-                    document.getElementById('history-container').innerHTML = '<p>Error loading history.</p>';
-                });
-        }
-    </script>
     </div>
-</body>
-</html>
+    {% endif %}
+
+    {% if show_spotify %}
+    <div class="spotify-section">
+        <div class="result-card">
+            <h3>🎵 Spotify Music Discovery</h3>
+            <p style="margin-bottom: 20px; color: var(--text-secondary);">Based on your description "{{ prompt }}", here are some matching tracks:</p>
+
+            <div class="spotify-filters">
+                <select id="spotify-language">
+                    <option value="">All Languages</option>
+                    <option value="english">English</option>
+                    <option value="hindi">Hindi</option>
+                    <option value="tamil">Tamil</option>
+                    <option value="telugu">Telugu</option>
+                    <option value="bengali">Bengali</option>
+                    <option value="marathi">Marathi</option>
+                    <option value="gujarati">Gujarati</option>
+                    <option value="kannada">Kannada</option>
+                    <option value="malayalam">Malayalam</option>
+                    <option value="punjabi">Punjabi</option>
+                    <option value="urdu">Urdu</option>
+                    <option value="odia">Odia</option>
+                    <option value="assamese">Assamese</option>
+                    <option value="maithili">Maithili</option>
+                    <option value="santali">Santali</option>
+                </select>
+                <button onclick="searchSpotify()">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+            </div>
+
+            <div id="spotify-results" class="track-list">
+                <p>Choose a language above and click Search to discover music!</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% include 'spotify_scripts.html' %}
+<script>
+function scrollToSection(selector) {
+    const element = document.querySelector(selector);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+// Quiz functionality
+const quizData = [
+    {
+        question: "What does AI use to understand musical mood from text descriptions?",
+        options: ["Sentiment Analysis", "Neural Networks", "Both A and B", "None of the above"],
+        correct: "Both A and B"
+    },
+    {
+        question: "What is the standard tuning for a six-string guitar?",
+        options: ["EADGBE", "DGBEAC", "CGDAEB", "BEADGC"],
+        correct: "EADGBE"
+    },
+    {
+        question: "Who composed 'The Four Seasons'?",
+        options: ["Mozart", "Beethoven", "Vivaldi", "Bach"],
+        correct: "Vivaldi"
+    },
+    {
+        question: "What is a chord progression?",
+        options: ["A sequence of notes", "A series of chords played in order", "A musical scale", "A rhythm pattern"],
+        correct: "A series of chords played in order"
+    },
+    {
+        question: "How does AI typically generate music?",
+        options: ["Random notes", "Using machine learning models", "Copying existing songs", "Manual composition"],
+        correct: "Using machine learning models"
+    }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let selectedAnswer = null;
+
+function loadQuestion() {
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.querySelector('.quiz-options');
+    const resultEl = document.getElementById('result');
+    const nextBtn = document.getElementById('next-btn');
+
+    // Reset
+    resultEl.style.display = 'none';
+    nextBtn.style.display = 'none';
+    selectedAnswer = null;
+
+    // Load question
+    const currentQuiz = quizData[currentQuestion];
+    questionEl.textContent = currentQuiz.question;
+
+    // Load options
+    optionsEl.innerHTML = '';
+    currentQuiz.options.forEach((option, index) => {
+        const optionEl = document.createElement('div');
+        optionEl.className = 'quiz-option';
+        optionEl.textContent = option;
+        optionEl.setAttribute('data-answer', option.toLowerCase().replace(/\s+/g, '-'));
+        optionEl.onclick = () => selectOption(optionEl, currentQuiz.correct);
+        optionsEl.appendChild(optionEl);
+    });
+}
+
+function selectOption(optionEl, correctAnswer) {
+    if (selectedAnswer) return;
+
+    selectedAnswer = optionEl.getAttribute('data-answer');
+    const resultEl = document.getElementById('result');
+    const nextBtn = document.getElementById('next-btn');
+
+    // Remove previous selections
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.classList.remove('selected', 'correct', 'incorrect');
+    });
+
+    optionEl.classList.add('selected');
+
+    if (selectedAnswer === correctAnswer) {
+        optionEl.classList.add('correct');
+        resultEl.textContent = 'Correct! 🎉';
+        resultEl.className = 'quiz-result correct';
+        score++;
+    } else {
+        optionEl.classList.add('incorrect');
+        resultEl.textContent = 'Incorrect. The correct answer is: ' + quizData[currentQuestion].options.find(opt =>
+            opt.toLowerCase().replace(/\s+/g, '-') === correctAnswer
+        );
+        resultEl.className = 'quiz-result incorrect';
+    }
+
+    resultEl.style.display = 'block';
+    nextBtn.style.display = 'block';
+
+    // Update score
+    document.getElementById('score').textContent = score;
+}
+
+function nextQuestion() {
+    currentQuestion++;
+
+    if (currentQuestion < quizData.length) {
+        loadQuestion();
+    } else {
+        showFinalScore();
+    }
+}
+
+function showFinalScore() {
+    const quizContent = document.getElementById('quiz-content');
+    const resultEl = document.getElementById('result');
+    const nextBtn = document.getElementById('next-btn');
+
+    quizContent.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+            <h3>Quiz Complete! 🎵</h3>
+            <p style="font-size: 1.2rem; margin: 20px 0;">Your final score: ${score}/${quizData.length}</p>
+            <p style="color: var(--text-secondary);">
+                ${score === quizData.length ? 'Perfect! You\'re a music expert! 🎉' :
+                  score >= quizData.length * 0.8 ? 'Great job! You know your music! 👍' :
+                  score >= quizData.length * 0.6 ? 'Good effort! Keep learning! 📚' :
+                  'Keep exploring music! You\'ll get better! 🌟'}
+            </p>
+            <button onclick="restartQuiz()" style="padding: 12px 24px; background: linear-gradient(135deg, #fbbf24, #ef4444); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 20px;">
+                Take Quiz Again
+            </button>
+        </div>
+    `;
+
+    resultEl.style.display = 'none';
+    nextBtn.style.display = 'none';
+}
+
+function restartQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    document.getElementById('score').textContent = '0';
+
+    // Recreate quiz content
+    const quizCard = document.querySelector('.quiz-card');
+    quizCard.innerHTML = `
+        <div class="quiz-score">Score: <span id="score">0</span>/5</div>
+        <div id="quiz-content">
+            <div class="quiz-question" id="question"></div>
+            <div class="quiz-options"></div>
+        </div>
+        <div class="quiz-result" id="result"></div>
+        <button class="quiz-next-btn" id="next-btn" onclick="nextQuestion()">Next Question</button>
+    `;
+
+    loadQuestion();
+}
+
+// Initialize quiz on page load
+document.addEventListener('DOMContentLoaded', loadQuestion);
+
+// Interactive Games Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Web Audio API Setup
+    let audioContext = null;
+    let beatInterval = null;
+    let isPlaying = false;
+
+    // Initialize Audio Context
+    function initAudio() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return audioContext;
+    }
+
+    // Sound generation functions for each instrument
+    function playDrumSound(time) {
+        const ctx = initAudio();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        // Drum-like sound: quick attack, short decay
+        oscillator.frequency.setValueAtTime(200, time);
+        oscillator.frequency.exponentialRampToValueAtTime(50, time + 0.1);
+
+        gainNode.gain.setValueAtTime(0.3, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+
+        oscillator.start(time);
+        oscillator.stop(time + 0.1);
+    }
+
+    function playBassSound(time, frequency = 110) {
+        const ctx = initAudio();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        // Bass sound: low frequency, smooth
+        oscillator.frequency.setValueAtTime(frequency, time);
+        oscillator.type = 'sawtooth';
+
+        gainNode.gain.setValueAtTime(0.2, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.3);
+
+        oscillator.start(time);
+        oscillator.stop(time + 0.3);
+    }
+
+    function playPianoSound(time, frequency = 440) {
+        const ctx = initAudio();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        // Piano-like sound: clear tone with quick decay
+        oscillator.frequency.setValueAtTime(frequency, time);
+        oscillator.type = 'sine';
+
+        gainNode.gain.setValueAtTime(0.15, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
+
+        oscillator.start(time);
+        oscillator.stop(time + 0.5);
+    }
+
+    function playGuitarSound(time, frequency = 330) {
+        const ctx = initAudio();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        // Guitar-like sound: slightly distorted
+        oscillator.frequency.setValueAtTime(frequency, time);
+        oscillator.type = 'square';
+
+        gainNode.gain.setValueAtTime(0.1, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.4);
+
+        oscillator.start(time);
+        oscillator.stop(time + 0.4);
+    }
+
+    function playSynthSound(time, frequency = 660) {
+        const ctx = initAudio();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        // Synth sound: electronic, sustained
+        oscillator.frequency.setValueAtTime(frequency, time);
+        oscillator.type = 'triangle';
+
+        gainNode.gain.setValueAtTime(0.12, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.6);
+
+        oscillator.start(time);
+        oscillator.stop(time + 0.6);
+    }
+
+    function playStringsSound(time, frequency = 220) {
+        const ctx = initAudio();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        // Strings sound: warm, sustained
+        oscillator.frequency.setValueAtTime(frequency, time);
+        oscillator.type = 'sawtooth';
+
+        gainNode.gain.setValueAtTime(0.08, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.8);
+
+        oscillator.start(time);
+        oscillator.stop(time + 0.8);
+    }
+
+    // Beat Maker Functionality
+    const instrumentButtons = document.querySelectorAll('.instrument-btn');
+    const playBeatBtn = document.getElementById('play-beat');
+    const clearBeatBtn = document.getElementById('clear-beat');
+    const waveBars = document.querySelectorAll('.visual-waveform .wave-bar');
+
+    let selectedInstruments = new Set();
+
+    // Instrument selection
+    instrumentButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const instrument = this.dataset.instrument;
+
+            if (selectedInstruments.has(instrument)) {
+                selectedInstruments.delete(instrument);
+                this.classList.remove('active');
+            } else {
+                selectedInstruments.add(instrument);
+                this.classList.add('active');
+            }
+
+            updateWaveform();
+        });
+    });
+
+    // Update waveform visualization
+    function updateWaveform() {
+        waveBars.forEach((bar, index) => {
+            if (selectedInstruments.size > 0) {
+                const intensity = (index % selectedInstruments.size) / selectedInstruments.size;
+                bar.style.opacity = 0.3 + (intensity * 0.7);
+                bar.classList.add('active');
+            } else {
+                bar.style.opacity = 0.3;
+                bar.classList.remove('active');
+            }
+        });
+    }
+
+    // Play beat functionality
+    playBeatBtn.addEventListener('click', function() {
+        if (isPlaying) {
+            stopBeat();
+        } else {
+            startBeat();
+        }
+    });
+
+    function startBeat() {
+        if (selectedInstruments.size === 0) {
+            alert('Please select at least one instrument first!');
+            return;
+        }
+
+        // Initialize audio context on user interaction
+        initAudio();
+
+        isPlaying = true;
+        playBeatBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Beat';
+        playBeatBtn.classList.add('playing');
+
+        let beatCount = 0;
+        const bpm = 120; // beats per minute
+        const interval = (60 / bpm) * 1000; // milliseconds per beat
+
+        beatInterval = setInterval(() => {
+            const currentTime = audioContext.currentTime;
+
+            // Play sounds for selected instruments
+            selectedInstruments.forEach(instrument => {
+                switch (instrument) {
+                    case 'drums':
+                        // Play on every beat
+                        playDrumSound(currentTime);
+                        break;
+                    case 'bass':
+                        // Play on beats 1 and 3
+                        if (beatCount % 4 === 0 || beatCount % 4 === 2) {
+                            playBassSound(currentTime, 110); // A2
+                        }
+                        break;
+                    case 'piano':
+                        // Play melody notes
+                        const pianoNotes = [261.63, 293.66, 329.63, 349.23]; // C4, D4, E4, F4
+                        const pianoNote = pianoNotes[beatCount % pianoNotes.length];
+                        playPianoSound(currentTime, pianoNote);
+                        break;
+                    case 'guitar':
+                        // Play chord progression
+                        const guitarNotes = [196, 220, 246, 261.63]; // G3, A3, B3, C4
+                        const guitarNote = guitarNotes[beatCount % guitarNotes.length];
+                        playGuitarSound(currentTime, guitarNote);
+                        break;
+                    case 'synth':
+                        // Play arpeggio
+                        const synthNotes = [440, 554.37, 659.25, 880]; // A4, C#5, E5, A5
+                        const synthNote = synthNotes[beatCount % synthNotes.length];
+                        playSynthSound(currentTime, synthNote);
+                        break;
+                    case 'strings':
+                        // Play sustained notes
+                        const stringNotes = [220, 246.94, 293.66, 329.63]; // A3, B3, D4, E4
+                        const stringNote = stringNotes[Math.floor(beatCount / 4) % stringNotes.length];
+                        playStringsSound(currentTime, stringNote);
+                        break;
+                }
+            });
+
+            // Animate waveform
+            waveBars.forEach((bar, index) => {
+                if ((beatCount + index) % 4 === 0) {
+                    bar.style.animation = 'wavePulse 0.2s ease-in-out';
+                    setTimeout(() => bar.style.animation = '', 200);
+                }
+            });
+
+            beatCount++;
+        }, interval);
+    }
+
+    function stopBeat() {
+        isPlaying = false;
+        playBeatBtn.innerHTML = '<i class="fas fa-play"></i> Play Beat';
+        playBeatBtn.classList.remove('playing');
+        if (beatInterval) {
+            clearInterval(beatInterval);
+            beatInterval = null;
+        }
+    }
+
+    // Clear beat
+    clearBeatBtn.addEventListener('click', function() {
+        selectedInstruments.clear();
+        instrumentButtons.forEach(btn => btn.classList.remove('active'));
+        updateWaveform();
+        if (isPlaying) {
+            stopBeat();
+        }
+    });
+
+    // Mood Wheel Functionality
+    const moodWheel = document.getElementById('mood-wheel');
+    const moodResult = document.getElementById('mood-result');
+    const selectedMood = document.getElementById('selected-mood');
+    const moodDescription = document.getElementById('mood-description');
+    const useMoodBtn = document.getElementById('use-mood-btn');
+
+    const moods = [
+        { name: 'Happy & Energetic', emoji: '⚡', description: 'Upbeat and lively, perfect for celebrations and high-energy activities!' },
+        { name: 'Calm & Peaceful', emoji: '🧘', description: 'Soothing and tranquil, ideal for relaxation and meditation.' },
+        { name: 'Romantic & Tender', emoji: '💖', description: 'Soft and emotional, great for intimate moments and love songs.' },
+        { name: 'Mysterious & Dark', emoji: '🌑', description: 'Deep and haunting, perfect for suspenseful or dramatic scenes.' },
+        { name: 'Dreamy & Ethereal', emoji: '☁️', description: 'Light and otherworldly, ideal for fantasy and ambient music.' },
+        { name: 'Powerful & Epic', emoji: '⚔️', description: 'Grand and heroic, perfect for cinematic moments and adventures.' }
+    ];
+
+    let isSpinning = false;
+
+    moodWheel.addEventListener('click', function() {
+        if (isSpinning) return;
+
+        isSpinning = true;
+        const spinDuration = 3000; // 3 seconds
+        const randomRotations = 5 + Math.random() * 5; // 5-10 full rotations
+        const finalRotation = randomRotations * 360;
+
+        this.style.transition = `transform ${spinDuration}ms cubic-bezier(0.23, 1, 0.32, 1)`;
+        this.style.transform = `rotate(${finalRotation}deg)`;
+
+        setTimeout(() => {
+            isSpinning = false;
+            this.style.transition = 'transform 0.5s ease-out';
+
+            // Calculate which mood was selected
+            const normalizedRotation = finalRotation % 360;
+            const moodIndex = Math.floor((normalizedRotation / 360) * moods.length);
+            const selectedMoodData = moods[moodIndex];
+
+            selectedMood.textContent = selectedMoodData.name;
+            moodDescription.textContent = selectedMoodData.description;
+            moodResult.style.display = 'block';
+
+            // Store selected mood for use button
+            useMoodBtn.dataset.mood = selectedMoodData.name.toLowerCase().replace(/\s+/g, '-');
+        }, spinDuration);
+    });
+
+    // Use mood button
+    useMoodBtn.addEventListener('click', function() {
+        const mood = this.dataset.mood;
+        if (mood) {
+            const moodDescriptions = {
+                'happy-&-energetic': 'happy upbeat energetic music with driving beats and positive vibes',
+                'calm-&-peaceful': 'calm peaceful soothing music with gentle melodies and soft harmonies',
+                'romantic-&-tender': 'romantic tender emotional music with soft piano and warm strings',
+                'mysterious-&-dark': 'mysterious dark haunting music with deep cello and atmospheric sounds',
+                'dreamy-&-ethereal': 'dreamy ethereal ambient music with floating melodies and soft pads',
+                'powerful-&-epic': 'powerful epic cinematic music with orchestral swells and dramatic builds'
+            };
+
+            const textArea = document.getElementById('text');
+            if (textArea) {
+                textArea.value = moodDescriptions[mood] || '';
+                textArea.focus();
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

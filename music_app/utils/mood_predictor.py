@@ -18,18 +18,18 @@ def predict_mood(text: str):
     # Get confidence score
     confidence = top_emotion["score"]
 
-    # Improved emotion to mood mapping with better logic
+    # Simplified emotion to mood mapping - only three categories
     emotion_to_mood = {
         "joy": "happy",
-        "anger": "angry",
+        "anger": "energetic",
         "sadness": "sad",
-        "fear": "calm",
-        "surprise": "happy",  # Changed from calm to happy
-        "disgust": "angry",   # Changed from calm to angry
-        "neutral": "calm"
+        "fear": "energetic",
+        "surprise": "happy",
+        "disgust": "energetic",
+        "neutral": "energetic"
     }
 
-    # Special handling for low confidence predictions
+    # Special handling for low confidence predictions - all categories for Spotify analysis
     if confidence < 0.3:
         # For low confidence, check for explicit mood words
         text_lower = text.lower()
@@ -37,8 +37,8 @@ def predict_mood(text: str):
             return "happy"
         elif any(word in text_lower for word in ["sad", "depressed", "unhappy", "terrible", "awful", "horrible"]):
             return "sad"
-        elif any(word in text_lower for word in ["angry", "mad", "furious", "annoyed", "hate", "frustrated"]):
-            return "angry"
+        elif any(word in text_lower for word in ["angry", "mad", "furious", "annoyed", "hate", "frustrated", "nervous", "anxious", "worried", "stressed", "motivated", "determined", "focused"]):
+            return "energetic"
         elif any(word in text_lower for word in ["calm", "peaceful", "relaxed", "neutral", "okay", "chill", "cool"]):
             return "calm"
 
