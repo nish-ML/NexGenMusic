@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard - NexGenMusic{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+        <div class="banner-content">
+            <h1 class="banner-title">Welcome to NexGen Music</h1>
+            <p class="banner-subtitle">Create, discover, and enjoy AI-powered music</p>
+        </div>
+        <div class="banner-glow-1"></div>
+        <div class="banner-glow-2"></div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-content">
+                <p class="stat-label">Total Generated</p>
+                <p class="stat-value" id="totalGenerated">0</p>
+            </div>
+            <div class="stat-icon-wrapper stat-icon-purple">
+                <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-content">
+                <p class="stat-label">Favorite Genre</p>
+                <p class="stat-value" id="favoriteGenre">Unknown</p>
+            </div>
+            <div class="stat-icon-wrapper stat-icon-green">
+                <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-content">
+                <p class="stat-label">Listening Time</p>
+                <p class="stat-value" id="listeningTime">0 min</p>
+            </div>
+            <div class="stat-icon-wrapper stat-icon-blue">
+                <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="section-header">
+        <h2 class="section-title">Quick Actions</h2>
+    </div>
+    <div class="quick-actions-grid">
+        <a href="/ai-generator/" class="action-card action-card-purple">
+            <div class="action-icon-wrapper">
+                <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                </svg>
+            </div>
+            <div class="action-content">
+                <h3 class="action-title">AI Music Generator</h3>
+                <p class="action-description">Create music from your mood</p>
+            </div>
+        </a>
+        <a href="/spotify-recommendations/" class="action-card action-card-green">
+            <div class="action-icon-wrapper">
+                <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                </svg>
+            </div>
+            <div class="action-content">
+                <h3 class="action-title">Spotify Recommendations</h3>
+                <p class="action-description">Get personalized suggestions</p>
+            </div>
+        </a>
+        <a href="/history/" class="action-card action-card-blue">
+            <div class="action-icon-wrapper">
+                <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <div class="action-content">
+                <h3 class="action-title">Generation History</h3>
+                <p class="action-description">View your past creations</p>
+            </div>
+        </a>
+    </div>
+
+    <!-- Recent Generations Section -->
+    <div class="section-header">
+        <h2 class="section-title">Recent Generations</h2>
+        <a href="/history/" class="view-all-link">View All →</a>
+    </div>
+    <div class="recent-generations" id="recentGenerations">
+        <div class="empty-state">
+            <div class="empty-icon-wrapper">
+                <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                </svg>
+            </div>
+            <h3 class="empty-title">Start Creating Music</h3>
+            <p class="empty-description">You haven't generated any music yet. Try our AI generator to create your first track!</p>
+            <a href="/ai-generator/" class="empty-cta-btn">Generate Your First Track</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

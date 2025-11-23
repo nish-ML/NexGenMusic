@@ -1,0 +1,58 @@
+<!-- 
+    MOOD WAVE RIDER - EMBED VERSION
+    Copy this entire section into your dashboard HTML
+    Make sure to include the CSS and JS files in your page
+-->
+
+<!-- Add to your <head> section -->
+<link rel="stylesheet" href="/static/css/mood-wave-rider.css">
+
+<!-- Add this where you want the game to appear -->
+<div id="mood-wave-rider">
+    <!-- Game Header -->
+    <div class="game-header">
+        <div class="game-title">🎮 Mood Wave Rider</div>
+        <div class="game-controls">
+            <div class="game-score">
+                Score: <span id="score-value">0</span>
+            </div>
+            <button id="minimize-btn" class="game-btn minimize-btn">−</button>
+        </div>
+    </div>
+    
+    <!-- Game Canvas Container -->
+    <div class="game-container">
+        <canvas id="game-canvas"></canvas>
+        
+        <!-- Game Overlay (Menu, Countdown, Game Over) -->
+        <div id="game-overlay" class="game-overlay">
+            <!-- Menu Screen -->
+            <div id="menu-screen" class="overlay-content">
+                <div class="overlay-title">🎵 Mood Wave Rider 🎵</div>
+                <div class="overlay-subtitle">Ride the sound wave and avoid the spikes!</div>
+                <button id="start-btn" class="play-btn">▶ Start Game</button>
+                <div class="game-instructions">
+                    <p><strong>Controls:</strong> Arrow Keys or A/D to move</p>
+                    <p><strong>Goal:</strong> Survive as long as possible!</p>
+                    <p><strong>Tip:</strong> The wave pulses with the beat 🎶</p>
+                </div>
+            </div>
+            
+            <!-- Countdown Screen -->
+            <div id="countdown-screen" class="overlay-content" style="display: none;">
+                <div class="countdown" id="countdown-number">3</div>
+            </div>
+            
+            <!-- Game Over Screen -->
+            <div id="gameover-screen" class="overlay-content game-over-content" style="display: none;">
+                <div class="overlay-title">💥 Game Over! 💥</div>
+                <div class="final-score" id="final-score">0</div>
+                <div class="overlay-subtitle">points survived!</div>
+                <button id="play-again-btn" class="play-btn">🔄 Play Again</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add before closing </body> tag -->
+<script src="/static/js/mood-wave-rider.js"></script>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Mood Wave Rider</title>
+    <link rel="stylesheet" href="/static/css/mood-wave-rider.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50px;
+            background: #f0f0f0;
+        }
+        .test-btn {
+            padding: 20px 40px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #FF69B4, #64FFDA);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #FF69B4;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎮 Mood Wave Rider - Test Page</h1>
+    <p>Click the button below to test the game:</p>
+    
+    <button class="test-btn" onclick="testGame()">🎮 Launch Game</button>
+    
+    <div class="status" id="status">
+        <strong>Status:</strong> Ready to test
+    </div>
+
+    <script src="/static/js/mood-wave-rider.js"></script>
+    <script>
+        function updateStatus(message) {
+            document.getElementById('status').innerHTML = '<strong>Status:</strong> ' + message;
+            console.log('Status:', message);
+        }
+
+        function testGame() {
+            updateStatus('Opening game modal...');
+            
+            try {
+                // Create modal
+                const gameModal = document.createElement('div');
+                gameModal.id = 'game-modal';
+                gameModal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.85);
+                    backdrop-filter: blur(10px);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+
+                gameModal.innerHTML = `
+                    <div style="position: relative; width: 95%; max-width: 1000px; height: 90vh; max-height: 700px;">
+                        <button onclick="closeGame()" style="
+                            position: absolute;
+                            top: -50px;
+                            right: 0;
+                            background: white;
+                            border: none;
+                            border-radius: 50%;
+                            width: 45px;
+                            height: 45px;
+                            font-size: 28px;
+                            cursor: pointer;
+                            color: #FF69B4;
+                            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+                        ">×</button>
+                        
+                        <div id="mood-wave-rider" style="height: 100%; margin: 0;">
+                            <div class="game-header">
+                                <div class="game-title">🎮 Mood Wave Rider</div>
+                                <div class="game-controls">
+                                    <div class="game-score">Score: <span id="score-value">0</span></div>
+                                </div>
+                            </div>
+                            <div class="game-container" style="height: calc(100% - 70px);">
+                                <canvas id="game-canvas"></canvas>
+                                <div id="game-overlay" class="game-overlay">
+                                    <div id="menu-screen" class="overlay-content">
+                                        <div class="overlay-title">🎵 Mood Wave Rider 🎵</div>
+                                        <div class="overlay-subtitle">Ride the sound wave and avoid the spikes!</div>
+                                        <button id="start-btn" class="play-btn">▶ Start Game</button>
+                                        <div class="game-instructions">
+                                            <p><strong>Controls:</strong> Arrow Keys or A/D to move</p>
+                                            <p><strong>Goal:</strong> Survive as long as possible!</p>
+                                            <p><strong>Tip:</strong> The wave pulses with the beat 🎶</p>
+                                        </div>
+                                    </div>
+                                    <div id="countdown-screen" class="overlay-content" style="display: none;">
+                                        <div class="countdown" id="countdown-number">3</div>
+                                    </div>
+                                    <div id="gameover-screen" class="overlay-content game-over-content" style="display: none;">
+                                        <div class="overlay-title">💥 Game Over! 💥</div>
+                                        <div class="final-score" id="final-score">0</div>
+                                        <div class="overlay-subtitle">points survived!</div>
+                                        <button id="play-again-btn" class="play-btn">🔄 Play Again</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(gameModal);
+                updateStatus('Modal created, initializing game...');
+
+                // Initialize game
+                setTimeout(() => {
+                    if (window.MoodWaveRider) {
+                        updateStatus('MoodWaveRider class found, creating instance...');
+                        window.currentGame = new MoodWaveRider('mood-wave-rider');
+                        updateStatus('✅ Game initialized successfully! Click "Start Game" to play.');
+                    } else {
+                        updateStatus('❌ Error: MoodWaveRider class not found. Check if mood-wave-rider.js loaded correctly.');
+                    }
+                }, 100);
+
+            } catch (error) {
+                updateStatus('❌ Error: ' + error.message);
+                console.error('Error:', error);
+            }
+        }
+
+        function closeGame() {
+            const modal = document.getElementById('game-modal');
+            if (modal) {
+                if (window.currentGame && window.currentGame.animationId) {
+                    cancelAnimationFrame(window.currentGame.animationId);
+                    window.currentGame = null;
+                }
+                modal.remove();
+                updateStatus('Game closed. Ready to test again.');
+            }
+        }
+
+        // Check if game script loaded
+        window.addEventListener('load', () => {
+            if (window.MoodWaveRider) {
+                updateStatus('✅ Game script loaded successfully! Ready to test.');
+            } else {
+                updateStatus('⚠️ Warning: Game script may not be loaded. Check console for errors.');
+            }
+        });
+    </script>
+</body>
+</html>

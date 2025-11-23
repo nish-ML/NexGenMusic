@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NexGenMusic{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body data-theme="dark">
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <span class="logo-icon">🎵</span>
+                <span class="logo-text">NexGenMusic</span>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                <span class="theme-icon sun">☀️</span>
+                <span class="theme-icon moon">🌙</span>
+            </button>
+            
+            <div class="user-menu">
+                <button class="user-btn" id="userBtn">
+                    <span class="user-avatar">👤</span>
+                </button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="#" class="dropdown-item">
+                        <span class="item-icon">✏️</span>
+                        Edit Profile
+                    </a>
+                    <a href="/history/" class="dropdown-item">
+                        <span class="item-icon">📜</span>
+                        History
+                    </a>
+                    <a href="/about/" class="dropdown-item">
+                        <span class="item-icon">ℹ️</span>
+                        About Us
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item logout">
+                        <span class="item-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <a href="/dashboard/" class="nav-item {% block nav_home %}{% endblock %}">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">Home</span>
+            </a>
+            <a href="/spotify-recommendations/" class="nav-item {% block nav_spotify %}{% endblock %}">
+                <span class="nav-icon">🎧</span>
+                <span class="nav-text">Spotify Recommendations</span>
+            </a>
+            <a href="/ai-generator/" class="nav-item {% block nav_ai %}{% endblock %}">
+                <span class="nav-icon">🎵</span>
+                <span class="nav-text">AI Mood Generator</span>
+            </a>
+            <a href="/about/" class="nav-item {% block nav_about %}{% endblock %}">
+                <span class="nav-icon">ℹ️</span>
+                <span class="nav-text">About Us</span>
+            </a>
+            <a href="/history/" class="nav-item {% block nav_history %}{% endblock %}">
+                <span class="nav-icon">📜</span>
+                <span class="nav-text">History</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Background Effects -->
+    <div class="bg-effects">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+
+    <script src="{% static 'js/theme.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

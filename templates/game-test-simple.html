@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Test - Simple</title>
+</head>
+<body>
+    <h1>Game Test Page</h1>
+    <p>Check console (F12) for messages</p>
+    <button id="test-btn" style="padding: 20px; font-size: 20px; cursor: pointer;">Click Me to Test</button>
+    
+    <script>
+        console.log('=== SIMPLE TEST PAGE ===');
+        console.log('1. Page loaded');
+        
+        // Test if we can load the game script
+        const script = document.createElement('script');
+        script.src = '/static/js/mood-wave-rider.js';
+        script.onload = function() {
+            console.log('2. ✅ Script loaded successfully');
+            console.log('3. Checking for MoodWaveRider class...');
+            console.log('4. MoodWaveRider exists?', typeof MoodWaveRider !== 'undefined');
+            
+            if (typeof MoodWaveRider !== 'undefined') {
+                console.log('5. ✅ MoodWaveRider class found!');
+                console.log('6. MoodWaveRider:', MoodWaveRider);
+            } else {
+                console.log('5. ❌ MoodWaveRider class NOT found!');
+            }
+        };
+        script.onerror = function() {
+            console.log('2. ❌ Script FAILED to load');
+            console.log('   Check if file exists: /static/js/mood-wave-rider.js');
+        };
+        document.head.appendChild(script);
+        
+        // Test button
+        document.getElementById('test-btn').addEventListener('click', function() {
+            console.log('=== BUTTON CLICKED ===');
+            alert('Button works! Check console for game script status.');
+        });
+    </script>
+</body>
+</html>

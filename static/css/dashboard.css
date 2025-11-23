@@ -1,0 +1,191 @@
+/* ===========================
+    GLOBAL THEME
+=========================== */
+:root {
+    --bg: #f8f9fb;
+    --text: #121212;
+    --card: rgba(255, 255, 255, 0.6);
+    --border-glow: rgba(120, 120, 255, 0.5);
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+body.dark {
+    --bg: #0d0d12;
+    --text: #f5f5f5;
+    --card: rgba(25, 25, 35, 0.45);
+    --border-glow: rgba(0, 255, 255, 0.4);
+    --shadow: rgba(0, 0, 0, 0.6);
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    transition: background 0.4s ease, color 0.4s ease;
+    font-family: "Poppins", sans-serif;
+}
+
+/* ===========================
+    TOP RIGHT CONTROLS
+=========================== */
+.top-right-controls {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* ---- Theme Toggle ---- */
+.theme-toggle {
+    background: var(--card);
+    backdrop-filter: blur(10px);
+    padding: 10px 14px;
+    border-radius: 50px;
+    border: 1px solid var(--border-glow);
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 20px;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px var(--border-glow);
+}
+
+/* ---- Profile Avatar ---- */
+.profile-menu {
+    position: relative;
+}
+
+.profile-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--border-glow);
+}
+
+/* ---- Dropdown ---- */
+.profile-dropdown {
+    position: absolute;
+    right: 0;
+    top: 55px;
+    background: var(--card);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 15px var(--shadow);
+    border-radius: 12px;
+    padding: 10px 0;
+    width: 180px;
+    display: none;
+    border: 1px solid var(--border-glow);
+}
+
+.profile-dropdown a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--text);
+    transition: 0.2s;
+}
+
+.profile-dropdown a:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Show dropdown */
+.profile-menu:hover .profile-dropdown {
+    display: block;
+}
+
+/* ===========================
+    WELCOME BANNER
+=========================== */
+.welcome-banner {
+    position: relative;
+    padding: 40px;
+    border-radius: 30px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.3), rgba(200,200,255,0.2));
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glow);
+    box-shadow: 0 0 25px var(--shadow);
+    margin-bottom: 40px;
+    animation: fadeIn 0.8s ease;
+}
+
+/* Glow circles */
+.banner-glow-1, .banner-glow-2 {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+}
+
+.banner-glow-1 {
+    width: 220px;
+    height: 220px;
+    background: rgba(150, 90, 255, 0.6);
+    top: -40px;
+    right: -20px;
+}
+
+.banner-glow-2 {
+    width: 250px;
+    height: 250px;
+    background: rgba(90, 200, 255, 0.5);
+    bottom: -30px;
+    left: -10px;
+}
+
+/* ===========================
+    STATS CARDS
+=========================== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.stat-card {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid var(--border-glow);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 15px var(--shadow);
+    transition: 0.35s;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 0 25px var(--border-glow);
+}
+
+/* ===========================
+    QUICK ACTION CARDS
+=========================== */
+.action-card {
+    display: flex;
+    gap: 18px;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid var(--border-glow);
+    cursor: pointer;
+    transition: 0.3s;
+    backdrop-filter: blur(10px);
+}
+
+.action-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 20px var(--border-glow);
+}
+
+/* ===========================
+    ANIMATIONS
+=========================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px);}
+    to { opacity: 1; transform: translateY(0);}
+}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}History - NexGenMusic{% endblock %}
+{% block nav_history %}active{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">📜 Music History</h1>
+        <p class="page-subtitle">Your previously generated music tracks</p>
+    </div>
+
+    <!-- History Section -->
+    <div class="history-section" id="historySection">
+        <div class="history-empty" id="historyEmpty">
+            <div class="empty-icon">🎵</div>
+            <h3>No History Yet</h3>
+            <p>Start generating music to see your history here</p>
+            <a href="/ai-generator/" class="btn btn-primary">
+                <span class="btn-icon">✨</span>
+                <span class="btn-text">Generate Music</span>
+            </a>
+        </div>
+        
+        <div class="history-grid" id="historyGrid"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/history.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}AI Mood Generator - NexGenMusic{% endblock %}
+{% block nav_ai %}active{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title gradient-text">🎵 AI Mood Music Generator</h1>
+        <p class="page-subtitle">Create personalized music based on your emotions</p>
+    </div>
+
+    <!-- Generator Section -->
+    <div class="generator-section glass-card">
+        <div class="input-grid">
+            <!-- Mood Input -->
+            <div class="input-group">
+                <label class="input-label">🎭 Select Your Mood</label>
+                <input type="text" class="input-field" id="moodInput" 
+                       placeholder="e.g., Happy, Sad, Energetic...">
+                <div class="mood-chips">
+                    <button class="mood-chip" data-mood="Happy">😊 Happy</button>
+                    <button class="mood-chip" data-mood="Sad">😢 Sad</button>
+                    <button class="mood-chip" data-mood="Energetic">⚡ Energetic</button>
+                    <button class="mood-chip" data-mood="Chill">😌 Chill</button>
+                    <button class="mood-chip" data-mood="Romantic">❤️ Romantic</button>
+                    <button class="mood-chip" data-mood="Angry">😠 Angry</button>
+                </div>
+            </div>
+
+            <!-- Tempo Input -->
+            <div class="input-group">
+                <label class="input-label">🎼 Tempo Preference</label>
+                <select class="select-field" id="tempoInput">
+                    <option value="slow">🐢 Slow (60-80 BPM)</option>
+                    <option value="medium" selected>🚶 Medium (80-120 BPM)</option>
+                    <option value="fast">🏃 Fast (120-180 BPM)</option>
+                </select>
+            </div>
+
+            <!-- Genre Input -->
+            <div class="input-group">
+                <label class="input-label">🎸 Genre (Optional)</label>
+                <select class="select-field" id="genreInput">
+                    <option value="">Any Genre</option>
+                    <option value="pop">Pop</option>
+                    <option value="rock">Rock</option>
+                    <option value="electronic">Electronic</option>
+                    <option value="jazz">Jazz</option>
+                    <option value="classical">Classical</option>
+                    <option value="hip-hop">Hip Hop</option>
+                    <option value="r&b">R&B</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-large generate-btn" id="generateBtn">
+            <span class="btn-icon">✨</span>
+            <span class="btn-text">Generate My Music</span>
+        </button>
+    </div>
+
+    <!-- Player Section -->
+    <div class="player-section glass-card" id="playerSection" style="display: none;">
+        <div class="player-header">
+            <h2 class="player-title gradient-text">🎵 Your Generated Music</h2>
+            <div class="player-info">
+                <span class="info-badge" id="moodBadge">Mood: Happy</span>
+                <span class="info-badge" id="tempoBadge">Tempo: Medium</span>
+                <span class="info-badge" id="genreBadge">Genre: Pop</span>
+            </div>
+        </div>
+
+        <!-- Waveform Animation -->
+        <div class="waveform" id="waveform">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+        </div>
+
+        <!-- Audio Player -->
+        <div class="audio-player-wrapper">
+            <audio controls class="audio-player" id="audioPlayer">
+                <source id="audioSource" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-success" id="downloadBtn">
+                <span class="btn-icon">📥</span>
+                <span class="btn-text">Download</span>
+            </button>
+            <button class="btn btn-secondary" id="saveHistoryBtn">
+                <span class="btn-icon">💾</span>
+                <span class="btn-text">Save to History</span>
+            </button>
+            <button class="btn btn-primary" id="regenerateBtn">
+                <span class="btn-icon">🔄</span>
+                <span class="btn-text">Regenerate</span>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ai-generator.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,280 @@
+/* Mood Wave Rider Game Styles */
+#mood-wave-rider {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 240, 245, 0.8));
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.15),
+                0 0 60px rgba(100, 255, 218, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    overflow: hidden;
+}
+
+.game-container {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(90deg, rgba(255, 182, 193, 0.3), rgba(176, 224, 230, 0.3));
+    border-bottom: 2px solid rgba(255, 105, 180, 0.2);
+}
+
+.game-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #FF69B4, #64FFDA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+}
+
+.game-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.game-score {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #FF69B4;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.2);
+}
+
+.game-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.minimize-btn {
+    background: linear-gradient(135deg, #FFB6C1, #FFC0CB);
+    color: #fff;
+}
+
+.minimize-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 105, 180, 0.3);
+}
+
+#game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, 
+        rgba(255, 250, 250, 1) 0%,
+        rgba(255, 240, 245, 0.9) 50%,
+        rgba(240, 255, 255, 0.9) 100%);
+}
+
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+.game-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.overlay-content {
+    text-align: center;
+    padding: 2rem;
+}
+
+.overlay-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #FF69B4, #64FFDA, #00CED1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    animation: titleGlow 2s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.5)); }
+    50% { filter: drop-shadow(0 0 20px rgba(100, 255, 218, 0.8)); }
+}
+
+.overlay-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.play-btn {
+    padding: 1rem 3rem;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, #FF69B4, #FF1493);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(255, 105, 180, 0.4);
+    transition: all 0.3s ease;
+    animation: buttonPulse 2s ease-in-out infinite;
+}
+
+@keyframes buttonPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.play-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 32px rgba(255, 105, 180, 0.6);
+}
+
+.countdown {
+    font-size: 5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #FF69B4, #64FFDA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: countdownPulse 1s ease-in-out;
+}
+
+@keyframes countdownPulse {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.game-over-content {
+    animation: gameOverAppear 0.5s ease-out;
+}
+
+@keyframes gameOverAppear {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.final-score {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #FF69B4;
+    margin: 1rem 0;
+    text-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+}
+
+.game-instructions {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(100, 255, 218, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(100, 255, 218, 0.3);
+}
+
+.game-instructions p {
+    margin: 0.5rem 0;
+    color: #555;
+    font-size: 1rem;
+}
+
+.floating-emoji {
+    position: absolute;
+    font-size: 2rem;
+    pointer-events: none;
+    animation: floatEmoji 3s ease-in-out infinite;
+    opacity: 0.6;
+}
+
+@keyframes floatEmoji {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #mood-wave-rider {
+        margin: 1rem;
+        border-radius: 16px;
+    }
+    
+    .game-container {
+        height: 400px;
+    }
+    
+    .game-title {
+        font-size: 1.2rem;
+    }
+    
+    .overlay-title {
+        font-size: 2rem;
+    }
+    
+    .play-btn {
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-container {
+        height: 350px;
+    }
+    
+    .game-header {
+        padding: 0.8rem 1rem;
+    }
+    
+    .game-title {
+        font-size: 1rem;
+    }
+    
+    .game-score {
+        font-size: 1rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+/* Minimized State */
+#mood-wave-rider.minimized {
+    max-width: 300px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+#mood-wave-rider.minimized .game-container {
+    height: 60px;
+}
+
+#mood-wave-rider.minimized .game-overlay {
+    display: none;
+}

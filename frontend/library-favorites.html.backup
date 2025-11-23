@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Favorites - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-hover: #f1f3f5;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --accent-red: #ef4444;
+            --accent-pink: #ec4899;
+            --accent-purple: #a855f7;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        #canvas3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .header, .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .page-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: white;
+            text-shadow: 0 4px 20px rgba(236, 72, 153, 0.5);
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Favorites Grid */
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .favorite-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .favorite-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(236, 72, 153, 0.4);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .favorite-thumbnail {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            position: relative;
+        }
+
+        .favorite-info {
+            padding: 16px;
+        }
+
+        .favorite-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .favorite-meta {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 12px;
+        }
+
+        .favorite-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .heart-icon {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 24px;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 24px;
+        }
+
+        .empty-state-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 24px;
+        }
+
+        .btn-primary {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas3d"></canvas>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="/dashboard/" class="logo">
+            <span style="font-size: 28px;">❤️</span>
+            <span>NexGenMusic</span>
+        </a>
+        <a href="/dashboard/" class="back-btn">← Back to Dashboard</a>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">❤️ My Favorites</h1>
+            <p class="page-subtitle">Your most loved music tracks</p>
+        </div>
+
+        <!-- Favorites Grid -->
+        <div class="favorites-grid" id="favoritesGrid">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-state-icon">💔</div>
+            <h2 class="empty-state-title">No favorites yet</h2>
+            <p class="empty-state-text">Start adding music to your favorites to see them here</p>
+            <a href="/ai-generator/" class="btn-primary">Generate Music</a>
+        </div>
+    </div>
+
+    <script>
+        // Load favorites
+        async function loadFavorites() {
+            const token = localStorage.getItem('access_token');
+            const favoritesGrid = document.getElementById('favoritesGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            try {
+                const response = await fetch('/api/history/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        displayFavorites(data.slice(0, 12)); // Show first 12
+                    } else {
+                        showEmptyState();
+                    }
+                } else {
+                    loadDemoFavorites();
+                }
+            } catch (error) {
+                console.error('Error loading favorites:', error);
+                loadDemoFavorites();
+            }
+        }
+
+        function displayFavorites(favorites) {
+            const favoritesGrid = document.getElementById('favoritesGrid');
+            const moodEmojis = {
+                'happy': '😊',
+                'sad': '😢',
+                'energetic': '⚡',
+                'calm': '😌',
+                'romantic': '❤️',
+                'angry': '😠'
+            };
+
+            favoritesGrid.innerHTML = favorites.map((item, index) => {
+                const emoji = moodEmojis[item.mood] || '🎵';
+                const colors = [
+                    'linear-gradient(135deg, #ec4899 0%, #a855f7 100%)',
+                    'linear-gradient(135deg, #f43f5e 0%, #ec4899 100%)',
+                    'linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%)',
+                    'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)'
+                ];
+                
+                return `
+                    <div class="favorite-card">
+                        <div class="favorite-thumbnail" style="background: ${colors[index % colors.length]};">
+                            ${emoji}
+                            <div class="heart-icon">❤️</div>
+                        </div>
+                        <div class="favorite-info">
+                            <div class="favorite-title">${item.mood} ${item.genre || 'Music'}</div>
+                            <div class="favorite-meta">${getTimeAgo(item.created_at)}</div>
+                            <div class="favorite-actions">
+                                <button class="btn-action" onclick="playAudio('${item.audio_url || ''}')">▶️ Play</button>
+                                <button class="btn-action" onclick="removeFavorite(${index})">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadDemoFavorites() {
+            const demoData = [
+                { mood: 'happy', genre: 'Pop', created_at: new Date(Date.now() - 2 * 3600000).toISOString() },
+                { mood: 'romantic', genre: 'Jazz', created_at: new Date(Date.now() - 5 * 3600000).toISOString() },
+                { mood: 'energetic', genre: 'Rock', created_at: new Date(Date.now() - 86400000).toISOString() },
+                { mood: 'calm', genre: 'Classical', created_at: new Date(Date.now() - 2 * 86400000).toISOString() },
+                { mood: 'happy', genre: 'Electronic', created_at: new Date(Date.now() - 3 * 86400000).toISOString() },
+                { mood: 'romantic', genre: 'Ambient', created_at: new Date(Date.now() - 4 * 86400000).toISOString() }
+            ];
+            displayFavorites(demoData);
+        }
+
+        function showEmptyState() {
+            document.getElementById('favoritesGrid').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+        }
+
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + ' min ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
+            return Math.floor(seconds / 86400) + ' days ago';
+        }
+
+        function playAudio(url) {
+            if (url) {
+                window.open(url, '_blank');
+            } else {
+                alert('Audio not available');
+            }
+        }
+
+        function removeFavorite(index) {
+            if (confirm('Remove from favorites?')) {
+                alert('Favorite removed!');
+                loadFavorites();
+            }
+        }
+
+        // Load on page load
+        loadFavorites();
+
+        // 3D Background - Hearts theme
+        let scene, camera, renderer, hearts = [];
+        
+        function init3D() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 30;
+            
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('canvas3d'), 
+                antialias: true,
+                alpha: true 
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const pointLight = new THREE.PointLight(0xec4899, 2, 50);
+            pointLight.position.set(10, 10, 10);
+            scene.add(pointLight);
+            
+            // Create floating hearts
+            for (let i = 0; i < 30; i++) {
+                const geometry = new THREE.SphereGeometry(0.8, 16, 16);
+                const material = new THREE.MeshStandardMaterial({
+                    color: i % 2 === 0 ? 0xec4899 : 0xa855f7,
+                    emissive: i % 2 === 0 ? 0xec4899 : 0xa855f7,
+                    emissiveIntensity: 0.5,
+                    transparent: true,
+                    opacity: 0.7
+                });
+                const heart = new THREE.Mesh(geometry, material);
+                
+                heart.position.x = (Math.random() - 0.5) * 60;
+                heart.position.y = (Math.random() - 0.5) * 40;
+                heart.position.z = (Math.random() - 0.5) * 40;
+                
+                heart.userData.speed = 0.01 + Math.random() * 0.02;
+                
+                scene.add(heart);
+                hearts.push(heart);
+            }
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+            animate3D();
+        }
+        
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            
+            const time = Date.now() * 0.001;
+            
+            hearts.forEach(heart => {
+                heart.position.y += heart.userData.speed;
+                heart.rotation.y += 0.02;
+                
+                if (heart.position.y > 25) {
+                    heart.position.y = -25;
+                }
+                
+                const scale = 1 + Math.sin(time * 2 + heart.position.x) * 0.2;
+                heart.scale.set(scale, scale, scale);
+            });
+            
+            renderer.render(scene, camera);
+        }
+        
+        init3D();
+    </script>
+
+    <!-- 3D Background Animation Script -->
+    <script src="/static/js/3d-background-simple.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us - NexGenMusic{% endblock %}
+{% block nav_about %}active{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title gradient-text">ℹ️ About NexGenMusic</h1>
+        <p class="page-subtitle">Revolutionizing music discovery with AI</p>
+    </div>
+
+    <!-- About Content -->
+    <div class="glass-card" style="max-width: 900px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <div style="font-size: 80px; margin-bottom: 20px;">🎵</div>
+            <h2 style="font-size: 32px; margin-bottom: 15px; color: var(--text-primary);">
+                Welcome to NexGenMusic
+            </h2>
+            <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.8;">
+                Your ultimate destination for AI-powered music generation and personalized Spotify recommendations.
+            </p>
+        </div>
+
+        <div style="margin-bottom: 40px;">
+            <h3 style="font-size: 24px; margin-bottom: 20px; color: var(--text-primary);">
+                🎧 What We Offer
+            </h3>
+            
+            <div style="display: grid; gap: 20px;">
+                <div style="padding: 20px; background: var(--bg-glass); border-radius: 15px; border: 1px solid var(--border-color);">
+                    <h4 style="font-size: 20px; margin-bottom: 10px; color: var(--accent-primary);">
+                        🎵 AI Mood Music Generator
+                    </h4>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">
+                        Generate unique, personalized music based on your mood, tempo preferences, and genre choices. 
+                        Our AI creates custom audio experiences tailored just for you.
+                    </p>
+                </div>
+
+                <div style="padding: 20px; background: var(--bg-glass); border-radius: 15px; border: 1px solid var(--border-color);">
+                    <h4 style="font-size: 20px; margin-bottom: 10px; color: var(--accent-success);">
+                        🎧 Spotify Recommendations
+                    </h4>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">
+                        Discover amazing tracks from Spotify's vast library. Search by genre, artist, or mood 
+                        and get instant personalized playlists.
+                    </p>
+                </div>
+
+                <div style="padding: 20px; background: var(--bg-glass); border-radius: 15px; border: 1px solid var(--border-color);">
+                    <h4 style="font-size: 20px; margin-bottom: 10px; color: var(--accent-secondary);">
+                        📜 Music History
+                    </h4>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">
+                        Keep track of all your generated music. Download, replay, and manage your 
+                        personalized audio collection anytime.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 40px;">
+            <h3 style="font-size: 24px; margin-bottom: 20px; color: var(--text-primary);">
+                ✨ Features
+            </h3>
+            <ul style="list-style: none; padding: 0; display: grid; gap: 12px;">
+                <li style="padding: 12px 20px; background: var(--bg-glass); border-radius: 10px; border-left: 4px solid var(--accent-primary);">
+                    🎨 Modern, futuristic UI with light/dark theme support
+                </li>
+                <li style="padding: 12px 20px; background: var(--bg-glass); border-radius: 10px; border-left: 4px solid var(--accent-primary);">
+                    🤖 AI-powered music generation based on emotions
+                </li>
+                <li style="padding: 12px 20px; background: var(--bg-glass); border-radius: 10px; border-left: 4px solid var(--accent-primary);">
+                    🎵 Spotify integration for music discovery
+                </li>
+                <li style="padding: 12px 20px; background: var(--bg-glass); border-radius: 10px; border-left: 4px solid var(--accent-primary);">
+                    💾 Save and manage your music history
+                </li>
+                <li style="padding: 12px 20px; background: var(--bg-glass); border-radius: 10px; border-left: 4px solid var(--accent-primary);">
+                    📱 Fully responsive design for all devices
+                </li>
+                <li style="padding: 12px 20px; background: var(--bg-glass); border-radius: 10px; border-left: 4px solid var(--accent-primary);">
+                    ⚡ Fast and intuitive user experience
+                </li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; padding: 30px; background: var(--gradient-1); border-radius: 15px;">
+            <h3 style="font-size: 24px; margin-bottom: 15px; color: white;">
+                Ready to Create?
+            </h3>
+            <p style="font-size: 16px; color: rgba(255, 255, 255, 0.9); margin-bottom: 25px;">
+                Start generating your personalized music experience today!
+            </p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="/ai-generator/" class="btn btn-secondary">
+                    <span class="btn-icon">🎵</span>
+                    <span class="btn-text">Generate Music</span>
+                </a>
+                <a href="/spotify-recommendations/" class="btn btn-success">
+                    <span class="btn-icon">🎧</span>
+                    <span class="btn-text">Explore Spotify</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

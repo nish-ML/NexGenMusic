@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        #canvas3d { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .header, .container { position: relative; z-index: 1; }
+        .header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .content-section { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #ffffff; --bg-secondary: #f8f9fa; --text-primary: #1e293b;
+            --text-secondary: #64748b; --border-color: #e2e8f0; --accent-blue: #3b82f6;
+            --accent-purple: #a855f7; --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-secondary); color: var(--text-primary); }
+        .header { background: var(--bg-primary); border-bottom: 1px solid var(--border-color); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 700; text-decoration: none; color: var(--text-primary); }
+        .back-btn { padding: 8px 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 500; color: var(--text-primary); }
+        .container { max-width: 900px; margin: 0 auto; padding: 60px 24px; }
+        .hero { text-align: center; margin-bottom: 60px; }
+        .hero-icon { font-size: 80px; margin-bottom: 24px; }
+        .hero-title { font-size: 48px; font-weight: 700; margin-bottom: 16px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle { font-size: 20px; color: var(--text-secondary); line-height: 1.6; }
+        .content-section { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 16px; padding: 40px; margin-bottom: 24px; }
+        .section-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: var(--accent-blue); }
+        .section-text { font-size: 16px; line-height: 1.8; color: var(--text-secondary); margin-bottom: 16px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 32px; }
+        .feature-card { text-align: center; padding: 24px; }
+        .feature-icon { font-size: 48px; margin-bottom: 16px; }
+        .feature-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .feature-text { font-size: 14px; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+<!-- Premium Header and Sidebar Component -->
+<style>
+    /* 3D Background Canvas */
+    #canvas3d {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    /* Make content appear above 3D background */
+    .header, .main-layout {
+        position: relative;
+        z-index: 1;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8f9fa;
+        --bg-hover: #f1f3f5;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --accent-blue: #3b82f6;
+        --accent-purple: #a855f7;
+        --accent-green: #10b981;
+        --accent-pink: #ec4899;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 50%, #e1d1fa 100%);
+        color: #1e293b;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Header - Ghost White */
+    .header {
+        background: rgba(248, 248, 255, 0.98);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #1e293b;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+        color: #3b82f6;
+        transform: scale(1.05);
+    }
+
+    .logo-icon {
+        font-size: 28px;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .icon-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        color: var(--text-secondary);
+    }
+
+    .icon-btn:hover {
+        background: var(--bg-hover);
+        color: var(--text-primary);
+    }
+
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    /* Main Layout */
+    .main-layout {
+        display: flex;
+        min-height: calc(100vh - 73px);
+    }
+
+    /* Sidebar - Ghost White */
+    .sidebar {
+        width: 240px;
+        background: rgba(248, 248, 255, 0.98);
+        backdrop-filter: blur(10px);
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 24px 12px;
+        overflow-y: auto;
+        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-section {
+        margin-bottom: 24px;
+    }
+
+    .nav-section-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0 12px;
+        margin-bottom: 8px;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        color: #1e293b;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .nav-item:hover {
+        background: #f1f5f9;
+        color: #3b82f6;
+        transform: translateX(4px);
+    }
+
+    .nav-item.active {
+        background: #eff6ff;
+        color: #3b82f6;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .nav-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Main Content */
+    .main-content {
+        flex: 1;
+        padding: 32px;
+        overflow-y: auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+        .sidebar {
+            display: none;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+    }
+</style>
+
+<!-- 3D Background Canvas -->
+<canvas id="canvas3d"></canvas>
+
+<!-- Header -->
+<header class="header">
+    <a href="/dashboard/" class="logo">
+        <span class="logo-icon">🎵</span>
+        <span>NexGenMusic</span>
+    </a>
+    
+    <div class="header-actions">
+        <div class="user-avatar" onclick="window.location.href='/profile/'">U</div>
+    </div>
+</header>
+
+<!-- Main Layout -->
+<div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <nav class="nav-section">
+            <div class="nav-section-title">Menu</div>
+            <a href="/dashboard/" class="nav-item" id="nav-dashboard">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span>Home</span>
+            </a>
+            <a href="/ai-generator/" class="nav-item" id="nav-ai-generator">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                </svg>
+                <span>AI Generator</span>
+            </a>
+            <a href="/spotify-recommendations/" class="nav-item" id="nav-spotify">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                </svg>
+                <span>Spotify</span>
+            </a>
+            <a href="/history/" class="nav-item" id="nav-history">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>History</span>
+            </a>
+        </nav>
+
+        <nav class="nav-section">
+            <div class="nav-section-title">Library</div>
+            <a href="/library/" class="nav-item" id="nav-library">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <span>My Library</span>
+            </a>
+            <a href="/library/favorites/" class="nav-item" id="nav-favorites">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+                <span>Favorites</span>
+            </a>
+            <a href="/library/playlists/" class="nav-item" id="nav-playlists">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                </svg>
+                <span>Playlists</span>
+            </a>
+        </nav>
+
+        <nav class="nav-section">
+            <div class="nav-section-title">Account</div>
+            <a href="/about/" class="nav-item" id="nav-about" class="active">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>About</span>
+            </a>
+            <a href="#" class="nav-item" onclick="logout(); return false;">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </aside>
+    
+    <!-- Main Content (will be filled by each page) -->
+    <main class="main-content">
+
+<div class="container">
+        <div class="hero">
+            <div class="hero-icon">🎵</div>
+            <h1 class="hero-title">About NexGenMusic</h1>
+            <p class="hero-subtitle">Your AI-powered music generation and discovery platform</p>
+        </div>
+        <div class="content-section">
+            <h2 class="section-title">✨ Our Mission</h2>
+            <p class="section-text">
+                At NexGenMusic, we believe that everyone has a unique musical voice waiting to be discovered. 
+                Our mission is to democratize music creation and make it accessible to everyone, regardless of 
+                musical background or technical expertise.
+            </p>
+            <p class="section-text">
+                We combine cutting-edge artificial intelligence with your emotions and preferences to create 
+                personalized music experiences that resonate with your soul.
+            </p>
+        </div>
+        <div class="content-section">
+            <h2 class="section-title">🚀 What We Offer</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3 class="feature-title">AI Music Generation</h3>
+                    <p class="feature-text">Create unique tracks based on your mood and preferences</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎭</div>
+                    <h3 class="feature-title">Mood Analysis</h3>
+                    <p class="feature-text">Advanced sentiment analysis to understand your emotional state</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎧</div>
+                    <h3 class="feature-title">Spotify Integration</h3>
+                    <p class="feature-text">Seamless connection with your favorite music platform</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📁</div>
+                    <h3 class="feature-title">Personalized Playlists</h3>
+                    <p class="feature-text">Curated music collections tailored just for you</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⬇️</div>
+                    <h3 class="feature-title">MIDI & Audio Export</h3>
+                    <p class="feature-text">Download your generated music in multiple formats</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Analytics</h3>
+                    <p class="feature-text">Track your music generation history and preferences</p>
+                </div>
+            </div>
+        </div>
+        <div class="content-section">
+            <h2 class="section-title">💡 How It Works</h2>
+            <p class="section-text">
+                <strong>1. Choose Your Mood:</strong> Select how you're feeling from our mood selector
+            </p>
+            <p class="section-text">
+                <strong>2. Pick a Genre:</strong> Choose your preferred music style
+            </p>
+            <p class="section-text">
+                <strong>3. Generate:</strong> Our AI creates a unique track just for you
+            </p>
+            <p class="section-text">
+                <strong>4. Enjoy & Share:</strong> Listen, download, and share your creation
+            </p>
+        </div>
+        <div class="content-section" style="text-align: center;">
+            <h2 class="section-title">🎨 Where AI Meets Creativity</h2>
+            <p class="section-text">
+                NexGenMusic is more than just a music generator – it's a creative companion that understands 
+                your emotions and helps you express them through music. Join thousands of users who are 
+                discovering their musical voice with AI.
+            </p>
+            <p class="section-text" style="margin-top: 32px; font-size: 14px; color: var(--text-secondary);">
+                © 2025 NexGenMusic. All rights reserved.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // 3D Background - Milky Yellow Theme
+        let scene, camera, renderer, stars = [], musicNotes = [], lightBeams = [];
+        
+        function init3D() {
+            scene = new THREE.Scene();
+            // Solar Pink gradient background
+            scene.background = new THREE.Color(0xffe0f0);
+            scene.fog = new THREE.Fog(0xffe0f0, 20, 60);
+            
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 15);
+            
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            // Solar Pink lighting
+            scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+            const light1 = new THREE.DirectionalLight(0xff69b4, 1.2);
+            light1.position.set(5, 10, 5);
+            scene.add(light1);
+            const light2 = new THREE.DirectionalLight(0xff1493, 0.8);
+            light2.position.set(-5, 8, -3);
+            scene.add(light2);
+            
+            // Pink stars
+            for (let i = 0; i < 40; i++) {
+                const geo = new THREE.OctahedronGeometry(0.3, 0);
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: 0xff69b4, 
+                    emissive: 0xff69b4, 
+                    emissiveIntensity: 0.6,
+                    metalness: 0.8,
+                    roughness: 0.2
+                });
+                const star = new THREE.Mesh(geo, mat);
+                star.position.set(
+                    (Math.random() - 0.5) * 40,
+                    Math.random() * 20,
+                    (Math.random() - 0.5) * 40
+                );
+                star.userData.speed = 0.5 + Math.random() * 0.5;
+                scene.add(star);
+                stars.push(star);
+            }
+            
+            // Floating music symbols (solar pink colors)
+            const colors = [0xff69b4, 0xff1493, 0xec4899, 0xff85c1];
+            for (let i = 0; i < 30; i++) {
+                const geo = new THREE.SphereGeometry(0.4, 16, 16);
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: colors[i % colors.length], 
+                    emissive: colors[i % colors.length], 
+                    emissiveIntensity: 0.4,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                const note = new THREE.Mesh(geo, mat);
+                note.position.set(
+                    (Math.random() - 0.5) * 35,
+                    Math.random() * 15,
+                    (Math.random() - 0.5) * 35
+                );
+                note.userData.speed = 0.3 + Math.random() * 0.4;
+                note.userData.time = Math.random() * Math.PI * 2;
+                scene.add(note);
+                musicNotes.push(note);
+            }
+            
+            // Pink light beam rings
+            for (let i = 0; i < 6; i++) {
+                const geo = new THREE.TorusGeometry(3 + i * 2, 0.12, 16, 100);
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: 0xff69b4, 
+                    emissive: 0xff69b4,
+                    emissiveIntensity: 0.5,
+                    transparent: true, 
+                    opacity: 0.4 - i * 0.05
+                });
+                const beam = new THREE.Mesh(geo, mat);
+                beam.position.set(0, 5 + i, -20);
+                beam.rotation.x = Math.PI / 2;
+                scene.add(beam);
+                lightBeams.push(beam);
+            }
+            
+            // Pink particle field
+            const particleCount = 120;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 50;
+                positions[i * 3 + 1] = Math.random() * 20;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+            }
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const material = new THREE.PointsMaterial({
+                size: 0.12,
+                color: 0xff85c1,
+                transparent: true,
+                opacity: 0.6
+            });
+            const particleSystem = new THREE.Points(geometry, material);
+            scene.add(particleSystem);
+            
+            window.addEventListener('resize', () => { 
+                camera.aspect = window.innerWidth / window.innerHeight; 
+                camera.updateProjectionMatrix(); 
+                renderer.setSize(window.innerWidth, window.innerHeight); 
+            });
+            animate3D();
+        }
+        
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            const time = Date.now() * 0.001;
+            
+            // Animate stars - twinkle and rotate
+            stars.forEach((star, i) => {
+                star.rotation.y += 0.02;
+                star.rotation.x += 0.01;
+                star.position.y += Math.sin(time * star.userData.speed + i) * 0.01;
+            });
+            
+            // Animate music notes - float and bob
+            musicNotes.forEach(note => {
+                note.userData.time += note.userData.speed * 0.01;
+                note.position.y += Math.sin(note.userData.time) * 0.02;
+                note.rotation.y += 0.02;
+                note.rotation.x = Math.sin(note.userData.time * 0.5) * 0.3;
+            });
+            
+            // Animate light beams - pulse and rotate
+            lightBeams.forEach((beam, i) => {
+                const scale = 1 + Math.sin(time * 0.5 + i * 0.5) * 0.1;
+                beam.scale.set(scale, scale, 1);
+                beam.rotation.z += 0.003;
+            });
+            
+            renderer.render(scene, camera);
+        }
+        
+        init3D();
+    </script>
+
+    <!-- 3D Background Animation Script -->
+    
+    <!-- Premium 3D Background: Peacock, Deer, Birds, Emojis -->
+    <script src="/static/js/3d-background-premium.js"></script>
+    </main>
+</div>
+
+<!-- Footer -->
+<footer style="position: relative; z-index: 1; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(0, 0, 0, 0.1); padding: 24px 0; margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; text-align: center;">
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 12px;">
+            © 2025 NexGenMusic – AI Music Creation Platform
+        </p>
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 12px;">
+            <a href="/about/" style="color: #3b82f6; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">About</a>
+            <span style="color: #e2e8f0;">|</span>
+            <a href="mailto:nish010906@gmail.com" style="color: #3b82f6; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">Contact</a>
+            <span style="color: #e2e8f0;">|</span>
+            <a href="#" style="color: #3b82f6; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">Privacy</a>
+            <span style="color: #e2e8f0;">|</span>
+            <a href="#" style="color: #3b82f6; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">Terms</a>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 8px; align-items: center; font-size: 14px; color: #64748b;">
+            <span>Follow us:</span>
+            <a href="https://www.instagram.com/nish.1__/" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">Instagram</a>
+            <span style="color: #e2e8f0;">|</span>
+            <a href="https://github.com/nish-ML" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">GitHub</a>
+        </div>
+    </div>
+</footer>
+
+<script src="/static/js/3d-background-premium.js"></script>
+<script>
+    function logout() {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('token');
+        window.location.href = '/';
+    }
+</script>
+</body>
+</html>

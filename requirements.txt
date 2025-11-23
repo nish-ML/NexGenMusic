@@ -1,0 +1,16 @@
+Django>=4.2
+djangorestframework
+djangorestframework-simplejwt
+drf-yasg
+spotipy
+python-dotenv
+textblob
+transformers
+torch
+numpy
+scikit-learn
+librosa
+soundfile
+scipy
+midiutil
+

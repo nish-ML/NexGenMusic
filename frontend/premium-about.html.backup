@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        #canvas3d { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .header, .container { position: relative; z-index: 1; }
+        .header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .content-section { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #ffffff; --bg-secondary: #f8f9fa; --text-primary: #1e293b;
+            --text-secondary: #64748b; --border-color: #e2e8f0; --accent-blue: #3b82f6;
+            --accent-purple: #a855f7; --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-secondary); color: var(--text-primary); }
+        .header { background: var(--bg-primary); border-bottom: 1px solid var(--border-color); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow-sm); }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 700; text-decoration: none; color: var(--text-primary); }
+        .back-btn { padding: 8px 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 500; color: var(--text-primary); }
+        .container { max-width: 900px; margin: 0 auto; padding: 60px 24px; }
+        .hero { text-align: center; margin-bottom: 60px; }
+        .hero-icon { font-size: 80px; margin-bottom: 24px; }
+        .hero-title { font-size: 48px; font-weight: 700; margin-bottom: 16px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle { font-size: 20px; color: var(--text-secondary); line-height: 1.6; }
+        .content-section { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 16px; padding: 40px; margin-bottom: 24px; }
+        .section-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: var(--accent-blue); }
+        .section-text { font-size: 16px; line-height: 1.8; color: var(--text-secondary); margin-bottom: 16px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 32px; }
+        .feature-card { text-align: center; padding: 24px; }
+        .feature-icon { font-size: 48px; margin-bottom: 16px; }
+        .feature-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .feature-text { font-size: 14px; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+    <canvas id="canvas3d"></canvas>
+    <header class="header">
+        <a href="/dashboard/" class="logo"><span style="font-size: 28px;">🎵</span><span>NexGenMusic</span></a>
+        <a href="/dashboard/" class="back-btn">← Back to Dashboard</a>
+    </header>
+    <div class="container">
+        <div class="hero">
+            <div class="hero-icon">🎵</div>
+            <h1 class="hero-title">About NexGenMusic</h1>
+            <p class="hero-subtitle">Your AI-powered music generation and discovery platform</p>
+        </div>
+        <div class="content-section">
+            <h2 class="section-title">✨ Our Mission</h2>
+            <p class="section-text">
+                At NexGenMusic, we believe that everyone has a unique musical voice waiting to be discovered. 
+                Our mission is to democratize music creation and make it accessible to everyone, regardless of 
+                musical background or technical expertise.
+            </p>
+            <p class="section-text">
+                We combine cutting-edge artificial intelligence with your emotions and preferences to create 
+                personalized music experiences that resonate with your soul.
+            </p>
+        </div>
+        <div class="content-section">
+            <h2 class="section-title">🚀 What We Offer</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3 class="feature-title">AI Music Generation</h3>
+                    <p class="feature-text">Create unique tracks based on your mood and preferences</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎭</div>
+                    <h3 class="feature-title">Mood Analysis</h3>
+                    <p class="feature-text">Advanced sentiment analysis to understand your emotional state</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎧</div>
+                    <h3 class="feature-title">Spotify Integration</h3>
+                    <p class="feature-text">Seamless connection with your favorite music platform</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📁</div>
+                    <h3 class="feature-title">Personalized Playlists</h3>
+                    <p class="feature-text">Curated music collections tailored just for you</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⬇️</div>
+                    <h3 class="feature-title">MIDI & Audio Export</h3>
+                    <p class="feature-text">Download your generated music in multiple formats</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Analytics</h3>
+                    <p class="feature-text">Track your music generation history and preferences</p>
+                </div>
+            </div>
+        </div>
+        <div class="content-section">
+            <h2 class="section-title">💡 How It Works</h2>
+            <p class="section-text">
+                <strong>1. Choose Your Mood:</strong> Select how you're feeling from our mood selector
+            </p>
+            <p class="section-text">
+                <strong>2. Pick a Genre:</strong> Choose your preferred music style
+            </p>
+            <p class="section-text">
+                <strong>3. Generate:</strong> Our AI creates a unique track just for you
+            </p>
+            <p class="section-text">
+                <strong>4. Enjoy & Share:</strong> Listen, download, and share your creation
+            </p>
+        </div>
+        <div class="content-section" style="text-align: center;">
+            <h2 class="section-title">🎨 Where AI Meets Creativity</h2>
+            <p class="section-text">
+                NexGenMusic is more than just a music generator – it's a creative companion that understands 
+                your emotions and helps you express them through music. Join thousands of users who are 
+                discovering their musical voice with AI.
+            </p>
+            <p class="section-text" style="margin-top: 32px; font-size: 14px; color: var(--text-secondary);">
+                © 2025 NexGenMusic. All rights reserved.
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // 3D Background - Milky Yellow Theme
+        let scene, camera, renderer, stars = [], musicNotes = [], lightBeams = [];
+        
+        function init3D() {
+            scene = new THREE.Scene();
+            // Solar Pink gradient background
+            scene.background = new THREE.Color(0xffe0f0);
+            scene.fog = new THREE.Fog(0xffe0f0, 20, 60);
+            
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 15);
+            
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            // Solar Pink lighting
+            scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+            const light1 = new THREE.DirectionalLight(0xff69b4, 1.2);
+            light1.position.set(5, 10, 5);
+            scene.add(light1);
+            const light2 = new THREE.DirectionalLight(0xff1493, 0.8);
+            light2.position.set(-5, 8, -3);
+            scene.add(light2);
+            
+            // Pink stars
+            for (let i = 0; i < 40; i++) {
+                const geo = new THREE.OctahedronGeometry(0.3, 0);
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: 0xff69b4, 
+                    emissive: 0xff69b4, 
+                    emissiveIntensity: 0.6,
+                    metalness: 0.8,
+                    roughness: 0.2
+                });
+                const star = new THREE.Mesh(geo, mat);
+                star.position.set(
+                    (Math.random() - 0.5) * 40,
+                    Math.random() * 20,
+                    (Math.random() - 0.5) * 40
+                );
+                star.userData.speed = 0.5 + Math.random() * 0.5;
+                scene.add(star);
+                stars.push(star);
+            }
+            
+            // Floating music symbols (solar pink colors)
+            const colors = [0xff69b4, 0xff1493, 0xec4899, 0xff85c1];
+            for (let i = 0; i < 30; i++) {
+                const geo = new THREE.SphereGeometry(0.4, 16, 16);
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: colors[i % colors.length], 
+                    emissive: colors[i % colors.length], 
+                    emissiveIntensity: 0.4,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                const note = new THREE.Mesh(geo, mat);
+                note.position.set(
+                    (Math.random() - 0.5) * 35,
+                    Math.random() * 15,
+                    (Math.random() - 0.5) * 35
+                );
+                note.userData.speed = 0.3 + Math.random() * 0.4;
+                note.userData.time = Math.random() * Math.PI * 2;
+                scene.add(note);
+                musicNotes.push(note);
+            }
+            
+            // Pink light beam rings
+            for (let i = 0; i < 6; i++) {
+                const geo = new THREE.TorusGeometry(3 + i * 2, 0.12, 16, 100);
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: 0xff69b4, 
+                    emissive: 0xff69b4,
+                    emissiveIntensity: 0.5,
+                    transparent: true, 
+                    opacity: 0.4 - i * 0.05
+                });
+                const beam = new THREE.Mesh(geo, mat);
+                beam.position.set(0, 5 + i, -20);
+                beam.rotation.x = Math.PI / 2;
+                scene.add(beam);
+                lightBeams.push(beam);
+            }
+            
+            // Pink particle field
+            const particleCount = 120;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 50;
+                positions[i * 3 + 1] = Math.random() * 20;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+            }
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const material = new THREE.PointsMaterial({
+                size: 0.12,
+                color: 0xff85c1,
+                transparent: true,
+                opacity: 0.6
+            });
+            const particleSystem = new THREE.Points(geometry, material);
+            scene.add(particleSystem);
+            
+            window.addEventListener('resize', () => { 
+                camera.aspect = window.innerWidth / window.innerHeight; 
+                camera.updateProjectionMatrix(); 
+                renderer.setSize(window.innerWidth, window.innerHeight); 
+            });
+            animate3D();
+        }
+        
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            const time = Date.now() * 0.001;
+            
+            // Animate stars - twinkle and rotate
+            stars.forEach((star, i) => {
+                star.rotation.y += 0.02;
+                star.rotation.x += 0.01;
+                star.position.y += Math.sin(time * star.userData.speed + i) * 0.01;
+            });
+            
+            // Animate music notes - float and bob
+            musicNotes.forEach(note => {
+                note.userData.time += note.userData.speed * 0.01;
+                note.position.y += Math.sin(note.userData.time) * 0.02;
+                note.rotation.y += 0.02;
+                note.rotation.x = Math.sin(note.userData.time * 0.5) * 0.3;
+            });
+            
+            // Animate light beams - pulse and rotate
+            lightBeams.forEach((beam, i) => {
+                const scale = 1 + Math.sin(time * 0.5 + i * 0.5) * 0.1;
+                beam.scale.set(scale, scale, 1);
+                beam.rotation.z += 0.003;
+            });
+            
+            renderer.render(scene, camera);
+        }
+        
+        init3D();
+    </script>
+
+    <!-- 3D Background Animation Script -->
+    <script src="/static/js/3d-background-simple.js"></script>
+</body>
+</html>

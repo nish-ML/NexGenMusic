@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium 3D Login - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --lavender: #e0e7ff;
+            --baby-blue: #dbeafe;
+            --mint: #d1fae5;
+            --peach: #fed7aa;
+            --purple: #a855f7;
+            --pink: #ec4899;
+            --indigo: #6366f1;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--lavender) 0%, var(--baby-blue) 50%, var(--mint) 100%);
+            color: #1e293b;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Full-screen 3D Canvas */
+        #canvas3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* UI Overlay */
+        .ui-overlay {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 80px;
+            pointer-events: none;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 480px;
+            pointer-events: all;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(40px);
+            border-radius: 32px;
+            padding: 48px 40px;
+            box-shadow: 
+                0 30px 80px rgba(99, 102, 241, 0.12),
+                0 0 0 1px rgba(255, 255, 255, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 40px 100px rgba(99, 102, 241, 0.18),
+                0 0 0 1px rgba(147, 197, 253, 0.8);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .logo h1 {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--indigo) 0%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #475569;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 18px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(203, 213, 225, 0.4);
+            border-radius: 16px;
+            color: #1e293b;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus {
+            border-color: var(--indigo);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--indigo) 0%, var(--purple) 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 12px 35px rgba(99, 102, 241, 0.35);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 18px 50px rgba(99, 102, 241, 0.45);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .links a {
+            color: var(--indigo);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Lite Mode Toggle */
+        .lite-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 100;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(203, 213, 225, 0.4);
+            border-radius: 12px;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            pointer-events: all;
+        }
+
+        .lite-toggle:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .ui-overlay {
+                padding: 20px;
+                justify-content: center;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Full-screen 3D Canvas -->
+    <canvas id="canvas3d" aria-label="Interactive 3D background with animated animals and emojis"></canvas>
+
+    <!-- Lite Mode Toggle -->
+    <button class="lite-toggle" id="liteToggle" aria-label="Toggle 3D mode">🎨 Lite Mode</button>
+
+    <!-- UI Overlay -->
+    <div class="ui-overlay">
+        <div class="form-container">
+            <div class="glass-card">
+                <div class="logo">
+                    <h1>🎵 NexGen Music</h1>
+                    <p>Welcome Back</p>
+                </div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="remember">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" style="color: var(--indigo); text-decoration: none; font-weight: 600;">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Sign In</button>
+                </form>
+
+                <div class="links">
+                    <p>Don't have an account? <a href="/premium-register/">Create Account</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== ULTRA-PREMIUM 3D SCENE ==========
+        let scene, camera, renderer;
+        let peacock, deer, birds = [];
+        let emojis = [];
+        let waveform;
+        let mouse = { x: 0, y: 0 };
+        let isLiteMode = false;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function init3DScene() {
+            const canvas = document.getElementById('canvas3d');
+            
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xe0e7ff);
+            scene.fog = new THREE.Fog(0xe0e7ff, 20, 60);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 20);
+            camera.lookAt(0, 3, 0);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const directionalLight1 = new THREE.DirectionalLight(0xa5b4fc, 1.2);
+            directionalLight1.position.set(10, 15, 10);
+            directionalLight1.castShadow = true;
+            directionalLight1.shadow.mapSize.width = 2048;
+            directionalLight1.shadow.mapSize.height = 2048;
+            scene.add(directionalLight1);
+
+            const directionalLight2 = new THREE.DirectionalLight(0xfae8ff, 0.8);
+            directionalLight2.position.set(-10, 10, -5);
+            scene.add(directionalLight2);
+
+            const pointLight = new THREE.PointLight(0xd1fae5, 0.6, 50);
+            pointLight.position.set(0, 8, 5);
+            scene.add(pointLight);
+
+            // Create scene elements
+            createGround();
+            createPeacock();
+            createDeer();
+            createBirds();
+            createFloatingEmojis();
+            createWaveform();
+            createParticles();
+            createVolumetricLights();
+
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('mousemove', onMouseMove);
+            
+            // Form interactions
+            setupFormInteractions();
+
+            // Start animation
+            animate();
+        }
+
+        function createGround() {
+            const groundGeometry = new THREE.PlaneGeometry(100, 100);
+            const groundMaterial = new THREE.MeshStandardMaterial({
+                color: 0xdbeafe,
+                roughness: 0.8,
+                metalness: 0.1
+            });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = 0;
+            ground.receiveShadow = true;
+            scene.add(ground);
+        }
+
+        function createPeacock() {
+            const peacockGroup = new THREE.Group();
+
+            // Body
+            const bodyGeometry = new THREE.SphereGeometry(0.8, 20, 20);
+            const bodyMaterial = new THREE.MeshStandardMaterial({
+                color: 0xa5b4fc,
+                roughness: 0.3,
+                metalness: 0.2
+            });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.scale.set(1, 1.3, 0.9);
+            body.castShadow = true;
+            peacockGroup.add(body);
+
+            // Head
+            const headGeometry = new THREE.SphereGeometry(0.45, 16, 16);
+            const headMaterial = new THREE.MeshStandardMaterial({ color: 0xc7d2fe });
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.set(0, 1, 0.4);
+            head.castShadow = true;
+            peacockGroup.add(head);
+
+            // Beak
+            const beakGeometry = new THREE.ConeGeometry(0.1, 0.25, 8);
+            const beakMaterial = new THREE.MeshStandardMaterial({ color: 0xfbbf24 });
+            const beak = new THREE.Mesh(beakGeometry, beakMaterial);
+            beak.position.set(0, 1, 0.75);
+            beak.rotation.x = Math.PI / 2;
+            peacockGroup.add(beak);
+
+            // Eyes
+            const eyeGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.2, 1.1, 0.65);
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.2, 1.1, 0.65);
+            peacockGroup.add(leftEye, rightEye);
+
+            // Tail feathers (glowing)
+            const featherGroup = new THREE.Group();
+            for (let i = 0; i < 11; i++) {
+                const angle = (i - 5) * 0.22;
+                const featherGeometry = new THREE.PlaneGeometry(0.5, 2);
+                const featherMaterial = new THREE.MeshStandardMaterial({
+                    color: i % 2 === 0 ? 0x6366f1 : 0xa855f7,
+                    side: THREE.DoubleSide,
+                    emissive: i % 2 === 0 ? 0x6366f1 : 0xa855f7,
+                    emissiveIntensity: 0.4,
+                    transparent: true,
+                    opacity: 0.95
+                });
+                const feather = new THREE.Mesh(featherGeometry, featherMaterial);
+                feather.position.set(Math.sin(angle) * 1.2, 0.8, -0.6 + Math.cos(angle) * 0.4);
+                feather.rotation.y = angle;
+                featherGroup.add(feather);
+            }
+            peacockGroup.add(featherGroup);
+            peacockGroup.userData.feathers = featherGroup;
+
+            peacockGroup.position.set(-6, 0.8, -5);
+            peacockGroup.userData.baseY = 0.8;
+            peacockGroup.userData.time = 0;
+            peacockGroup.scale.set(1.5, 1.5, 1.5);
+            
+            scene.add(peacockGroup);
+            peacock = peacockGroup;
+        }
+
+        function createDeer() {
+            const deerGroup = new THREE.Group();
+
+            // Body
+            const bodyGeometry = new THREE.BoxGeometry(1, 0.8, 1.5);
+            const bodyMaterial = new THREE.MeshStandardMaterial({
+                color: 0xfed7aa,
+                roughness: 0.5
+            });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.castShadow = true;
+            deerGroup.add(body);
+
+            // Head
+            const headGeometry = new THREE.BoxGeometry(0.6, 0.6, 0.8);
+            const head = new THREE.Mesh(headGeometry, bodyMaterial);
+            head.position.set(0, 0.5, 1);
+            head.castShadow = true;
+            deerGroup.add(head);
+
+            // Snout
+            const snoutGeometry = new THREE.BoxGeometry(0.4, 0.25, 0.4);
+            const snout = new THREE.Mesh(snoutGeometry, bodyMaterial);
+            snout.position.set(0, 0.4, 1.5);
+            deerGroup.add(snout);
+
+            // Nose
+            const noseGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const noseMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+            const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+            nose.position.set(0, 0.4, 1.7);
+            deerGroup.add(nose);
+
+            // Eyes
+            const eyeGeometry = new THREE.SphereGeometry(0.12, 8, 8);
+            const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.2, 0.6, 1.3);
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.2, 0.6, 1.3);
+            deerGroup.add(leftEye, rightEye);
+
+            // Ears
+            const earGeometry = new THREE.ConeGeometry(0.2, 0.5, 8);
+            const leftEar = new THREE.Mesh(earGeometry, bodyMaterial);
+            leftEar.position.set(-0.3, 0.9, 1);
+            leftEar.rotation.z = -0.3;
+            const rightEar = new THREE.Mesh(earGeometry, bodyMaterial);
+            rightEar.position.set(0.3, 0.9, 1);
+            rightEar.rotation.z = 0.3;
+            deerGroup.add(leftEar, rightEar);
+            deerGroup.userData.ears = [leftEar, rightEar];
+
+            // Antlers
+            const antlerMaterial = new THREE.MeshStandardMaterial({ color: 0x92400e });
+            const antlerGeometry = new THREE.CylinderGeometry(0.04, 0.06, 0.6, 8);
+            const leftAntler = new THREE.Mesh(antlerGeometry, antlerMaterial);
+            leftAntler.position.set(-0.25, 1.1, 0.9);
+            const rightAntler = new THREE.Mesh(antlerGeometry, antlerMaterial);
+            rightAntler.position.set(0.25, 1.1, 0.9);
+            deerGroup.add(leftAntler, rightAntler);
+
+            // Legs
+            const legGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.8, 8);
+            const positions = [[-0.4, -0.8, 0.5], [0.4, -0.8, 0.5], [-0.4, -0.8, -0.5], [0.4, -0.8, -0.5]];
+            positions.forEach(pos => {
+                const leg = new THREE.Mesh(legGeometry, bodyMaterial);
+                leg.position.set(...pos);
+                leg.castShadow = true;
+                deerGroup.add(leg);
+            });
+
+            deerGroup.position.set(6, 1.2, -3);
+            deerGroup.userData.baseY = 1.2;
+            deerGroup.userData.time = 0;
+            deerGroup.scale.set(1.3, 1.3, 1.3);
+            
+            scene.add(deerGroup);
+            deer = deerGroup;
+        }
+
+        function createBirds() {
+            const colors = [0x93c5fd, 0xbfdbfe, 0xdbeafe];
+            for (let i = 0; i < 5; i++) {
+                const birdGroup = new THREE.Group();
+
+                // Body
+                const bodyGeometry = new THREE.SphereGeometry(0.2, 12, 12);
+                const bodyMaterial = new THREE.MeshStandardMaterial({
+                    color: colors[i % 3],
+                    roughness: 0.4
+                });
+                const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+                body.scale.set(1, 0.8, 1.2);
+                body.castShadow = true;
+                birdGroup.add(body);
+
+                // Head
+                const headGeometry = new THREE.SphereGeometry(0.12, 12, 12);
+                const head = new THREE.Mesh(headGeometry, bodyMaterial);
+                head.position.set(0, 0.15, 0.2);
+                birdGroup.add(head);
+
+                // Beak
+                const beakGeometry = new THREE.ConeGeometry(0.04, 0.1, 6);
+                const beakMaterial = new THREE.MeshStandardMaterial({ color: 0xfbbf24 });
+                const beak = new THREE.Mesh(beakGeometry, beakMaterial);
+                beak.position.set(0, 0.15, 0.32);
+                beak.rotation.x = Math.PI / 2;
+                birdGroup.add(beak);
+
+                // Wings
+                const wingGeometry = new THREE.BoxGeometry(0.4, 0.05, 0.2);
+                const leftWing = new THREE.Mesh(wingGeometry, bodyMaterial);
+                leftWing.position.set(-0.25, 0, 0);
+                const rightWing = new THREE.Mesh(wingGeometry, bodyMaterial);
+                rightWing.position.set(0.25, 0, 0);
+                birdGroup.add(leftWing, rightWing);
+                birdGroup.userData.wings = [leftWing, rightWing];
+
+                // Position in circular path
+                const angle = (i / 5) * Math.PI * 2;
+                const radius = 8;
+                birdGroup.position.set(
+                    Math.cos(angle) * radius,
+                    5 + Math.sin(i) * 2,
+                    Math.sin(angle) * radius
+                );
+                birdGroup.userData.angle = angle;
+                birdGroup.userData.radius = radius;
+                birdGroup.userData.time = i * 0.5;
+
+                scene.add(birdGroup);
+                birds.push(birdGroup);
+            }
+        }
+
+        function createFloatingEmojis() {
+            const emojiTexts = ['🎵', '🎧', '🔊', '⭐', '❤️', '🔥', '🌈'];
+            const emojiMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                emissive: 0xffffff,
+                emissiveIntensity: 0.3,
+                transparent: true,
+                opacity: 0.9
+            });
+
+            for (let i = 0; i < 30; i++) {
+                const emojiGroup = new THREE.Group();
+                
+                // Create emoji as a simple sphere with color
+                const geometry = new THREE.SphereGeometry(0.3, 16, 16);
+                const colors = [0xfbbf24, 0xec4899, 0xa855f7, 0x6366f1, 0x10b981, 0xf59e0b, 0x8b5cf6];
+                const material = new THREE.MeshStandardMaterial({
+                    color: colors[i % colors.length],
+                    emissive: colors[i % colors.length],
+                    emissiveIntensity: 0.4,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                const emoji = new THREE.Mesh(geometry, material);
+                emojiGroup.add(emoji);
+
+                // Random position in foreground
+                emojiGroup.position.set(
+                    (Math.random() - 0.5) * 30,
+                    Math.random() * 10 + 2,
+                    Math.random() * 15 + 5
+                );
+                emojiGroup.userData.baseY = emojiGroup.position.y;
+                emojiGroup.userData.speed = 0.5 + Math.random() * 0.5;
+                emojiGroup.userData.time = Math.random() * Math.PI * 2;
+
+                scene.add(emojiGroup);
+                emojis.push(emojiGroup);
+            }
+        }
+
+        function createWaveform() {
+            const waveformGroup = new THREE.Group();
+            const barCount = 20;
+            const bars = [];
+
+            for (let i = 0; i < barCount; i++) {
+                const height = 1 + Math.random() * 3;
+                const geometry = new THREE.BoxGeometry(0.3, height, 0.3);
+                const material = new THREE.MeshStandardMaterial({
+                    color: 0x6366f1,
+                    emissive: 0x6366f1,
+                    emissiveIntensity: 0.5,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                const bar = new THREE.Mesh(geometry, material);
+                bar.position.set((i - barCount / 2) * 0.5, height / 2, 0);
+                bar.userData.baseHeight = height;
+                waveformGroup.add(bar);
+                bars.push(bar);
+            }
+
+            waveformGroup.position.set(0, 0, -10);
+            waveformGroup.userData.bars = bars;
+            scene.add(waveformGroup);
+            waveform = waveformGroup;
+        }
+
+        function createParticles() {
+            const particleCount = 200;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 50;
+                positions[i * 3 + 1] = Math.random() * 20;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+
+                const color = new THREE.Color();
+                color.setHSL(Math.random() * 0.3 + 0.5, 0.7, 0.7);
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.15,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6,
+                blending: THREE.AdditiveBlending
+            });
+
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+        }
+
+        function createVolumetricLights() {
+            // Floating rings
+            for (let i = 0; i < 3; i++) {
+                const ringGeometry = new THREE.TorusGeometry(2 + i, 0.1, 16, 100);
+                const ringMaterial = new THREE.MeshStandardMaterial({
+                    color: [0xa5b4fc, 0xd8b4fe, 0xfed7aa][i],
+                    emissive: [0xa5b4fc, 0xd8b4fe, 0xfed7aa][i],
+                    emissiveIntensity: 0.5,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+                ring.position.set(0, 8 + i * 2, -15);
+                ring.rotation.x = Math.PI / 2;
+                scene.add(ring);
+            }
+        }
+
+        function setupFormInteractions() {
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = document.querySelector('.btn-primary');
+
+            // Input focus - waveform pulse
+            [usernameInput, passwordInput].forEach(input => {
+                input.addEventListener('focus', () => {
+                    if (waveform && !prefersReducedMotion) {
+                        waveform.userData.pulsing = true;
+                        // Deer ears move
+                        if (deer && deer.userData.ears) {
+                            deer.userData.ears.forEach(ear => {
+                                ear.rotation.z += ear.rotation.z > 0 ? 0.2 : -0.2;
+                            });
+                        }
+                    }
+                });
+
+                input.addEventListener('blur', () => {
+                    if (waveform) {
+                        waveform.userData.pulsing = false;
+                    }
+                });
+
+                // Typing - waveform reacts
+                input.addEventListener('input', () => {
+                    if (waveform && waveform.userData.bars && !prefersReducedMotion) {
+                        waveform.userData.bars.forEach((bar, i) => {
+                            const randomHeight = 1 + Math.random() * 4;
+                            bar.scale.y = randomHeight / bar.userData.baseHeight;
+                        });
+                    }
+                });
+            });
+
+            // Button hover - animals react
+            loginButton.addEventListener('mouseenter', () => {
+                if (!prefersReducedMotion) {
+                    // Peacock feathers brighten
+                    if (peacock && peacock.userData.feathers) {
+                        peacock.userData.feathers.children.forEach(feather => {
+                            feather.material.emissiveIntensity = 0.7;
+                        });
+                    }
+                    // Deer hops
+                    if (deer) {
+                        deer.userData.hopping = true;
+                    }
+                }
+            });
+
+            loginButton.addEventListener('mouseleave', () => {
+                if (peacock && peacock.userData.feathers) {
+                    peacock.userData.feathers.children.forEach(feather => {
+                        feather.material.emissiveIntensity = 0.4;
+                    });
+                }
+                if (deer) {
+                    deer.userData.hopping = false;
+                }
+            });
+
+            // Form submit - success animation
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+                
+                // Disable button during submission
+                loginButton.disabled = true;
+                loginButton.textContent = 'Signing in...';
+                
+                try {
+                    const response = await fetch('/api/login/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Store tokens
+                        localStorage.setItem('access_token', data.access);
+                        localStorage.setItem('refresh_token', data.refresh);
+                        
+                        // Trigger success animation
+                        if (!prefersReducedMotion) {
+                            if (peacock) {
+                                peacock.userData.spinning = true;
+                            }
+                            emojis.forEach(emoji => {
+                                emoji.userData.blooming = true;
+                            });
+                        }
+                        
+                        // Redirect to dashboard after animation
+                        setTimeout(() => {
+                            window.location.href = '/dashboard/';
+                        }, 1500);
+                    } else {
+                        // Show error
+                        alert(data.error || 'Login failed. Please check your credentials.');
+                        loginButton.disabled = false;
+                        loginButton.textContent = 'Sign In';
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    alert('Network error. Please try again.');
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Sign In';
+                }
+            });
+        }
+
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            // Camera parallax
+            if (!prefersReducedMotion) {
+                camera.position.x = mouse.x * 2;
+                camera.position.y = 5 + mouse.y * 1;
+                camera.lookAt(0, 3, 0);
+            }
+
+            // Emojis react to pointer proximity
+            emojis.forEach(emoji => {
+                const dx = emoji.position.x - mouse.x * 20;
+                const dy = emoji.position.y - (5 + mouse.y * 10);
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 5 && !prefersReducedMotion) {
+                    emoji.userData.accelerated = true;
+                    emoji.scale.set(1.3, 1.3, 1.3);
+                } else {
+                    emoji.userData.accelerated = false;
+                    emoji.scale.set(1, 1, 1);
+                }
+            });
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = Date.now() * 0.001;
+
+            if (!prefersReducedMotion && !isLiteMode) {
+                // Peacock animation
+                if (peacock) {
+                    peacock.userData.time += 0.01;
+                    peacock.position.y = peacock.userData.baseY + Math.sin(peacock.userData.time) * 0.2;
+                    peacock.rotation.y = Math.sin(peacock.userData.time * 0.5) * 0.3;
+                    
+                    // Feather sway
+                    if (peacock.userData.feathers) {
+                        peacock.userData.feathers.rotation.y = Math.sin(time * 0.8) * 0.2;
+                    }
+
+                    // Spinning animation on submit
+                    if (peacock.userData.spinning) {
+                        peacock.rotation.y += 0.1;
+                        if (peacock.rotation.y > Math.PI * 2) {
+                            peacock.userData.spinning = false;
+                            peacock.rotation.y = 0;
+                        }
+                    }
+                }
+
+                // Deer animation
+                if (deer) {
+                    deer.userData.time += 0.01;
+                    // Gentle head-bob
+                    deer.rotation.x = Math.sin(deer.userData.time * 2) * 0.05;
+                    
+                    // Hopping
+                    if (deer.userData.hopping) {
+                        deer.position.y = deer.userData.baseY + Math.abs(Math.sin(time * 8)) * 0.5;
+                    } else {
+                        deer.position.y = deer.userData.baseY + Math.sin(deer.userData.time) * 0.1;
+                    }
+                }
+
+                // Birds animation
+                birds.forEach((bird, i) => {
+                    bird.userData.time += 0.01;
+                    bird.userData.angle += 0.005;
+                    bird.position.x = Math.cos(bird.userData.angle) * bird.userData.radius;
+                    bird.position.z = Math.sin(bird.userData.angle) * bird.userData.radius;
+                    bird.position.y = 5 + Math.sin(bird.userData.time * 2) * 1;
+                    bird.lookAt(
+                        Math.cos(bird.userData.angle + 0.1) * bird.userData.radius,
+                        bird.position.y,
+                        Math.sin(bird.userData.angle + 0.1) * bird.userData.radius
+                    );
+
+                    // Wing flapping
+                    if (bird.userData.wings) {
+                        const flapAngle = Math.sin(time * 10 + i) * 0.5;
+                        bird.userData.wings[0].rotation.z = flapAngle;
+                        bird.userData.wings[1].rotation.z = -flapAngle;
+                    }
+                });
+
+                // Emojis animation
+                emojis.forEach((emoji, i) => {
+                    emoji.userData.time += emoji.userData.speed * 0.01;
+                    emoji.position.y = emoji.userData.baseY + Math.sin(emoji.userData.time) * 0.5;
+                    emoji.rotation.y += 0.02;
+                    emoji.rotation.x = Math.sin(emoji.userData.time * 0.5) * 0.3;
+
+                    // Accelerate on mouse proximity
+                    if (emoji.userData.accelerated) {
+                        emoji.rotation.y += 0.05;
+                    }
+
+                    // Bloom animation on submit
+                    if (emoji.userData.blooming) {
+                        emoji.position.x += (emoji.position.x > 0 ? 0.2 : -0.2);
+                        emoji.position.z += 0.2;
+                        emoji.scale.multiplyScalar(1.02);
+                        if (emoji.scale.x > 2) {
+                            emoji.userData.blooming = false;
+                        }
+                    }
+                });
+
+                // Waveform animation
+                if (waveform && waveform.userData.bars) {
+                    waveform.userData.bars.forEach((bar, i) => {
+                        if (waveform.userData.pulsing) {
+                            bar.scale.y = 1 + Math.sin(time * 5 + i * 0.5) * 0.5;
+                        } else {
+                            bar.scale.y = 1 + Math.sin(time * 2 + i * 0.3) * 0.2;
+                        }
+                    });
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Lite mode toggle
+        document.getElementById('liteToggle').addEventListener('click', function() {
+            isLiteMode = !isLiteMode;
+            this.textContent = isLiteMode ? '🎨 3D Mode' : '🎨 Lite Mode';
+            
+            if (isLiteMode) {
+                document.getElementById('canvas3d').style.display = 'none';
+                document.body.style.background = 'linear-gradient(135deg, var(--lavender) 0%, var(--baby-blue) 50%, var(--mint) 100%)';
+            } else {
+                document.getElementById('canvas3d').style.display = 'block';
+            }
+        });
+
+        // Initialize
+        if (!prefersReducedMotion) {
+            init3DScene();
+        } else {
+            document.getElementById('canvas3d').style.display = 'none';
+            document.body.style.background = 'linear-gradient(135deg, var(--lavender) 0%, var(--baby-blue) 50%, var(--mint) 100%)';
+        }
+    </script>
+</body>
+</html>

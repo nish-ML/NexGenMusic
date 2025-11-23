@@ -1,0 +1,240 @@
+<!-- 
+    INTEGRATION INSTRUCTIONS FOR MOOD WAVE RIDER GAME
+    ==================================================
+    
+    This file shows the complete integration with the game as a stat card.
+    
+    STEP 1: Add CSS to <head> section
+    STEP 2: Replace stats grid section
+    STEP 3: Add JavaScript functions before </body>
+-->
+
+<!-- ============================================ -->
+<!-- STEP 1: Add this to <head> section -->
+<!-- ============================================ -->
+<link rel="stylesheet" href="/static/css/mood-wave-rider.css">
+
+<!-- ============================================ -->
+<!-- STEP 2: Replace your stats grid with this -->
+<!-- ============================================ -->
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Total Generated</span>
+            <div class="stat-icon blue">🎵</div>
+        </div>
+        <div class="stat-value" id="totalGenerated">0</div>
+        <div class="stat-change">+12% from last week</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Listening Time</span>
+            <div class="stat-icon purple">⏱️</div>
+        </div>
+        <div class="stat-value" id="listeningTime">0h</div>
+        <div class="stat-change">+8% from last week</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Favorite Genre</span>
+            <div class="stat-icon green">🎸</div>
+        </div>
+        <div class="stat-value" id="favoriteGenre" style="font-size: 20px;">Unknown</div>
+        <div class="stat-change">Most played this month</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Playlists</span>
+            <div class="stat-icon pink">📁</div>
+        </div>
+        <div class="stat-value" id="totalPlaylists">0</div>
+        <div class="stat-change">+3 new this week</div>
+    </div>
+
+    <!-- MOOD WAVE RIDER GAME CARD -->
+    <div class="stat-card game-card" onclick="openMoodWaveRider()" style="cursor: pointer; background: linear-gradient(135deg, rgba(255, 182, 193, 0.2), rgba(100, 255, 218, 0.2)); border: 2px solid rgba(255, 105, 180, 0.3); transition: all 0.3s ease;">
+        <div class="stat-header">
+            <span class="stat-label">Play Mini Game</span>
+            <div class="stat-icon" style="background: linear-gradient(135deg, #FF69B4, #64FFDA); color: white;">🎮</div>
+        </div>
+        <div class="stat-value" style="font-size: 20px; background: linear-gradient(135deg, #FF69B4, #64FFDA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Mood Wave Rider</div>
+        <div class="stat-change" style="color: #fcf7fa; font-weight: 600;">👆 Click to play! 🎵</div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- STEP 3: Add this JavaScript before </body> -->
+<!-- ============================================ -->
+<script>
+// Mood Wave Rider Game Modal Functions
+function openMoodWaveRider() {
+    // Create game modal overlay
+    const gameModal = document.createElement('div');
+    gameModal.id = 'game-modal';
+    gameModal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(10px);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+    `;
+
+    gameModal.innerHTML = `
+        <div style="position: relative; width: 95%; max-width: 1000px; height: 90vh; max-height: 700px;">
+            <!-- Close Button -->
+            <button onclick="closeMoodWaveRider()" style="
+                position: absolute;
+                top: -50px;
+                right: 0;
+                background: rgba(255, 255, 255, 0.95);
+                border: none;
+                border-radius: 50%;
+                width: 45px;
+                height: 45px;
+                font-size: 28px;
+                cursor: pointer;
+                color: #FF69B4;
+                box-shadow: 0 4px 16px rgba(255, 105, 180, 0.4);
+                transition: all 0.3s ease;
+                z-index: 10001;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            " onmouseover="this.style.transform='scale(1.15) rotate(90deg)'; this.style.background='#FF69B4'; this.style.color='white';" onmouseout="this.style.transform='scale(1) rotate(0deg)'; this.style.background='rgba(255, 255, 255, 0.95)'; this.style.color='#FF69B4';">×</button>
+            
+            <!-- Game Container -->
+            <div id="mood-wave-rider" style="height: 100%; margin: 0;">
+                <!-- Game Header -->
+                <div class="game-header">
+                    <div class="game-title">🎮 Mood Wave Rider</div>
+                    <div class="game-controls">
+                        <div class="game-score">
+                            Score: <span id="score-value">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Game Canvas Container -->
+                <div class="game-container" style="height: calc(100% - 70px);">
+                    <canvas id="game-canvas"></canvas>
+                    
+                    <!-- Game Overlay (Menu, Countdown, Game Over) -->
+                    <div id="game-overlay" class="game-overlay">
+                        <!-- Menu Screen -->
+                        <div id="menu-screen" class="overlay-content">
+                            <div class="overlay-title">🎵 Mood Wave Rider 🎵</div>
+                            <div class="overlay-subtitle">Ride the sound wave and avoid the spikes!</div>
+                            <button id="start-btn" class="play-btn">▶ Start Game</button>
+                            <div class="game-instructions">
+                                <p><strong>Controls:</strong> Arrow Keys or A/D to move</p>
+                                <p><strong>Goal:</strong> Survive as long as possible!</p>
+                                <p><strong>Tip:</strong> The wave pulses with the beat 🎶</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Countdown Screen -->
+                        <div id="countdown-screen" class="overlay-content" style="display: none;">
+                            <div class="countdown" id="countdown-number">3</div>
+                        </div>
+                        
+                        <!-- Game Over Screen -->
+                        <div id="gameover-screen" class="overlay-content game-over-content" style="display: none;">
+                            <div class="overlay-title">💥 Game Over! 💥</div>
+                            <div class="final-score" id="final-score">0</div>
+                            <div class="overlay-subtitle">points survived!</div>
+                            <button id="play-again-btn" class="play-btn">🔄 Play Again</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(gameModal);
+
+    // Load game CSS if not already loaded
+    if (!document.getElementById('game-css')) {
+        const link = document.createElement('link');
+        link.id = 'game-css';
+        link.rel = 'stylesheet';
+        link.href = '/static/css/mood-wave-rider.css';
+        document.head.appendChild(link);
+    }
+
+    // Load game JS if not already loaded
+    if (!window.MoodWaveRider) {
+        const script = document.createElement('script');
+        script.src = '/static/js/mood-wave-rider.js';
+        script.onload = function() {
+            initializeGame();
+        };
+        document.body.appendChild(script);
+    } else {
+        initializeGame();
+    }
+}
+
+function initializeGame() {
+    // Wait for DOM to be ready
+    setTimeout(() => {
+        if (window.MoodWaveRider) {
+            window.currentGame = new MoodWaveRider('mood-wave-rider');
+        }
+    }, 100);
+}
+
+function closeMoodWaveRider() {
+    const modal = document.getElementById('game-modal');
+    if (modal) {
+        // Stop game animation
+        if (window.currentGame && window.currentGame.animationId) {
+            cancelAnimationFrame(window.currentGame.animationId);
+            window.currentGame = null;
+        }
+        modal.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+}
+
+// Close modal on ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeMoodWaveRider();
+    }
+});
+
+// Add CSS animations
+const gameStyle = document.createElement('style');
+gameStyle.textContent = `
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; transform: scale(1); }
+        to { opacity: 0; transform: scale(0.95); }
+    }
+    .game-card:hover {
+        transform: translateY(-6px) scale(1.03) !important;
+        box-shadow: 0 12px 32px rgba(255, 105, 180, 0.4) !important;
+    }
+    .game-card:active {
+        transform: translateY(-4px) scale(1.01) !important;
+    }
+`;
+document.head.appendChild(gameStyle);
+</script>

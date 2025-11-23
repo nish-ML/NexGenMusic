@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Catcher - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    
+<!-- Include Header and Sidebar -->
+{% include 'includes/premium_header_sidebar.html' %}
+
+<!-- Game Content -->
+<style>
+    .game-container-wrapper {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    h1 {
+        color: #FF69B4;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    #gameCanvas {
+        display: block;
+        width: 100%;
+        height: 400px;
+        background: linear-gradient(180deg, #fff5f5, #f0f9ff);
+        border-radius: 10px;
+        margin: 20px 0;
+        border: 2px solid #FF69B4;
+    }
+    button {
+        display: inline-block;
+        margin: 10px 5px;
+        padding: 15px 30px;
+        font-size: 18px;
+        background: linear-gradient(135deg, #FF69B4, #FF1493);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: transform 0.2s;
+    }
+    button:hover {
+        transform: scale(1.05);
+    }
+    .score {
+        text-align: center;
+        font-size: 28px;
+        color: #FF69B4;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+    .instructions {
+        text-align: center;
+        color: #666;
+        margin: 20px 0;
+        padding: 20px;
+        background: #f0f9ff;
+        border-radius: 10px;
+    }
+    .instructions p {
+        margin: 10px 0;
+    }
+    .button-container {
+        text-align: center;
+    }
+</style>
+
+<div class="game-container-wrapper">
+    <h1>⭐ Star Catcher ⭐</h1>
+    
+    <div class="score">Score: <span id="score">0</span></div>
+    
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    
+    <div class="instructions">
+        <p><strong>Controls:</strong> Arrow Left/Right or A/D keys</p>
+        <p><strong>Goal:</strong> ⭐ CATCH the golden stars to score points! ⭐</p>
+        <p><strong>Scoring:</strong> Catch = +100 points | Miss = -10 points</p>
+        <p style="color: #FF69B4; font-weight: bold;">👆 Click on the game area to activate controls!</p>
+    </div>
+    
+    <div class="button-container">
+        <button id="startBtn" onclick="startGame()">▶ Start Game</button>
+        <button id="pauseBtn" onclick="pauseGame()" style="display:none;">⏸️ Pause</button>
+        <button id="restartBtn" onclick="restartGame()" style="display:none;">🔄 Continue</button>
+    </div>
+</div>
+
+    </main> <!-- Close main-content from header -->
+</div> <!-- Close main-layout from header -->
+
+<script src="/static/js/3d-background-premium.js"></script>
+<script>
+console.log('🎮 Star Catcher Game Loading...');
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('score');
+const startBtn = document.getElementById('startBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const restartBtn = document.getElementById('restartBtn');
+
+let gameRunning = false;
+let score = 0;
+let player = { x: 100, y: 200, size: 20 };
+let obstacles = [];
+let keys = {};
+
+// Keyboard controls
+document.addEventListener('keydown', (e) => {
+    keys[e.key] = true;
+    console.log('Key pressed:', e.key);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'a' || e.key === 'd' || 
+        e.key === 'A' || e.key === 'D') {
+        e.preventDefault();
+    }
+});
+
+document.addEventListener('keyup', (e) => {
+    keys[e.key] = false;
+});
+
+canvas.addEventListener('click', () => {
+    canvas.focus();
+    console.log('Canvas focused - keyboard controls active');
+});
+
+function startGame() {
+    console.log('▶️ Starting game...');
+    gameRunning = true;
+    score = 0;
+    player.x = 100;
+    player.y = 200;
+    obstacles = [];
+    startBtn.style.display = 'none';
+    restartBtn.style.display = 'none';
+    pauseBtn.style.display = 'inline-block';
+    
+    canvas.focus();
+    canvas.tabIndex = 1;
+    
+    console.log('✅ Game started! Catch the golden stars! ⭐');
+    gameLoop();
+}
+
+function restartGame() {
+    startGame();
+}
+
+function pauseGame() {
+    console.log('⏸️ Game Paused! Score:', score);
+    gameRunning = false;
+    restartBtn.style.display = 'inline-block';
+    pauseBtn.style.display = 'none';
+    
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 40px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Game Paused', canvas.width/2, canvas.height/2 - 20);
+    ctx.font = '30px Arial';
+    ctx.fillText('Score: ' + score, canvas.width/2, canvas.height/2 + 30);
+}
+
+function gameLoop() {
+    if (!gameRunning) return;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw background wave
+    ctx.strokeStyle = '#FF69B4';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (let x = 0; x < canvas.width; x += 5) {
+        const y = 200 + Math.sin(x * 0.02 + Date.now() * 0.003) * 30;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    
+    // Update player
+    if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
+        player.x = Math.max(player.size, player.x - 5);
+    }
+    if (keys['ArrowRight'] || keys['d'] || keys['D']) {
+        player.x = Math.min(canvas.width - player.size, player.x + 5);
+    }
+    
+    // Draw player
+    ctx.fillStyle = '#FF69B4';
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillText('🎧', player.x - 10, player.y + 5);
+    
+    // Spawn stars
+    if (Math.random() < 0.02) {
+        obstacles.push({ x: canvas.width, y: 200, size: 15 });
+    }
+    
+    // Update and draw stars
+    obstacles.forEach((obs, index) => {
+        obs.x -= 3;
+        
+        // Draw star
+        ctx.fillStyle = '#FFD700';
+        ctx.strokeStyle = '#FF69B4';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+            const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+            const x = obs.x + Math.cos(angle) * obs.size;
+            const y = obs.y + Math.sin(angle) * obs.size;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        
+        // Check collision
+        const dist = Math.sqrt((player.x - obs.x) ** 2 + (player.y - obs.y) ** 2);
+        if (dist < player.size + obs.size) {
+            obstacles.splice(index, 1);
+            score += 100;
+            scoreEl.textContent = score;
+            console.log('⭐ Caught! +100 points! Score:', score);
+            
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.5)';
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, player.size * 2, 0, Math.PI * 2);
+            ctx.fill();
+            return;
+        }
+        
+        // Remove off-screen
+        if (obs.x < -obs.size) {
+            obstacles.splice(index, 1);
+            score = Math.max(0, score - 10);
+            scoreEl.textContent = score;
+            console.log('❌ Missed! -10 points');
+        }
+    });
+    
+    requestAnimationFrame(gameLoop);
+}
+
+// Mark game nav as active
+document.getElementById('nav-dashboard').classList.remove('active');
+console.log('✅ Game ready! Click Start Game button.');
+
+function logout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('email');
+    window.location.href = '/premium-login/';
+}
+</script>
+</body>
+</html>

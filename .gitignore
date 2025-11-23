@@ -1,0 +1,21 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Django
+db.sqlite3
+/media/
+staticfiles/
+
+# Environment
+.env
+
+# VSCode
+.vscode/
+
+# Cache
+.cache/
+models_cache/
+generated_audio/
+generated_music/

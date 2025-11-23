@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Wave Rider - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/mood-wave-rider.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 50%, #e1d1fa 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #FF69B4;
+            border-radius: 12px;
+            color: #FF69B4;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            background: #FF69B4;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 105, 180, 0.4);
+        }
+
+        #mood-wave-rider {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .game-container {
+            height: 600px;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-container {
+                height: 400px;
+            }
+            
+            .back-button {
+                top: 10px;
+                left: 10px;
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Dashboard Button -->
+    <a href="/dashboard/" class="back-button">← Back to Dashboard</a>
+
+    <!-- Game Container -->
+    <div id="mood-wave-rider">
+        <!-- Game Header -->
+        <div class="game-header">
+            <div class="game-title">🎮 Mood Wave Rider</div>
+            <div class="game-controls">
+                <div class="game-score">
+                    Score: <span id="score-value">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Game Canvas Container -->
+        <div class="game-container">
+            <canvas id="game-canvas"></canvas>
+            
+            <!-- Game Overlay (Menu, Countdown, Game Over) -->
+            <div id="game-overlay" class="game-overlay">
+                <!-- Menu Screen -->
+                <div id="menu-screen" class="overlay-content">
+                    <div class="overlay-title">🎵 Mood Wave Rider 🎵</div>
+                    <div class="overlay-subtitle">Ride the sound wave and avoid the spikes!</div>
+                    <button id="start-btn" class="play-btn">▶ Start Game</button>
+                    <div class="game-instructions">
+                        <p><strong>Controls:</strong> Arrow Keys or A/D to move</p>
+                        <p><strong>Goal:</strong> Survive as long as possible!</p>
+                        <p><strong>Tip:</strong> The wave pulses with the beat 🎶</p>
+                    </div>
+                </div>
+                
+                <!-- Countdown Screen -->
+                <div id="countdown-screen" class="overlay-content" style="display: none;">
+                    <div class="countdown" id="countdown-number">3</div>
+                </div>
+                
+                <!-- Game Over Screen -->
+                <div id="gameover-screen" class="overlay-content game-over-content" style="display: none;">
+                    <div class="overlay-title">💥 Game Over! 💥</div>
+                    <div class="final-score" id="final-score">0</div>
+                    <div class="overlay-subtitle">points survived!</div>
+                    <button id="play-again-btn" class="play-btn">🔄 Play Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Script -->
+    <script src="/static/js/mood-wave-rider.js"></script>
+    
+    <!-- Initialize Game -->
+    <script>
+        // Wait for DOM and script to load
+        window.addEventListener('load', function() {
+            console.log('🎮 Initializing Mood Wave Rider...');
+            
+            // Check if MoodWaveRider class exists
+            if (typeof MoodWaveRider !== 'undefined') {
+                try {
+                    // Initialize the game
+                    window.game = new MoodWaveRider('mood-wave-rider');
+                    console.log('✅ Game initialized successfully!');
+                    console.log('🎮 Click "Start Game" to play!');
+                    
+                    // Setup button handlers
+                    document.getElementById('start-btn').addEventListener('click', function() {
+                        console.log('▶ Start button clicked');
+                        window.game.startGame();
+                    });
+                    
+                    document.getElementById('play-again-btn').addEventListener('click', function() {
+                        console.log('🔄 Play Again clicked');
+                        window.game.resetGame();
+                    });
+                    
+                    console.log('✅ Button handlers attached');
+                    
+                } catch (error) {
+                    console.error('❌ Error initializing game:', error);
+                }
+            } else {
+                console.error('❌ MoodWaveRider class not found. Check if mood-wave-rider.js loaded correctly.');
+            }
+        });
+    </script>
+</body>
+</html>

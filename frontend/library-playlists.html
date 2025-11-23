@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Playlists - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* 3D Background Canvas */
+        #canvas3d {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* Make content appear above 3D background */
+        .header, .main-layout, .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header - Baby Blue */
+        .header {
+            background: linear-gradient(90deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
+            border-bottom: 2px solid rgba(219, 234, 254, 0.3);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px rgba(219, 234, 254, 0.3);
+        }
+        
+        .logo { 
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e3a8a;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            color: #1e40af;
+            transform: scale(1.05);
+        }
+        
+        .logo-icon {
+            font-size: 28px;
+            filter: drop-shadow(0 2px 4px rgba(219, 234, 254, 0.4));
+        }
+        
+        .back-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            color: #1e3a8a;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+          
+  </style>
+
+</head>
+<body>
+    <!-- 3D Background Canvas -->
+    <canvas id="canvas3d"></canvas>
+    
+    <!-- Header -->
+    <header class="header">
+        <a href="/dashboard/" class="logo">
+            <span class="logo-icon">📁</span>
+            <span>My Playlists</span>
+        </a>
+        <a href="/dashboard/" class="back-btn">← Back to Dashboard</a>
+    </header>
+    
+    <div class="container">
+        <h1 style="text-align: center; margin: 40px 0; font-size: 36px; color: #1e3a8a;">My Playlists</h1>
+        <p style="text-align: center; color: #64748b; margin-bottom: 40px;">Your music collections</p>
+        
+        <div id="playlistsContainer" style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+            <!-- Playlists will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // Load playlists functionality
+        console.log('Playlists page loaded');
+    </script>
+
+    <!-- 3D Background Animation Script -->
+    <script src="/static/js/3d-background-full.js"></script>
+</body>
+</html>

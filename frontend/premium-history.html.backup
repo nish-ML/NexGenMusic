@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        #canvas3d { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .header, .container { position: relative; z-index: 1; }
+        .header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .filter-bar, .history-item { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-hover: #f1f3f5;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-secondary); color: var(--text-primary); }
+        .header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 700; color: var(--text-primary); text-decoration: none; }
+        .back-btn { padding: 8px 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s ease; }
+        .back-btn:hover { background: var(--bg-hover); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .page-subtitle { font-size: 15px; color: var(--text-secondary); }
+        .filter-bar { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 24px; display: flex; gap: 16px; flex-wrap: wrap; }
+        .filter-select { padding: 10px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; background: var(--bg-secondary); }
+        .history-grid { display: grid; gap: 16px; }
+        .history-item { background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; gap: 20px; transition: all 0.2s ease; }
+        .history-item:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .history-thumbnail { width: 120px; height: 120px; border-radius: 8px; background: linear-gradient(135deg, #e0e7ff, #dbeafe); display: flex; align-items: center; justify-content: center; font-size: 48px; flex-shrink: 0; }
+        .history-content { flex: 1; }
+        .history-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .history-meta { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+        .history-actions { display: flex; gap: 8px; }
+        .btn-action { padding: 8px 16px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-secondary); font-size: 13px; cursor: pointer; transition: all 0.2s ease; }
+        .btn-action:hover { background: var(--bg-hover); border-color: var(--accent-blue); }
+        .empty-state { text-align: center; padding: 80px 20px; }
+        .empty-icon { font-size: 64px; margin-bottom: 16px; }
+        .empty-text { font-size: 18px; color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+    <canvas id="canvas3d"></canvas>
+    <header class="header">
+        <a href="/dashboard/" class="logo"><span style="font-size: 28px;">🎵</span><span>NexGenMusic</span></a>
+        <a href="/dashboard/" class="back-btn">← Back to Dashboard</a>
+    </header>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">📜 Generation History</h1>
+            <p class="page-subtitle">View and manage your past music creations</p>
+        </div>
+        <div class="filter-bar">
+            <select class="filter-select" id="filterGenre">
+                <option value="">All Genres</option>
+                <option value="pop">Pop</option>
+                <option value="rock">Rock</option>
+                <option value="jazz">Jazz</option>
+                <option value="classical">Classical</option>
+            </select>
+            <select class="filter-select" id="filterMood">
+                <option value="">All Moods</option>
+                <option value="happy">Happy</option>
+                <option value="sad">Sad</option>
+                <option value="energetic">Energetic</option>
+                <option value="calm">Calm</option>
+            </select>
+        </div>
+        <div class="history-grid" id="historyGrid">
+            <div class="empty-state">
+                <div class="empty-icon">🎵</div>
+                <div class="empty-text">No music generated yet. Start creating!</div>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function loadHistory() {
+            const token = localStorage.getItem('access_token');
+            if (!token) return;
+            try {
+                const response = await fetch('/api/history/', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    displayHistory(data);
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+        function displayHistory(items) {
+            const grid = document.getElementById('historyGrid');
+            if (!items || items.length === 0) return;
+            grid.innerHTML = items.map(item => `
+                <div class="history-item">
+                    <div class="history-thumbnail">🎵</div>
+                    <div class="history-content">
+                        <div class="history-title">${item.title || 'Untitled'}</div>
+                        <div class="history-meta">
+                            ${item.genre || 'Unknown'} • ${item.mood || 'Unknown'} • ${new Date(item.created_at).toLocaleDateString()}
+                        </div>
+                        <div class="history-actions">
+                            <button class="btn-action" onclick="playAudio('${item.audio_url}')">▶️ Play</button>
+                            <button class="btn-action" onclick="downloadAudio('${item.audio_url}')">⬇️ Download</button>
+                            <button class="btn-action" onclick="deleteItem(${item.id})">🗑️ Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        function playAudio(url) { window.open(url, '_blank'); }
+        function downloadAudio(url) { window.open(url, '_blank'); }
+        async function deleteItem(id) {
+            if (!confirm('Delete this item?')) return;
+            const token = localStorage.getItem('access_token');
+            try {
+                await fetch(`/api/history/${id}/`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadHistory();
+            } catch (error) {
+                console.error('Error deleting:', error);
+            }
+        }
+        loadHistory();
+        
+        // 3D Background - History/Timeline Theme
+        let scene, camera, renderer, records = [], timeline = [];
+        function init3D() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf8f9fa);
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, 15);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            const light = new THREE.DirectionalLight(0x3b82f6, 0.8);
+            light.position.set(5, 10, 5);
+            scene.add(light);
+            // Vinyl records
+            for (let i = 0; i < 10; i++) {
+                const geo = new THREE.CylinderGeometry(1.5, 1.5, 0.1, 32);
+                const mat = new THREE.MeshStandardMaterial({ color: [0x3b82f6, 0xa855f7, 0x10b981][i % 3], emissive: [0x3b82f6, 0xa855f7, 0x10b981][i % 3], emissiveIntensity: 0.3 });
+                const record = new THREE.Mesh(geo, mat);
+                record.position.set((Math.random() - 0.5) * 30, Math.random() * 15, (Math.random() - 0.5) * 30);
+                record.rotation.x = Math.PI / 2;
+                scene.add(record);
+                records.push(record);
+            }
+            // Timeline dots
+            for (let i = 0; i < 20; i++) {
+                const geo = new THREE.SphereGeometry(0.2, 16, 16);
+                const mat = new THREE.MeshStandardMaterial({ color: 0xfbbf24, emissive: 0xfbbf24, emissiveIntensity: 0.5 });
+                const dot = new THREE.Mesh(geo, mat);
+                dot.position.set(i * 2 - 20, 5, -20);
+                scene.add(dot);
+                timeline.push(dot);
+            }
+            window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+            animate3D();
+        }
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            records.forEach(r => { r.rotation.z += 0.01; });
+            timeline.forEach((d, i) => { d.position.y = 5 + Math.sin(Date.now() * 0.001 + i * 0.5) * 0.5; });
+            renderer.render(scene, camera);
+        }
+        init3D();
+    </script>
+
+    <!-- 3D Background Animation Script -->
+    <script src="/static/js/3d-background-simple.js"></script>
+</body>
+</html>

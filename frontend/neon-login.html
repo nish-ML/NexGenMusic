@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: url('/static/images/music-animals-bg.jpg') center center / cover no-repeat fixed;
+            color: #1a1a2e;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            position: relative;
+        }
+
+        /* Background overlay for better readability */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(240, 244, 255, 0.75) 0%, rgba(232, 240, 254, 0.75) 50%, rgba(243, 232, 255, 0.75) 100%);
+            backdrop-filter: blur(2px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(147, 197, 253, 0.4);
+            border-radius: 50%;
+            animation: float-up 15s infinite ease-in-out;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 1s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 3s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 2.5s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 4.5s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 1.5s; }
+
+        /* Container */
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1400px;
+            margin: auto;
+            padding: 20px;
+            gap: 60px;
+            align-items: center;
+            z-index: 2;
+        }
+
+        /* 3D Scene Side */
+        .scene-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 600px;
+        }
+
+        /* 3D Canvas */
+        #canvas3d {
+            width: 100%;
+            height: 500px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(240,244,255,0.5) 100%);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.1);
+        }
+
+
+
+        /* 3D Vinyl Disc */
+        .vinyl-disc {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            box-shadow: 
+                0 20px 60px rgba(99, 102, 241, 0.15),
+                inset 0 0 40px rgba(99, 102, 241, 0.1);
+            position: relative;
+            animation: rotate-vinyl 20s linear infinite;
+            transform-style: preserve-3d;
+        }
+
+        .vinyl-disc::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a5b4fc 0%, #c7d2fe 100%);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .vinyl-disc::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #6366f1;
+        }
+
+        @keyframes rotate-vinyl {
+            from {
+                transform: rotate(0deg) rotateY(0deg);
+            }
+            to {
+                transform: rotate(360deg) rotateY(10deg);
+            }
+        }
+
+        /* Waveform */
+        .waveform {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-top: 40px;
+            height: 80px;
+        }
+
+        .wave-bar {
+            width: 8px;
+            background: linear-gradient(180deg, #a5b4fc 0%, #c7d2fe 100%);
+            border-radius: 10px;
+            animation: wave 1.2s ease-in-out infinite;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .wave-bar:nth-child(1) { height: 30px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 50px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 70px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 45px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 60px; animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { height: 35px; animation-delay: 0.5s; }
+        .wave-bar:nth-child(7) { height: 55px; animation-delay: 0.6s; }
+        .wave-bar:nth-child(8) { height: 40px; animation-delay: 0.7s; }
+
+        @keyframes wave {
+            0%, 100% {
+                transform: scaleY(1);
+            }
+            50% {
+                transform: scaleY(1.5);
+            }
+        }
+
+        /* Form Side */
+        .form-side {
+            flex: 1;
+            max-width: 480px;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 
+                0 20px 60px rgba(99, 102, 241, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.5);
+            animation: fade-in 0.6s ease;
+            transition: all 0.3s ease;
+        }
+
+        .form-card:hover {
+            box-shadow: 
+                0 25px 70px rgba(99, 102, 241, 0.15),
+                0 0 0 1px rgba(147, 197, 253, 0.5);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #475569;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid rgba(203, 213, 225, 0.5);
+            border-radius: 12px;
+            color: #1e293b;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus {
+            border-color: #a5b4fc;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(165, 180, 252, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #94a3b8;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 28px 0;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 42%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(203, 213, 225, 0.5), transparent);
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .divider span {
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 0 12px;
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px solid rgba(203, 213, 225, 0.5);
+            border-radius: 12px;
+            color: #1e293b;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-google:hover {
+            border-color: #4285F4;
+            background: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(66, 133, 244, 0.15);
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .links a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #4f46e5;
+            text-decoration: underline;
+        }
+
+        .error-message, .success-message {
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            color: #dc2626;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid rgba(34, 197, 94, 0.3);
+            color: #16a34a;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .container {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .scene-side {
+                order: 1;
+                min-height: 400px;
+            }
+
+            #canvas3d {
+                height: 350px;
+            }
+
+            .form-side {
+                order: 2;
+                width: 100%;
+            }
+
+            .waveform {
+                height: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-card {
+                padding: 32px 24px;
+            }
+
+            .logo h1 {
+                font-size: 28px;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="container">
+        <!-- 3D Scene Side -->
+        <div class="scene-side">
+            <canvas id="canvas3d"></canvas>
+            <div class="waveform">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+        </div>
+
+        <!-- Form Side -->
+        <div class="form-side">
+            <div class="form-card">
+                <div class="logo">
+                    <h1>🎵 NexGen Music</h1>
+                    <p>Welcome Back</p>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="remember">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-login">Sign In</button>
+                </form>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <button class="btn-google" onclick="loginWithGoogle()">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+
+                <div class="links">
+                    <p>Don't have an account? <a href="/neon-register.html">Create Account</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 3D SCENE WITH CARTOON ANIMALS ==========
+        let scene, camera, renderer, peacock, deer, birds = [];
+        let audioContext, ambientSound, isSoundEnabled = false;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function init3DScene() {
+            const canvas = document.getElementById('canvas3d');
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf0f4ff);
+            scene.fog = new THREE.Fog(0xf0f4ff, 10, 50);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+            camera.position.set(0, 3, 12);
+            camera.lookAt(0, 2, 0);
+
+            // Renderer
+            const isMobile = window.innerWidth < 768;
+            renderer = new THREE.WebGLRenderer({ 
+                canvas, 
+                antialias: !isMobile, 
+                alpha: true,
+                powerPreference: isMobile ? 'low-power' : 'high-performance'
+            });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = !isMobile;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight1 = new THREE.DirectionalLight(0xa5b4fc, 0.8);
+            directionalLight1.position.set(5, 10, 5);
+            directionalLight1.castShadow = true;
+            scene.add(directionalLight1);
+
+            const directionalLight2 = new THREE.DirectionalLight(0xfae8ff, 0.5);
+            directionalLight2.position.set(-5, 8, -3);
+            scene.add(directionalLight2);
+
+            // Floating platform
+            const platformGeometry = new THREE.CylinderGeometry(4, 4, 0.3, 32);
+            const platformMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                roughness: 0.3,
+                metalness: 0.1,
+                transparent: true,
+                opacity: 0.8
+            });
+            const platform = new THREE.Mesh(platformGeometry, platformMaterial);
+            platform.position.y = 0;
+            platform.receiveShadow = true;
+            scene.add(platform);
+
+            // Create animals
+            createPeacock();
+            createDeer();
+            createBirds();
+
+            // Handle resize
+            window.addEventListener('resize', onWindowResize);
+
+            // Start animation
+            animate();
+        }
+
+        function createPeacock() {
+            const peacockGroup = new THREE.Group();
+
+            // Body (soft blue-purple)
+            const bodyGeometry = new THREE.SphereGeometry(0.6, 16, 16);
+            const bodyMaterial = new THREE.MeshStandardMaterial({
+                color: 0xa5b4fc,
+                roughness: 0.4,
+                metalness: 0.2
+            });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.scale.set(1, 1.2, 0.8);
+            body.castShadow = true;
+            peacockGroup.add(body);
+
+            // Head
+            const headGeometry = new THREE.SphereGeometry(0.35, 16, 16);
+            const headMaterial = new THREE.MeshStandardMaterial({
+                color: 0xc7d2fe,
+                roughness: 0.3
+            });
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.set(0, 0.8, 0.3);
+            head.castShadow = true;
+            peacockGroup.add(head);
+
+            // Beak
+            const beakGeometry = new THREE.ConeGeometry(0.08, 0.2, 8);
+            const beakMaterial = new THREE.MeshStandardMaterial({ color: 0xfbbf24 });
+            const beak = new THREE.Mesh(beakGeometry, beakMaterial);
+            beak.position.set(0, 0.8, 0.6);
+            beak.rotation.x = Math.PI / 2;
+            peacockGroup.add(beak);
+
+            // Eyes
+            const eyeGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+            const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.15, 0.9, 0.5);
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.15, 0.9, 0.5);
+            peacockGroup.add(leftEye, rightEye);
+
+            // Tail feathers (glowing)
+            const featherGroup = new THREE.Group();
+            for (let i = 0; i < 7; i++) {
+                const angle = (i - 3) * 0.3;
+                const featherGeometry = new THREE.PlaneGeometry(0.4, 1.5);
+                const featherMaterial = new THREE.MeshStandardMaterial({
+                    color: i % 2 === 0 ? 0x6366f1 : 0xa855f7,
+                    side: THREE.DoubleSide,
+                    emissive: i % 2 === 0 ? 0x6366f1 : 0xa855f7,
+                    emissiveIntensity: 0.3,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                const feather = new THREE.Mesh(featherGeometry, featherMaterial);
+                feather.position.set(Math.sin(angle) * 0.8, 0.5, -0.5 + Math.cos(angle) * 0.3);
+                feather.rotation.y = angle;
+                featherGroup.add(feather);
+            }
+            peacockGroup.add(featherGroup);
+            peacockGroup.userData.feathers = featherGroup;
+
+            peacockGroup.position.set(-2, 0.5, 0);
+            peacockGroup.userData.baseY = 0.5;
+            peacockGroup.userData.time = 0;
+            
+            // Entry animation
+            if (!prefersReducedMotion) {
+                peacockGroup.scale.set(0, 0, 0);
+                const startTime = Date.now();
+                const duration = 1000;
+                
+                function fadeIn() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const scale = progress;
+                    peacockGroup.scale.set(scale, scale, scale);
+                    
+                    // Spread feathers during entry
+                    if (featherGroup) {
+                        featherGroup.rotation.y = (1 - progress) * -Math.PI;
+                    }
+                    
+                    if (progress < 1) requestAnimationFrame(fadeIn);
+                }
+                fadeIn();
+            }
+            
+            scene.add(peacockGroup);
+            peacock = peacockGroup;
+        }
+
+        function createDeer() {
+            const deerGroup = new THREE.Group();
+
+            // Body (soft peach)
+            const bodyGeometry = new THREE.BoxGeometry(0.8, 0.6, 1.2);
+            const bodyMaterial = new THREE.MeshStandardMaterial({
+                color: 0xfed7aa,
+                roughness: 0.5
+            });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.castShadow = true;
+            deerGroup.add(body);
+
+            // Head
+            const headGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.6);
+            const headMaterial = new THREE.MeshStandardMaterial({ color: 0xfed7aa });
+            const head = new THREE.Mesh(headGeometry, headMaterial);
+            head.position.set(0, 0.4, 0.8);
+            head.castShadow = true;
+            deerGroup.add(head);
+
+            // Snout
+            const snoutGeometry = new THREE.BoxGeometry(0.3, 0.2, 0.3);
+            const snout = new THREE.Mesh(snoutGeometry, headMaterial);
+            snout.position.set(0, 0.3, 1.2);
+            deerGroup.add(snout);
+
+            // Nose
+            const noseGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+            const noseMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+            const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+            nose.position.set(0, 0.3, 1.35);
+            deerGroup.add(nose);
+
+            // Eyes
+            const eyeGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            const eyeMaterial = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.15, 0.5, 1.05);
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.15, 0.5, 1.05);
+            deerGroup.add(leftEye, rightEye);
+
+            // Ears
+            const earGeometry = new THREE.ConeGeometry(0.15, 0.4, 8);
+            const earMaterial = new THREE.MeshStandardMaterial({ color: 0xfed7aa });
+            const leftEar = new THREE.Mesh(earGeometry, earMaterial);
+            leftEar.position.set(-0.25, 0.7, 0.8);
+            leftEar.rotation.z = -0.3;
+            const rightEar = new THREE.Mesh(earGeometry, earMaterial);
+            rightEar.position.set(0.25, 0.7, 0.8);
+            rightEar.rotation.z = 0.3;
+            deerGroup.add(leftEar, rightEar);
+            deerGroup.userData.ears = [leftEar, rightEar];
+
+            // Antlers
+            const antlerMaterial = new THREE.MeshStandardMaterial({ color: 0x92400e });
+            const antlerGeometry = new THREE.CylinderGeometry(0.03, 0.05, 0.5, 8);
+            const leftAntler = new THREE.Mesh(antlerGeometry, antlerMaterial);
+            leftAntler.position.set(-0.2, 0.9, 0.7);
+            const rightAntler = new THREE.Mesh(antlerGeometry, antlerMaterial);
+            rightAntler.position.set(0.2, 0.9, 0.7);
+            deerGroup.add(leftAntler, rightAntler);
+
+            // Legs
+            const legGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.6, 8);
+            const legMaterial = new THREE.MeshStandardMaterial({ color: 0xfed7aa });
+            const positions = [[-0.3, -0.6, 0.4], [0.3, -0.6, 0.4], [-0.3, -0.6, -0.4], [0.3, -0.6, -0.4]];
+            positions.forEach(pos => {
+                const leg = new THREE.Mesh(legGeometry, legMaterial);
+                leg.position.set(...pos);
+                leg.castShadow = true;
+                deerGroup.add(leg);
+            });
+
+            deerGroup.position.set(2, 0.9, 0);
+            deerGroup.userData.baseY = 0.9;
+            deerGroup.userData.time = 0;
+            
+            // Entry animation - hop into frame
+            if (!prefersReducedMotion) {
+                deerGroup.position.y = -2;
+                const startTime = Date.now();
+                const duration = 800;
+                
+                function hopIn() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    deerGroup.position.y = -2 + (2.9) * easeOut;
+                    
+                    if (progress < 1) requestAnimationFrame(hopIn);
+                }
+                setTimeout(hopIn, 300);
+            }
+            
+            scene.add(deerGroup);
+            deer = deerGroup;
+        }
+
+        function createBirds() {
+            for (let i = 0; i < 3; i++) {
+                const birdGroup = new THREE.Group();
+
+                // Body
+                const bodyGeometry = new THREE.SphereGeometry(0.15, 12, 12);
+                const colors = [0x93c5fd, 0xbfdbfe, 0xdbeafe];
+                const bodyMaterial = new THREE.MeshStandardMaterial({
+                    color: colors[i],
+                    roughness: 0.4
+                });
+                const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+                body.scale.set(1, 0.8, 1.2);
+                body.castShadow = true;
+                birdGroup.add(body);
+
+                // Head
+                const headGeometry = new THREE.SphereGeometry(0.1, 12, 12);
+                const head = new THREE.Mesh(headGeometry, bodyMaterial);
+                head.position.set(0, 0.15, 0.15);
+                birdGroup.add(head);
+
+                // Beak
+                const beakGeometry = new THREE.ConeGeometry(0.03, 0.1, 6);
+                const beakMaterial = new THREE.MeshStandardMaterial({ color: 0xfbbf24 });
+                const beak = new THREE.Mesh(beakGeometry, beakMaterial);
+                beak.position.set(0, 0.15, 0.25);
+                beak.rotation.x = Math.PI / 2;
+                birdGroup.add(beak);
+
+                // Wings
+                const wingGeometry = new THREE.PlaneGeometry(0.25, 0.15);
+                const wingMaterial = new THREE.MeshStandardMaterial({
+                    color: colors[i],
+                    side: THREE.DoubleSide
+                });
+                const leftWing = new THREE.Mesh(wingGeometry, wingMaterial);
+                leftWing.position.set(-0.15, 0, 0);
+                leftWing.rotation.y = -0.5;
+                const rightWing = new THREE.Mesh(wingGeometry, wingMaterial);
+                rightWing.position.set(0.15, 0, 0);
+                rightWing.rotation.y = 0.5;
+                birdGroup.add(leftWing, rightWing);
+                birdGroup.userData.wings = [leftWing, rightWing];
+
+                const angle = (i / 3) * Math.PI * 2;
+                const radius = 5;
+                birdGroup.userData.angle = angle;
+                birdGroup.userData.radius = radius;
+                birdGroup.userData.speed = 0.3 + i * 0.1;
+                birdGroup.userData.time = i * 2;
+                
+                // Entry animation - fly in from left
+                if (!prefersReducedMotion) {
+                    birdGroup.position.set(-10, 3 + i * 0.5, Math.sin(angle) * radius);
+                    const startTime = Date.now();
+                    const duration = 1200;
+                    const targetX = Math.cos(angle) * radius;
+                    
+                    function flyIn() {
+                        const elapsed = Date.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const easeOut = 1 - Math.pow(1 - progress, 2);
+                        birdGroup.position.x = -10 + (targetX + 10) * easeOut;
+                        
+                        if (progress < 1) requestAnimationFrame(flyIn);
+                    }
+                    setTimeout(flyIn, 500 + i * 200);
+                } else {
+                    birdGroup.position.set(
+                        Math.cos(angle) * radius,
+                        3 + i * 0.5,
+                        Math.sin(angle) * radius
+                    );
+                }
+
+                scene.add(birdGroup);
+                birds.push(birdGroup);
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (prefersReducedMotion) {
+                renderer.render(scene, camera);
+                return;
+            }
+
+            const time = Date.now() * 0.001;
+
+            // Peacock dance animation
+            if (peacock) {
+                peacock.userData.time += 0.016;
+                peacock.position.y = peacock.userData.baseY + Math.sin(peacock.userData.time * 2) * 0.1;
+                peacock.rotation.y = Math.sin(peacock.userData.time) * 0.3;
+                
+                // Feather glow pulse
+                const feathers = peacock.userData.feathers;
+                if (feathers) {
+                    feathers.rotation.y = Math.sin(peacock.userData.time * 0.5) * 0.5;
+                    feathers.children.forEach((feather, i) => {
+                        feather.material.emissiveIntensity = 0.3 + Math.sin(time * 2 + i) * 0.2;
+                    });
+                }
+            }
+
+            // Deer groove animation
+            if (deer) {
+                deer.userData.time += 0.016;
+                deer.position.y = deer.userData.baseY + Math.sin(deer.userData.time * 3) * 0.08;
+                deer.rotation.y = Math.sin(deer.userData.time * 0.8) * 0.2;
+                
+                // Head bob
+                deer.children[1].rotation.x = Math.sin(deer.userData.time * 2) * 0.1;
+                
+                // Ear movement
+                if (deer.userData.ears) {
+                    deer.userData.ears[0].rotation.z = -0.3 + Math.sin(time * 3) * 0.2;
+                    deer.userData.ears[1].rotation.z = 0.3 - Math.sin(time * 3) * 0.2;
+                }
+            }
+
+            // Birds flying in circles
+            birds.forEach(bird => {
+                bird.userData.time += 0.016;
+                bird.userData.angle += bird.userData.speed * 0.01;
+                
+                bird.position.x = Math.cos(bird.userData.angle) * bird.userData.radius;
+                bird.position.z = Math.sin(bird.userData.angle) * bird.userData.radius;
+                bird.position.y = 3 + Math.sin(bird.userData.time * 2) * 0.3;
+                
+                bird.rotation.y = bird.userData.angle + Math.PI / 2;
+                
+                // Wing flapping
+                if (bird.userData.wings) {
+                    const flapAngle = Math.sin(bird.userData.time * 8) * 0.5;
+                    bird.userData.wings[0].rotation.y = -0.5 + flapAngle;
+                    bird.userData.wings[1].rotation.y = 0.5 - flapAngle;
+                }
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            const canvas = document.getElementById('canvas3d');
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        // Peacock spin on login
+        function triggerPeacockSpin() {
+            if (peacock && !prefersReducedMotion) {
+                const startRotation = peacock.rotation.y;
+                const duration = 1000;
+                const startTime = Date.now();
+                
+                function spin() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    peacock.rotation.y = startRotation + progress * Math.PI * 2;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(spin);
+                    }
+                }
+                spin();
+            }
+        }
+
+        // Deer jump on login
+        function triggerDeerJump() {
+            if (deer && !prefersReducedMotion) {
+                const startY = deer.position.y;
+                const duration = 600;
+                const startTime = Date.now();
+                
+                function jump() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const jumpHeight = Math.sin(progress * Math.PI) * 0.8;
+                    deer.position.y = startY + jumpHeight;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(jump);
+                    }
+                }
+                jump();
+            }
+        }
+
+        // Birds speed up
+        function triggerBirdsSpeedUp() {
+            if (!prefersReducedMotion) {
+                birds.forEach(bird => {
+                    const originalSpeed = bird.userData.speed;
+                    bird.userData.speed *= 3;
+                    setTimeout(() => {
+                        bird.userData.speed = originalSpeed;
+                    }, 2000);
+                });
+            }
+        }
+
+        // ========== AMBIENT SOUND SYSTEM ==========
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Create simple ambient sound using oscillators
+                const oscillator1 = audioContext.createOscillator();
+                const oscillator2 = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator1.type = 'sine';
+                oscillator1.frequency.setValueAtTime(220, audioContext.currentTime);
+                oscillator2.type = 'sine';
+                oscillator2.frequency.setValueAtTime(330, audioContext.currentTime);
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                
+                oscillator1.connect(gainNode);
+                oscillator2.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator1.start();
+                oscillator2.start();
+                
+                ambientSound = { oscillator1, oscillator2, gainNode };
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+
+        function toggleSound() {
+            const btn = document.getElementById('soundToggle');
+            const icon = btn.querySelector('.sound-icon');
+            
+            if (!audioContext) {
+                initAudio();
+            }
+            
+            isSoundEnabled = !isSoundEnabled;
+            
+            if (isSoundEnabled && ambientSound) {
+                ambientSound.gainNode.gain.linearRampToValueAtTime(0.02, audioContext.currentTime + 0.5);
+                icon.textContent = '🔊';
+                btn.classList.remove('muted');
+            } else if (ambientSound) {
+                ambientSound.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
+                icon.textContent = '🔇';
+                btn.classList.add('muted');
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            init3DScene();
+        });
+
+        document.getElementById('soundToggle').addEventListener('click', toggleSound);
+
+        // ========== ORIGINAL LOGIN LOGIC ==========
+        // Check for URL parameters (Google callback)
+        const urlParams = new URLSearchParams(window.location.search);
+        const access = urlParams.get('access');
+        const refresh = urlParams.get('refresh');
+        const googleAuth = urlParams.get('google');
+        const error = urlParams.get('error');
+
+        if (error) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = '✕ Google authentication failed. Please try again.';
+            errorMessage.style.display = 'block';
+        }
+
+        if (access && refresh && googleAuth) {
+            localStorage.setItem('access_token', access);
+            localStorage.setItem('refresh_token', refresh);
+            const successMessage = document.getElementById('successMessage');
+            successMessage.textContent = '✓ Google login successful! Redirecting...';
+            successMessage.style.display = 'block';
+            setTimeout(() => {
+                window.location.href = '/dashboard/';
+            }, 1000);
+        }
+
+        // Google login function
+        function loginWithGoogle() {
+            window.location.href = '/api/google-auth/';
+        }
+
+        // Waveform reactions
+        const inputs = document.querySelectorAll('input');
+        const waveBars = document.querySelectorAll('.wave-bar');
+        const buttons = document.querySelectorAll('button');
+        
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                waveBars.forEach(bar => {
+                    bar.style.background = 'linear-gradient(180deg, #6366f1 0%, #a855f7 100%)';
+                    bar.style.boxShadow = '0 4px 20px rgba(99, 102, 241, 0.5)';
+                });
+                // Trigger deer ear movement
+                if (deer && deer.userData.ears && !prefersReducedMotion) {
+                    deer.userData.ears.forEach(ear => {
+                        ear.rotation.z *= 1.5;
+                    });
+                }
+            });
+            
+            input.addEventListener('blur', () => {
+                waveBars.forEach(bar => {
+                    bar.style.background = 'linear-gradient(180deg, #a5b4fc 0%, #c7d2fe 100%)';
+                    bar.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.2)';
+                });
+            });
+
+            // Waveform react to typing
+            input.addEventListener('input', () => {
+                if (!prefersReducedMotion) {
+                    waveBars.forEach((bar, i) => {
+                        const randomHeight = 30 + Math.random() * 50;
+                        bar.style.height = randomHeight + 'px';
+                        setTimeout(() => {
+                            bar.style.height = '';
+                        }, 200);
+                    });
+                }
+            });
+        });
+
+        // Button hover effects
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                if (!prefersReducedMotion) {
+                    waveBars.forEach((bar, i) => {
+                        setTimeout(() => {
+                            bar.style.transform = 'scaleY(1.3)';
+                        }, i * 30);
+                    });
+                }
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                waveBars.forEach(bar => {
+                    bar.style.transform = '';
+                });
+            });
+        });
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Trigger animations
+            triggerPeacockSpin();
+            triggerDeerJump();
+            triggerBirdsSpeedUp();
+
+            try {
+                const response = await fetch('/api/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username: email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('access_token', data.access);
+                    localStorage.setItem('refresh_token', data.refresh);
+                    
+                    successMessage.textContent = '✓ Login successful! Redirecting...';
+                    successMessage.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        window.location.href = '/dashboard/';
+                    }, 1000);
+                } else {
+                    errorMessage.textContent = '✕ ' + (data.error || 'Login failed. Please try again.');
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+                errorMessage.textContent = '✕ Network error. Please try again.';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
