@@ -8,11 +8,19 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 
+    # Dashboard
+    path('dashboard/', views.dashboard, name='dashboard'),
+
     # Upload image
     path('upload/', views.upload_image, name='upload_image'),
 
     # Music generation (handles mood, sentiment, Spotify tracks, and generated music)
     path('music/', views.music_generation_view, name='music_generation'),
+    
+    # Aliases for the dashboard actions
+    path('ai-generator/', views.music_generation_view, name='ai_generator'),
+    path('spotify-recommendations/', views.music_generation_view, name='spotify_recommendations'),
+    path('history/', views.music_generation_view, name='history'),
 
     # If you have a separate mood detection view, uncomment this and make sure it exists in views.py
     # path('mood/', views.mood_detection_view, name='mood_detection'),

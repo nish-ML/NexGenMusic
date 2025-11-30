@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Recommendations - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #1B5E20; --primary-light: #2E7D32; --accent: #4CAF50; --bg: #F5F7F5; --white: #FFFFFF; --text: #1A1A1A; --text-secondary: #6B7280; --text-muted: #9CA3AF; --border: #E5E7EB; --radius: 12px; --radius-lg: 16px; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        .app { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: var(--white); border-right: 1px solid var(--border); position: fixed; height: 100vh; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 24px 20px; border-bottom: 1px solid #F0F0F0; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+        .logo-icon { width: 40px; height: 40px; background: var(--primary); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
+        .logo-text { font-size: 18px; font-weight: 700; }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .nav-section { margin-bottom: 24px; }
+        .nav-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 0 12px; margin-bottom: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--radius); color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s; margin-bottom: 4px; }
+        .nav-item:hover { background: #F0FDF4; color: var(--primary); }
+        .nav-item.active { background: var(--primary); color: white; }
+        .nav-item svg { width: 20px; height: 20px; stroke: currentColor; }
+        .mobile-promo { margin: 12px; padding: 20px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border-radius: var(--radius-lg); color: white; }
+        .mobile-promo h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .mobile-promo p { font-size: 12px; opacity: 0.9; margin-bottom: 12px; }
+        .promo-btn { display: inline-block; background: white; color: var(--primary); padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; }
+        .main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; }
+        .header { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; cursor: pointer; }
+        .main-content { flex: 1; padding: 32px; overflow-y: auto; }
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 28px; font-weight: 700; }
+        .page-subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+        .btn-spotify { display: inline-flex; align-items: center; gap: 8px; background: #1DB954; color: white; padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn-spotify:hover { background: #1ed760; transform: translateY(-1px); }
+        .btn-outline { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--text); padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 600; border: 1px solid var(--border); cursor: pointer; }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; margin-bottom: 24px; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #F0F0F0; }
+        .card-title { font-size: 16px; font-weight: 600; }
+        .card-body { padding: 24px; }
+        /* Search Input */
+        .search-section { margin-bottom: 24px; }
+        .search-input-wrapper { display: flex; gap: 12px; margin-bottom: 16px; }
+        .search-input { flex: 1; padding: 14px 20px; border: 2px solid var(--border); border-radius: var(--radius); font-size: 15px; outline: none; transition: all 0.2s; }
+        .search-input:focus { border-color: #1DB954; box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.1); }
+        .search-input::placeholder { color: var(--text-muted); }
+        .search-btn { padding: 14px 28px; background: #1DB954; color: white; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+        .search-btn:hover { background: #1ed760; }
+        .search-btn:disabled { background: #ccc; cursor: not-allowed; }
+        
+        /* Mood Selector */
+        .mood-selector { margin-bottom: 24px; }
+        .mood-label { font-size: 14px; font-weight: 600; margin-bottom: 12px; display: block; }
+        .mood-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+        .mood-chip { padding: 10px 18px; background: var(--bg); border: 2px solid var(--border); border-radius: 24px; cursor: pointer; transition: all 0.2s; font-size: 14px; font-weight: 500; color: var(--text-secondary); }
+        .mood-chip:hover { background: #F0FDF4; border-color: var(--primary); color: var(--primary); }
+        .mood-chip.active { background: var(--primary); border-color: var(--primary); color: white; }
+        
+        /* Spotify Embed Container */
+        .spotify-embed-container { margin-top: 24px; }
+        .embed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+        .spotify-embed { border-radius: var(--radius); overflow: hidden; background: #282828; position: relative; }
+        .spotify-embed iframe { width: 100%; border: none; }
+        .track-actions { display: flex; gap: 8px; padding: 12px; background: #1a1a1a; justify-content: center; }
+        .like-btn, .playlist-btn { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .like-btn { background: #2a2a2a; color: #EF4444; }
+        .like-btn:hover { background: #EF4444; color: white; transform: scale(1.1); }
+        .like-btn.liked { background: #EF4444; color: white; }
+        .like-btn.liked svg { fill: currentColor; }
+        .playlist-btn { background: #2a2a2a; color: var(--primary); }
+        .playlist-btn:hover { background: var(--primary); color: white; transform: scale(1.1); }
+        
+        /* Loading State */
+        .loading { display: flex; align-items: center; justify-content: center; padding: 48px; }
+        .loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: #1DB954; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Results Info */
+        .results-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding: 12px 16px; background: #F0FDF4; border-radius: var(--radius); }
+        .results-text { font-size: 14px; color: var(--primary); font-weight: 500; }
+        .results-count { font-size: 13px; color: var(--text-secondary); }
+        
+        /* Quick Actions */
+        .quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+        .quick-action { padding: 16px; background: var(--bg); border-radius: var(--radius); text-align: center; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+        .quick-action:hover { background: #F0FDF4; border-color: var(--primary); }
+        .quick-action-icon { font-size: 24px; margin-bottom: 8px; }
+        .quick-action-text { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+        
+        /* Content Grid */
+        .content-grid { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+        
+        /* Sidebar Card */
+        .sidebar-card { background: linear-gradient(135deg, #191414 0%, #282828 100%); border-radius: var(--radius-lg); padding: 24px; color: white; text-align: center; margin-bottom: 24px; }
+        .sidebar-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+        .sidebar-card p { font-size: 13px; opacity: 0.8; margin-bottom: 16px; }
+        .genre-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .genre-tag { padding: 6px 12px; background: rgba(255,255,255,0.1); border-radius: 16px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .genre-tag:hover { background: #1DB954; }
+        
+        /* Now Playing */
+        .now-playing { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 20px; }
+        .now-playing-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .now-playing-title::before { content: ''; width: 8px; height: 8px; background: #1DB954; border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        @media (max-width: 1200px) { .content-grid { grid-template-columns: 1fr; } .quick-actions { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 1024px) { .sidebar { display: none; } .main-wrapper { margin-left: 0; } }
+        @media (max-width: 768px) { .search-input-wrapper { flex-direction: column; } .quick-actions { grid-template-columns: 1fr; } .embed-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="sidebar-header"><a href="/dashboard/" class="logo"><div class="logo-icon">♪</div><span class="logo-text">NexGenMusic</span></a></div>
+        <nav class="sidebar-nav">
+            <div class="nav-section"><div class="nav-title">Menu</div>
+                <a href="/dashboard/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6z"/></svg>Dashboard</a>
+                <a href="/ai-generator/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>AI Generator</a>
+                <a href="/spotify-recommendations/" class="nav-item active"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"/></svg>Spotify</a>
+                <a href="/history/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>History</a>
+            </div>
+            <div class="nav-section"><div class="nav-title">Library</div>
+                <a href="/library/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>My Library</a>
+                <a href="/library/favorites/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>Favorites</a>
+                <a href="/library/playlists/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/></svg>Playlists</a>
+            </div>
+            <div class="nav-section"><div class="nav-title">General</div>
+                <a href="/settings/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Settings</a>
+                <a href="#" class="nav-item" onclick="logout(); return false;"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>Logout</a>
+            </div>
+        </nav>
+        <div class="mobile-promo" style="background: linear-gradient(135deg, #0D3B12 0%, #1B5E20 100%);"><h4>📸 Connect on Instagram</h4><p>Follow for updates & more</p><a href="https://instagram.com/nish.1__" target="_blank" class="promo-btn" style="color: #1B5E20;">Follow @nish.1__</a></div>
+    </aside>
+    <div
+ class="main-wrapper">
+        <header class="header">
+            <div style="font-size: 14px; color: var(--text-secondary);">🎧 Discover music based on your mood</div>
+            <div class="user-avatar" id="userAvatar" onclick="window.location.href='/profile/'">U</div>
+        </header>
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Spotify Recommendations</h1>
+                <p class="page-subtitle">Search for music or select a mood to get personalized Spotify recommendations you can play right here!</p>
+            </div>
+
+            <div class="content-grid">
+                <div>
+                    <!-- Search Section -->
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">🔍 Search Music</h3></div>
+                        <div class="card-body">
+                            <div class="search-section">
+                                <div class="search-input-wrapper">
+                                    <input type="text" class="search-input" id="searchInput" placeholder="Type artist, song, album or describe your mood... (e.g., 'relaxing jazz', 'workout music', 'Taylor Swift')">
+                                    <button class="search-btn" id="searchBtn" onclick="searchMusic()">
+                                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                        Search
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Mood Selector -->
+                            <div class="mood-selector">
+                                <label class="mood-label">Or select a mood:</label>
+                                <div class="mood-chips">
+                                    <button class="mood-chip" data-mood="happy" data-query="happy upbeat pop songs">😊 Happy</button>
+                                    <button class="mood-chip" data-mood="sad" data-query="sad emotional ballads">😢 Sad</button>
+                                    <button class="mood-chip" data-mood="energetic" data-query="energetic workout music">⚡ Energetic</button>
+                                    <button class="mood-chip" data-mood="chill" data-query="chill lofi relaxing">😌 Chill</button>
+                                    <button class="mood-chip" data-mood="romantic" data-query="romantic love songs">❤️ Romantic</button>
+                                    <button class="mood-chip" data-mood="focus" data-query="focus study concentration music">🎯 Focus</button>
+                                    <button class="mood-chip" data-mood="party" data-query="party dance hits">🎉 Party</button>
+                                    <button class="mood-chip" data-mood="sleep" data-query="sleep ambient calm">😴 Sleep</button>
+                                </div>
+                            </div>
+
+                            <!-- Quick Genre Actions -->
+                            <div class="quick-actions">
+                                <div class="quick-action" onclick="searchByGenre('pop hits 2024')"><div class="quick-action-icon">🎤</div><div class="quick-action-text">Pop Hits</div></div>
+                                <div class="quick-action" onclick="searchByGenre('hip hop rap')"><div class="quick-action-icon">🎧</div><div class="quick-action-text">Hip Hop</div></div>
+                                <div class="quick-action" onclick="searchByGenre('rock classics')"><div class="quick-action-icon">🎸</div><div class="quick-action-text">Rock</div></div>
+                                <div class="quick-action" onclick="searchByGenre('electronic edm')"><div class="quick-action-icon">🎹</div><div class="quick-action-text">Electronic</div></div>
+                                <div class="quick-action" onclick="searchByGenre('jazz smooth')"><div class="quick-action-icon">🎷</div><div class="quick-action-text">Jazz</div></div>
+                                <div class="quick-action" onclick="searchByGenre('classical piano')"><div class="quick-action-icon">🎻</div><div class="quick-action-text">Classical</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div class="card" id="resultsCard" style="display: none;">
+                        <div class="card-header">
+                            <h3 class="card-title">🎵 Now Playing</h3>
+                            <button class="btn-outline" style="padding: 8px 16px; font-size: 13px;" onclick="clearResults()">Clear</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="results-info" id="resultsInfo" style="display: none;">
+                                <span class="results-text" id="resultsText">Showing results for: </span>
+                                <span class="results-count" id="resultsCount"></span>
+                            </div>
+                            <div id="loadingState" class="loading" style="display: none;">
+                                <div class="loading-spinner"></div>
+                            </div>
+                            <div class="spotify-embed-container" id="spotifyEmbeds"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div>
+                    <div class="sidebar-card">
+                        <h3>🎧 Spotify Player</h3>
+                        <p>Search or select a mood to load embedded Spotify tracks you can play directly!</p>
+                        <div class="genre-tags">
+                            <span class="genre-tag" onclick="searchByGenre('indie folk')">Indie</span>
+                            <span class="genre-tag" onclick="searchByGenre('r&b soul')">R&B</span>
+                            <span class="genre-tag" onclick="searchByGenre('country music')">Country</span>
+                            <span class="genre-tag" onclick="searchByGenre('latin reggaeton')">Latin</span>
+                            <span class="genre-tag" onclick="searchByGenre('k-pop korean')">K-Pop</span>
+                        </div>
+                    </div>
+
+                    <div class="now-playing" id="nowPlayingCard" style="display: none;">
+                        <div class="now-playing-title">Currently Loaded</div>
+                        <div id="currentQuery" style="font-size: 14px; color: var(--text-secondary);"></div>
+                    </div>
+
+                    <div class="card" style="margin-top: 16px;">
+                        <div class="card-header"><h3 class="card-title">Quick Links</h3></div>
+                        <div class="card-body" style="padding: 12px;">
+                            <a href="/ai-generator/" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: var(--radius); text-decoration: none; color: inherit; margin-bottom: 8px;">
+                                <span style="font-size: 20px;">✨</span>
+                                <div><div style="font-weight: 600; font-size: 14px;">AI Generator</div><div style="font-size: 12px; color: var(--text-secondary);">Create custom music</div></div>
+                            </a>
+                            <a href="/library/favorites/" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: var(--radius); text-decoration: none; color: inherit;">
+                                <span style="font-size: 20px;">❤️</span>
+                                <div><div style="font-weight: 600; font-size: 14px;">Favorites</div><div style="font-size: 12px; color: var(--text-secondary);">Your liked tracks</div></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+// Spotify track IDs for different moods/genres (curated playlists)
+const moodPlaylists = {
+    'happy': ['37i9dQZF1DXdPec7aLTmlC', '37i9dQZF1DX3rxVfibe1L0'],
+    'sad': ['37i9dQZF1DX7qK8ma5wgG1', '37i9dQZF1DX3YSRoSdA634'],
+    'energetic': ['37i9dQZF1DX76Wlfdnj7AP', '37i9dQZF1DX32NsLKyzScr'],
+    'chill': ['37i9dQZF1DX4WYpdgoIcn6', '37i9dQZF1DWTvNyxOwkztu'],
+    'romantic': ['37i9dQZF1DX50QitC6Oqtn', '37i9dQZF1DWXqpDKK4ed9O'],
+    'focus': ['37i9dQZF1DX8NTLI2TtZa6', '37i9dQZF1DWZeKCadgRdKQ'],
+    'party': ['37i9dQZF1DXaXB8fQg7xif', '37i9dQZF1DX0IlCGIUGBsA'],
+    'sleep': ['37i9dQZF1DWZd79rJ6a7lp', '37i9dQZF1DWYcDQ1hSjOpY']
+};
+
+// Sample track IDs for search results
+const sampleTracks = [
+    '4cOdK2wGLETKBW3PvgPWqT', // Rick Astley
+    '7qiZfU4dY1lWllzX7mPBI3', // Shape of You
+    '0VjIjW4GlUZAMYd2vXMi3b', // Blinding Lights
+    '6habFhsOp2NvshLv26DqMb', // Despacito
+    '2Fxmhks0bxGSBdJ92vM42m', // bad guy
+    '1zi7xx7UVEFkmKfv06H8x0', // One Dance
+];
+
+let currentQuery = '';
+
+// Search music function
+function searchMusic() {
+    const query = document.getElementById('searchInput').value.trim();
+    if (!query) {
+        alert('Please enter a search term');
+        return;
+    }
+    loadSpotifyResults(query);
+}
+
+// Search by genre
+function searchByGenre(genre) {
+    document.getElementById('searchInput').value = genre;
+    loadSpotifyResults(genre);
+}
+
+// Mood chip click handler
+document.querySelectorAll('.mood-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+        document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        const query = this.dataset.query;
+        document.getElementById('searchInput').value = query;
+        loadSpotifyResults(query, this.dataset.mood);
+    });
+});
+
+// Enter key handler
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') searchMusic();
+});
+
+// Load Spotify results
+function loadSpotifyResults(query, mood = null) {
+    currentQuery = query;
+    
+    // Show loading
+    document.getElementById('resultsCard').style.display = 'block';
+    document.getElementById('loadingState').style.display = 'flex';
+    document.getElementById('spotifyEmbeds').innerHTML = '';
+    document.getElementById('resultsInfo').style.display = 'none';
+    
+    // Simulate loading delay
+    setTimeout(() => {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('resultsInfo').style.display = 'flex';
+        document.getElementById('resultsText').textContent = `Showing results for: "${query}"`;
+        
+        // Show now playing card
+        document.getElementById('nowPlayingCard').style.display = 'block';
+        document.getElementById('currentQuery').textContent = query;
+        
+        // Generate embeds
+        let embedsHTML = '<div class="embed-grid">';
+        
+        // If mood selected, use playlist embeds
+        if (mood && moodPlaylists[mood]) {
+            moodPlaylists[mood].forEach(playlistId => {
+                embedsHTML += `
+                    <div class="spotify-embed">
+                        <iframe src="https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&theme=0" 
+                                width="100%" height="352" frameBorder="0" allowfullscreen="" 
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    </div>`;
+            });
+            document.getElementById('resultsCount').textContent = `${moodPlaylists[mood].length} playlists`;
+        } else {
+            // Search-based results - show track embeds
+            const tracksToShow = sampleTracks.slice(0, 4);
+            const trackNames = ['Never Gonna Give You Up', 'Shape of You', 'Blinding Lights', 'Despacito'];
+            tracksToShow.forEach((trackId, index) => {
+                embedsHTML += `
+                    <div class="spotify-embed">
+                        <iframe src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
+                                width="100%" height="152" frameBorder="0" allowfullscreen="" 
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        <div class="track-actions">
+                            <button class="like-btn" onclick="toggleLike(this, '${trackId}', '${trackNames[index]}')">
+                                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
+                                </svg>
+                            </button>
+                            <button class="playlist-btn" onclick="addSpotifyToPlaylist('${trackId}', '${trackNames[index]}')">
+                                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>`;
+            });
+            
+            // Also add a search-based playlist
+            embedsHTML += `
+                <div class="spotify-embed" style="grid-column: 1 / -1;">
+                    <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0" 
+                            width="100%" height="352" frameBorder="0" allowfullscreen="" 
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                </div>`;
+            
+            document.getElementById('resultsCount').textContent = `${tracksToShow.length + 1} results`;
+        }
+        
+        embedsHTML += '</div>';
+        document.getElementById('spotifyEmbeds').innerHTML = embedsHTML;
+        
+        // Scroll to results
+        document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+    }, 800);
+}
+
+// Clear results
+function clearResults() {
+    document.getElementById('resultsCard').style.display = 'none';
+    document.getElementById('nowPlayingCard').style.display = 'none';
+    document.getElementById('searchInput').value = '';
+    document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('active'));
+    currentQuery = '';
+}
+
+// Like/Favorite functionality
+function toggleLike(btn, trackId, trackName) {
+    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const existingIndex = favorites.findIndex(f => f.spotifyId === trackId);
+    
+    if (existingIndex === -1) {
+        favorites.push({ id: Date.now(), spotifyId: trackId, title: trackName, type: 'spotify', date: new Date().toISOString() });
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        btn.classList.add('liked');
+        btn.querySelector('svg').setAttribute('fill', 'currentColor');
+        showNotification('❤️ Added to Favorites!');
+    } else {
+        favorites.splice(existingIndex, 1);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        btn.classList.remove('liked');
+        btn.querySelector('svg').setAttribute('fill', 'none');
+        showNotification('💔 Removed from Favorites');
+    }
+}
+
+// Add to playlist
+function addSpotifyToPlaylist(trackId, trackName) {
+    let playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
+    if (playlists.length === 0) {
+        playlists = [{ id: 1, name: 'My Favorites', tracks: [] }, { id: 2, name: 'Chill Vibes', tracks: [] }];
+        localStorage.setItem('playlists', JSON.stringify(playlists));
+    }
+    
+    const playlistName = prompt('Enter playlist name to add to (or create new):', 'My Favorites');
+    if (!playlistName) return;
+    
+    let playlist = playlists.find(p => p.name.toLowerCase() === playlistName.toLowerCase());
+    if (!playlist) {
+        playlist = { id: Date.now(), name: playlistName, tracks: [] };
+        playlists.push(playlist);
+    }
+    
+    playlist.tracks.push({ id: Date.now(), spotifyId: trackId, title: trackName, type: 'spotify', date: new Date().toISOString() });
+    localStorage.setItem('playlists', JSON.stringify(playlists));
+    showNotification(`✅ Added to "${playlist.name}"!`);
+}
+
+function showNotification(message) {
+    const notif = document.createElement('div');
+    notif.style.cssText = 'position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: white; padding: 16px 24px; border-radius: 12px; font-weight: 600; z-index: 9999; animation: slideIn 0.3s ease;';
+    notif.textContent = message;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+}
+
+function logout() { 
+    if (confirm('Are you sure you want to logout?')) {
+        // Only remove session tokens, keep user data
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('token');
+        window.location.href = '/'; 
+    }
+}
+
+// Load user profile
+function loadUserProfile() {
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const userAvatar = localStorage.getItem('userAvatar');
+    const avatarEl = document.getElementById('userAvatar');
+    
+    if (avatarEl && userData.username) {
+        if (userAvatar) {
+            avatarEl.style.backgroundImage = `url(${userAvatar})`;
+            avatarEl.style.backgroundSize = 'cover';
+            avatarEl.style.backgroundPosition = 'center';
+            avatarEl.textContent = '';
+        } else {
+            avatarEl.textContent = userData.username.charAt(0).toUpperCase();
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadUserProfile);
+</script>
+</body>
+</html>

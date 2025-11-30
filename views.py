@@ -60,7 +60,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('upload_image')
+            return redirect('dashboard')
         else:
             error = "Invalid username or password"
             return render(request, 'ai_app/login.html', {'error': error})
@@ -75,6 +75,16 @@ def logout_view(request):
 # ----------------------
 # Upload Image View
 # ----------------------
+def dashboard(request):
+    """Dashboard view with user statistics and quick actions"""
+    context = {
+        'total_generated': 24,
+        'recent_generations': [],
+        'favorite_genre': 'Pop',
+        'listening_time': 60,
+    }
+    return render(request, 'dashboard_premium.html', context)
+
 @login_required
 def upload_image(request):
     if request.method == 'POST':

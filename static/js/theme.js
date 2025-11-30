@@ -1,24 +1,41 @@
-// Theme Management
+// Theme Management for New Design System
 const themeToggle = document.getElementById('themeToggle');
-const userBtn = document.getElementById('userBtn');
-const userDropdown = document.getElementById('userDropdown');
-const menuToggle = document.getElementById('menuToggle');
-const sidebar = document.getElementById('sidebar');
 
 // Load saved theme
-const savedTheme = localStorage.getItem('theme') || 'dark';
-document.body.setAttribute('data-theme', savedTheme);
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+
+// Update theme toggle icons
+function updateThemeIcons() {
+    const sunIcon = document.querySelector('.sun-icon');
+    const moonIcon = document.querySelector('.moon-icon');
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    if (sunIcon && moonIcon) {
+        if (isDark) {
+            sunIcon.style.display = 'block';
+            moonIcon.style.display = 'none';
+        } else {
+            sunIcon.style.display = 'none';
+            moonIcon.style.display = 'block';
+        }
+    }
+}
 
 // Theme toggle
 if (themeToggle) {
     themeToggle.addEventListener('click', () => {
-        const currentTheme = document.body.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        const isDark = document.documentElement.classList.contains('dark');
+        const newTheme = isDark ? 'light' : 'dark';
         
-        document.body.setAttribute('data-theme', newTheme);
+        document.documentElement.classList.toggle('dark', newTheme === 'dark');
         localStorage.setItem('theme', newTheme);
+        updateThemeIcons();
     });
 }
+
+// Initialize theme icons
+updateThemeIcons();
 
 // User dropdown toggle
 if (userBtn && userDropdown) {

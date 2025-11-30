@@ -1,22 +1,5 @@
-<!-- Premium Header and Sidebar Component -->
+<!-- Premium Header and Sidebar Component - Donezo Green Theme -->
 <style>
-    /* 3D Background Canvas */
-    #canvas3d {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        pointer-events: none;
-    }
-    
-    /* Make content appear above 3D background */
-    .header, .main-layout {
-        position: relative;
-        z-index: 1;
-    }
-    
     * {
         margin: 0;
         padding: 0;
@@ -24,118 +7,90 @@
     }
 
     :root {
-        --bg-primary: #ffffff;
-        --bg-secondary: #f8f9fa;
-        --bg-hover: #f1f3f5;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --border-color: #e2e8f0;
-        --accent-blue: #3b82f6;
-        --accent-purple: #a855f7;
-        --accent-green: #10b981;
-        --accent-pink: #ec4899;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-        --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+        --primary-green: #1B5E20;
+        --primary-green-light: #2E7D32;
+        --primary-green-dark: #0D3B12;
+        --accent-green: #4CAF50;
+        --bg-main: #F5F7F5;
+        --bg-white: #FFFFFF;
+        --bg-card: #FFFFFF;
+        --text-primary: #1A1A1A;
+        --text-secondary: #6B7280;
+        --text-muted: #9CA3AF;
+        --border-color: #E5E7EB;
+        --border-light: #F0F0F0;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
     }
 
     body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 50%, #e1d1fa 100%);
-        color: #1e293b;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--bg-main);
+        color: var(--text-primary);
         min-height: 100vh;
         overflow-x: hidden;
     }
 
-    /* Header - Ghost White */
-    .header {
-        background: rgba(248, 248, 255, 0.98);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 16px 24px;
+    /* Main App Container */
+    .app-container {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: sticky;
+        min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 260px;
+        background: var(--bg-white);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        height: 100vh;
+        left: 0;
         top: 0;
         z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar-header {
+        padding: 24px 20px;
+        border-bottom: 1px solid var(--border-light);
     }
 
     .logo {
         display: flex;
         align-items: center;
         gap: 12px;
-        font-size: 20px;
-        font-weight: 700;
-        color: #1e293b;
         text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .logo:hover {
-        color: #3b82f6;
-        transform: scale(1.05);
-    }
-
-    .logo-icon {
-        font-size: 28px;
-    }
-
-    .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-
-    .icon-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        color: var(--text-secondary);
-    }
-
-    .icon-btn:hover {
-        background: var(--bg-hover);
         color: var(--text-primary);
     }
 
-    .user-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-green);
+        border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
+        font-size: 20px;
     }
 
-    /* Main Layout */
-    .main-layout {
-        display: flex;
-        min-height: calc(100vh - 73px);
+    .logo-text {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-primary);
     }
 
-    /* Sidebar - Ghost White */
-    .sidebar {
-        width: 240px;
-        background: rgba(248, 248, 255, 0.98);
-        backdrop-filter: blur(10px);
-        border-right: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 24px 12px;
+    .sidebar-nav {
+        flex: 1;
+        padding: 16px 12px;
         overflow-y: auto;
-        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
     }
 
     .nav-section {
@@ -143,9 +98,9 @@
     }
 
     .nav-section-title {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
-        color: #64748b;
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
         padding: 0 12px;
@@ -156,31 +111,240 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 10px 12px;
-        border-radius: 8px;
-        color: #1e293b;
+        padding: 12px 14px;
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
         text-decoration: none;
-        transition: all 0.2s ease;
         font-size: 14px;
         font-weight: 500;
+        transition: all 0.2s ease;
+        margin-bottom: 4px;
     }
 
     .nav-item:hover {
-        background: #f1f5f9;
-        color: #3b82f6;
-        transform: translateX(4px);
+        background: #F0FDF4;
+        color: var(--primary-green);
     }
 
     .nav-item.active {
-        background: #eff6ff;
-        color: #3b82f6;
-        font-weight: 600;
-        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+        background: var(--primary-green);
+        color: white;
     }
 
-    .nav-icon {
+    .nav-item.active svg {
+        stroke: white;
+    }
+
+    .nav-item svg {
         width: 20px;
         height: 20px;
+        stroke: currentColor;
+        flex-shrink: 0;
+    }
+
+    .nav-badge {
+        margin-left: auto;
+        background: var(--primary-green);
+        color: white;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 10px;
+    }
+
+    .nav-item.active .nav-badge {
+        background: white;
+        color: var(--primary-green);
+    }
+
+    /* Mobile App Promo */
+    .mobile-promo {
+        margin: 12px;
+        padding: 20px;
+        background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-light) 100%);
+        border-radius: var(--radius-lg);
+        color: white;
+    }
+
+    .mobile-promo h4 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .mobile-promo p {
+        font-size: 12px;
+        opacity: 0.9;
+        margin-bottom: 12px;
+    }
+
+    .mobile-promo-btn {
+        display: inline-block;
+        background: white;
+        color: var(--primary-green);
+        padding: 8px 16px;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .mobile-promo-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* Main Content Area */
+    .main-wrapper {
+        flex: 1;
+        margin-left: 260px;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+        background: var(--bg-white);
+        border-bottom: 1px solid var(--border-color);
+        padding: 16px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+    }
+
+    .search-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--bg-main);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 10px 16px;
+        width: 320px;
+        transition: all 0.2s ease;
+    }
+
+    .search-box:focus-within {
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
+    }
+
+    .search-box svg {
+        width: 18px;
+        height: 18px;
+        color: var(--text-muted);
+    }
+
+    .search-box input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-size: 14px;
+        color: var(--text-primary);
+        outline: none;
+    }
+
+    .search-box input::placeholder {
+        color: var(--text-muted);
+    }
+
+    .search-shortcut {
+        background: var(--bg-white);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 11px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-icon-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid var(--border-color);
+        background: var(--bg-white);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .header-icon-btn:hover {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+
+    .header-icon-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .notification-dot {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 8px;
+        height: 8px;
+        background: #EF4444;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 6px 12px 6px 6px;
+        border-radius: var(--radius-lg);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .user-profile:hover {
+        background: var(--bg-main);
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .user-info {
+        text-align: left;
+    }
+
+    .user-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .user-email {
+        font-size: 12px;
+        color: var(--text-muted);
     }
 
     /* Main Content */
@@ -191,102 +355,170 @@
     }
 
     /* Responsive */
-    @media (max-width: 968px) {
+    @media (max-width: 1024px) {
         .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .main-wrapper {
+            margin-left: 0;
+        }
+
+        .search-box {
+            width: 200px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header {
+            padding: 12px 16px;
+        }
+
+        .search-box {
             display: none;
         }
 
         .main-content {
-            padding: 20px;
+            padding: 16px;
+        }
+
+        .user-info {
+            display: none;
         }
     }
 </style>
 
-<!-- 3D Background Canvas -->
-<canvas id="canvas3d"></canvas>
-
-<!-- Header -->
-<header class="header">
-    <a href="/dashboard/" class="logo">
-        <span class="logo-icon">🎵</span>
-        <span>NexGenMusic</span>
-    </a>
-    
-    <div class="header-actions">
-        <div class="user-avatar" onclick="window.location.href='/profile/'">U</div>
-    </div>
-</header>
-
-<!-- Main Layout -->
-<div class="main-layout">
+<div class="app-container">
     <!-- Sidebar -->
     <aside class="sidebar">
-        <nav class="nav-section">
-            <div class="nav-section-title">Menu</div>
-            <a href="/dashboard/" class="nav-item" id="nav-dashboard">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>Home</span>
+        <div class="sidebar-header">
+            <a href="/dashboard/" class="logo">
+                <div class="logo-icon">♪</div>
+                <span class="logo-text">NexGenMusic</span>
             </a>
-            <a href="/ai-generator/" class="nav-item" id="nav-ai-generator">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                </svg>
-                <span>AI Generator</span>
-            </a>
-            <a href="/spotify-recommendations/" class="nav-item" id="nav-spotify">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
-                </svg>
-                <span>Spotify</span>
-            </a>
-            <a href="/history/" class="nav-item" id="nav-history">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span>History</span>
-            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Menu</div>
+                <a href="/dashboard/" class="nav-item" id="nav-dashboard">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="/ai-generator/" class="nav-item" id="nav-ai-generator">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/>
+                    </svg>
+                    AI Generator
+                </a>
+                <a href="/spotify-recommendations/" class="nav-item" id="nav-spotify">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"/>
+                    </svg>
+                    Spotify
+                </a>
+                <a href="/history/" class="nav-item" id="nav-history">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    History
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Library</div>
+                <a href="/library/" class="nav-item" id="nav-library">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/>
+                    </svg>
+                    My Library
+                </a>
+                <a href="/library/favorites/" class="nav-item" id="nav-favorites">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
+                    </svg>
+                    Favorites
+                </a>
+                <a href="/library/playlists/" class="nav-item" id="nav-playlists">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/>
+                    </svg>
+                    Playlists
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">General</div>
+                <a href="/settings/" class="nav-item" id="nav-settings">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Settings
+                </a>
+                <a href="/help/" class="nav-item" id="nav-help">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/>
+                    </svg>
+                    Help
+                </a>
+                <a href="#" class="nav-item" onclick="logout(); return false;">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/>
+                    </svg>
+                    Logout
+                </a>
+            </div>
         </nav>
 
-        <nav class="nav-section">
-            <div class="nav-section-title">Library</div>
-            <a href="/library/" class="nav-item" id="nav-library">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                </svg>
-                <span>My Library</span>
-            </a>
-            <a href="/library/favorites/" class="nav-item" id="nav-favorites">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                </svg>
-                <span>Favorites</span>
-            </a>
-            <a href="/library/playlists/" class="nav-item" id="nav-playlists">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
-                </svg>
-                <span>Playlists</span>
-            </a>
-        </nav>
-
-        <nav class="nav-section">
-            <div class="nav-section-title">Account</div>
-            <a href="/about/" class="nav-item" id="nav-about">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span>About</span>
-            </a>
-            <a href="#" class="nav-item" onclick="logout(); return false;">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                </svg>
-                <span>Logout</span>
-            </a>
-        </nav>
+        <div class="mobile-promo" style="background: linear-gradient(135deg, #0D3B12 0%, #1B5E20 100%);">
+            <h4>📸 Connect on Instagram</h4>
+            <p>Follow for updates & more</p>
+            <a href="https://instagram.com/nish.1__" target="_blank" class="mobile-promo-btn" style="color: #1B5E20;">Follow @nish.1__</a>
+        </div>
     </aside>
-    
-    <!-- Main Content (will be filled by each page) -->
-    <main class="main-content">
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="search-box">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
+                </svg>
+                <input type="text" placeholder="Search music...">
+                <span class="search-shortcut">⌘F</span>
+            </div>
+
+            <div class="header-actions">
+                <button class="header-icon-btn">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+                    </svg>
+                </button>
+                <button class="header-icon-btn">
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/>
+                    </svg>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="user-profile" onclick="window.location.href='/profile/'">
+                    <div class="user-avatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name">User</div>
+                        <div class="user-email">user@email.com</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">

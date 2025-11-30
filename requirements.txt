@@ -14,7 +14,4 @@ soundfile
 scipy
 midiutil
 gunicorn
-whitenoise
-dj-database-url
-psycopg2-binary
 

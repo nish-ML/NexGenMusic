@@ -1,0 +1,27 @@
+        </main>
+    </div>
+</div>
+
+<script>
+    // Highlight active nav item
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll('.nav-item');
+        
+        navItems.forEach(item => {
+            const href = item.getAttribute('href');
+            if (href && currentPath.includes(href) && href !== '/') {
+                item.classList.add('active');
+            } else if (href === '/dashboard/' && currentPath === '/dashboard/') {
+                item.classList.add('active');
+            }
+        });
+    });
+
+    function logout() {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('token');
+        window.location.href = '/';
+    }
+</script>

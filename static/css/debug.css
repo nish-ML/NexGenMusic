@@ -1,0 +1,12 @@
+/* DEBUG CSS - Remove after testing */
+body {
+    background: red !important;
+}
+
+.dashboard-content {
+    background: blue !important;
+}
+
+.sidebar.new-sidebar {
+    background: green !important;
+}

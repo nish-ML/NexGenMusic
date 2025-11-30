@@ -1,122 +1,62 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Sun, Moon, Bell, User, LogOut, Settings, Sparkles } from 'lucide-react'
+import { Search, Bell, Sun, Moon } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
-import { useSettings } from '../../contexts/SettingsContext'
-import Button from '../UI/Button'
-import ProfileModal from '../Profile/ProfileModal'
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme()
-  const { settings, toggleParticles } = useSettings()
-  const navigate = useNavigate()
-  const [showProfileMenu, setShowProfileMenu] = useState(false)
-  const [showProfileModal, setShowProfileModal] = useState(false)
-
-  const handleLogout = async () => {
-    // Placeholder for logout API call
-    // await fetch(import.meta.env.VITE_AUTH_API_URL + '/logout', { method: 'POST' })
-    localStorage.removeItem('auth-token')
-    navigate('/dashboard-old')
-  }
-
-  const OLD_DASHBOARD_URL = import.meta.env.VITE_OLD_DASHBOARD_URL || '/dashboard-old'
+  const [searchQuery, setSearchQuery] = useState('')
 
   return (
-    <>
-      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800">
-        <div className="h-full px-4 md:px-6 flex items-center justify-between">
-          {/* Logo */}
-          <button
-            onClick={() => window.location.href = OLD_DASHBOARD_URL}
-            className="flex items-center space-x-2 group"
-            aria-label="Go to home dashboard"
-          >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg group-hover:shadow-glow transition-all duration-300">
-              <span className="text-white font-bold text-xl">N</span>
-            </div>
-            <span className="hidden md:block text-xl font-bold text-gradient">NexGenMusic</span>
-          </button>
-
-          {/* Right Section */}
-          <div className="flex items-center space-x-2 md:space-x-4">
-            {/* Particle Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleParticles}
-              aria-label={`${settings.particlesEnabled ? 'Disable' : 'Enable'} particle effects`}
-              className={`relative ${settings.particlesEnabled ? 'text-primary' : ''}`}
-              title="Toggle particle effects"
-            >
-              <Sparkles className="w-5 h-5" />
-            </Button>
-
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              className="relative"
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </Button>
-
-            {/* Notifications */}
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Notifications"
-              className="relative"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-accent rounded-full"></span>
-            </Button>
-
-            {/* Profile Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center hover:shadow-glow transition-all duration-300"
-                aria-label="User profile menu"
-                aria-expanded={showProfileMenu}
-              >
-                <User className="w-5 h-5 text-white" />
-              </button>
-
-              {showProfileMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-card-hover border border-gray-200 dark:border-gray-700 overflow-hidden">
-                  <button
-                    onClick={() => {
-                      setShowProfileModal(true)
-                      setShowProfileMenu(false)
-                    }}
-                    className="w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 transition-colors"
-                  >
-                    <Settings className="w-4 h-4" />
-                    <span>Edit Profile</span>
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 text-danger transition-colors"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
-                  </button>
-                </div>
-              )}
-            </div>
+    <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-6 py-4">
+      <div className="flex items-center justify-between">
+        {/* Search */}
+        <div className="flex-1 max-w-md">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Search task"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+            <kbd className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400 bg-gray-100 dark:bg-slate-600 px-2 py-1 rounded">
+              ⌘F
+            </kbd>
           </div>
         </div>
-      </header>
 
-      <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} />
-    </>
+        {/* Right side controls */}
+        <div className="flex items-center gap-4">
+          {/* Notifications */}
+          <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <Bell className="w-5 h-5" />
+          </button>
+
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+
+          {/* Profile */}
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <div className="text-sm font-medium text-gray-900 dark:text-white">Totok Michael</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">tmichael@gmail.com</div>
+            </div>
+            <img
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+              alt="Profile"
+              className="w-10 h-10 rounded-full border-2 border-green-500"
+            />
+          </div>
+        </div>
+      </div>
+    </header>
   )
 }
 

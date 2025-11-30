@@ -1,122 +1,437 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Dashboard - NexGenMusic{% endblock %}
-{% block nav_home %}active{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-{% endblock %}
-
-{% block content %}
-<div class="dashboard-container">
-    <!-- Welcome Banner -->
-    <div class="welcome-banner">
-        <div class="banner-content">
-            <h1 class="banner-title">Welcome to NexGen Music</h1>
-            <p class="banner-subtitle">Create, discover, and enjoy AI-powered music</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NexGenMusic</title>
+    <style>
+        /* COMPLETE DONEZO DESIGN SYSTEM */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #F6F7F9;
+            color: #121417;
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: #F1F3F5;
+            border-right: 1px solid #E9ECEF;
+            padding: 24px 16px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding: 0 8px;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #0A8A4D;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 16px;
+            color: #5A5F6A;
+            text-decoration: none;
+            margin-bottom: 4px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-item.active {
+            background: #0A8A4D;
+            color: white;
+        }
+        
+        .nav-item:hover:not(.active) {
+            background: rgba(10, 138, 77, 0.08);
+            color: #0A8A4D;
+        }
+        
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* HEADER */
+        .header {
+            background: white;
+            border-bottom: 1px solid #E9ECEF;
+            padding: 32px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #5A5F6A;
+            font-size: 1rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #0A8A4D;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #087A44;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #121417;
+            border: 1px solid #DEE2E6;
+        }
+        
+        /* CONTENT BODY */
+        .content-body {
+            padding: 40px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 18px;
+            border: 1px solid #E9ECEF;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stat-card.primary {
+            background: #0A8A4D;
+            color: white;
+        }
+        
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: 12px;
+        }
+        
+        .stat-trend.positive {
+            color: #0A8A4D;
+        }
+        
+        .stat-card.primary .stat-trend {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* ACTIONS GRID */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .action-card {
+            background: white;
+            padding: 24px;
+            border-radius: 18px;
+            border: 1px solid #E9ECEF;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+        
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.12);
+            border-color: #0A8A4D;
+        }
+        
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            background: #0A8A4D;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .action-content h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .action-content p {
+            color: #5A5F6A;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 18px;
+            border: 1px solid #E9ECEF;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+        }
+        
+        .empty-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(10, 138, 77, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0A8A4D;
+            margin: 0 auto 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">♪</div>
+            <span style="font-size: 1.25rem; font-weight: 700;">NexGen Music</span>
         </div>
-        <div class="banner-glow-1"></div>
-        <div class="banner-glow-2"></div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-content">
-                <p class="stat-label">Total Generated</p>
-                <p class="stat-value" id="totalGenerated">0</p>
-            </div>
-            <div class="stat-icon-wrapper stat-icon-purple">
-                <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+        
+        <nav>
+            <a href="/dashboard/" class="nav-item active">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                 </svg>
+                Dashboard
+            </a>
+            <a href="/ai-generator/" class="nav-item">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                Tasks
+            </a>
+        </nav>
+    </div>
+    
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <div class="header">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Plan, prioritize, and accomplish your music tasks with ease.</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary">+ Add Project</button>
+                <button class="btn btn-secondary">Import Data</button>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-content">
-                <p class="stat-label">Favorite Genre</p>
-                <p class="stat-value" id="favoriteGenre">Unknown</p>
+        
+        <!-- CONTENT BODY -->
+        <div class="content-body">
+            <!-- STATS CARDS -->
+            <div class="stats-grid">
+                <div class="stat-card primary">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Total Projects</div>
+                            <div class="stat-value">24</div>
+                        </div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                        Increased from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Ended Projects</div>
+                            <div class="stat-value">10</div>
+                        </div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                        Increased from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Running Projects</div>
+                            <div class="stat-value">12</div>
+                        </div>
+                    </div>
+                    <div class="stat-trend positive">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                        Increased from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <div>
+                            <div class="stat-label">Pending Projects</div>
+                            <div class="stat-value">2</div>
+                        </div>
+                    </div>
+                    <div class="stat-trend">On Discuss</div>
+                </div>
             </div>
-            <div class="stat-icon-wrapper stat-icon-green">
-                <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                </svg>
+            
+            <!-- QUICK ACTIONS -->
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="actions-grid">
+                <a href="/ai-generator/" class="action-card">
+                    <div class="action-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                        </svg>
+                    </div>
+                    <div class="action-content">
+                        <h3>AI Music Generator</h3>
+                        <p>Create music from your mood and preferences</p>
+                    </div>
+                </a>
+                
+                <a href="/spotify-recommendations/" class="action-card">
+                    <div class="action-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="action-content">
+                        <h3>Spotify Recommendations</h3>
+                        <p>Get personalized music suggestions</p>
+                    </div>
+                </a>
+                
+                <a href="/history/" class="action-card">
+                    <div class="action-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="action-content">
+                        <h3>Generation History</h3>
+                        <p>View your past music creations</p>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- RECENT GENERATIONS -->
+            <h2 class="section-title">Recent Generations</h2>
+            <div class="card">
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 12px;">Start Creating Music</h3>
+                    <p style="color: #5A5F6A; margin-bottom: 24px;">You haven't generated any music yet. Try our AI generator to create your first track!</p>
+                    <a href="/ai-generator/" class="btn btn-primary">Generate Your First Track</a>
+                </div>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-content">
-                <p class="stat-label">Listening Time</p>
-                <p class="stat-value" id="listeningTime">0 min</p>
-            </div>
-            <div class="stat-icon-wrapper stat-icon-blue">
-                <svg class="stat-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-        </div>
     </div>
-
-    <!-- Quick Actions Section -->
-    <div class="section-header">
-        <h2 class="section-title">Quick Actions</h2>
-    </div>
-    <div class="quick-actions-grid">
-        <a href="/ai-generator/" class="action-card action-card-purple">
-            <div class="action-icon-wrapper">
-                <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
-                </svg>
-            </div>
-            <div class="action-content">
-                <h3 class="action-title">AI Music Generator</h3>
-                <p class="action-description">Create music from your mood</p>
-            </div>
-        </a>
-        <a href="/spotify-recommendations/" class="action-card action-card-green">
-            <div class="action-icon-wrapper">
-                <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
-                </svg>
-            </div>
-            <div class="action-content">
-                <h3 class="action-title">Spotify Recommendations</h3>
-                <p class="action-description">Get personalized suggestions</p>
-            </div>
-        </a>
-        <a href="/history/" class="action-card action-card-blue">
-            <div class="action-icon-wrapper">
-                <svg class="action-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            <div class="action-content">
-                <h3 class="action-title">Generation History</h3>
-                <p class="action-description">View your past creations</p>
-            </div>
-        </a>
-    </div>
-
-    <!-- Recent Generations Section -->
-    <div class="section-header">
-        <h2 class="section-title">Recent Generations</h2>
-        <a href="/history/" class="view-all-link">View All →</a>
-    </div>
-    <div class="recent-generations" id="recentGenerations">
-        <div class="empty-state">
-            <div class="empty-icon-wrapper">
-                <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
-                </svg>
-            </div>
-            <h3 class="empty-title">Start Creating Music</h3>
-            <p class="empty-description">You haven't generated any music yet. Try our AI generator to create your first track!</p>
-            <a href="/ai-generator/" class="empty-cta-btn">Generate Your First Track</a>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'js/dashboard.js' %}"></script>
-{% endblock %}
+</body>
+</html>

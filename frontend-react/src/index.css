@@ -3,24 +3,44 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: 79 70 229;
-  --color-secondary: 139 92 246;
-  --color-accent: 236 72 153;
-  --color-bg: 255 255 255;
-  --color-surface: 249 250 251;
-  --color-text: 17 24 39;
-  --color-text-secondary: 107 114 128;
-  --color-border: 229 231 235;
-  --color-success: 34 197 94;
-  --color-danger: 239 68 68;
+  /* Donezo Design System - Deep Modern Green */
+  /* Primary Colors - Deep Green Theme */
+  --color-primary: 10 138 77;      /* #0A8A4D - Deep Modern Green */
+  --color-secondary: 27 182 115;   /* #1BB673 - Secondary Green */
+  --color-accent: 5 150 105;       /* #059669 - Accent Green */
+  
+  /* Background & Surface - Donezo Style */
+  --color-bg: 246 247 249;         /* #F6F7F9 - Very light gray */
+  --color-surface: 255 255 255;    /* #FFFFFF - Pure white */
+  --color-surface-elevated: 255 255 255;
+  --color-sidebar: 241 243 245;    /* #F1F3F5 - Soft white panel */
+  
+  /* Text Colors - Donezo Style */
+  --color-text: 18 20 23;          /* #121417 - Headings */
+  --color-text-secondary: 90 95 106; /* #5A5F6A - Body text */
+  --color-text-tertiary: 139 146 153; /* #8B9299 - Placeholder */
+  
+  /* Border & Divider - Donezo Style */
+  --color-border: 233 236 239;     /* #E9ECEF - Light borders */
+  --color-border-medium: 222 226 230; /* #DEE2E6 - Medium borders */
+  
+  /* Status Colors */
+  --color-success: 10 138 77;      /* Matches brand primary */
+  --color-danger: 220 53 69;       /* #DC3545 */
+  --color-warning: 245 158 11;     /* #F59E0B */
+  --color-info: 14 165 233;        /* #0EA5E9 */
 }
 
 .dark {
-  --color-bg: 17 24 39;
-  --color-surface: 31 41 55;
-  --color-text: 249 250 251;
-  --color-text-secondary: 156 163 175;
-  --color-border: 55 65 81;
+  /* Dark Mode Colors */
+  --color-bg: 15 23 42;
+  --color-surface: 30 41 59;
+  --color-surface-elevated: 51 65 85;
+  --color-text: 248 250 252;
+  --color-text-secondary: 203 213 225;
+  --color-text-tertiary: 148 163 184;
+  --color-border: 51 65 85;
+  --color-border-medium: 71 85 105;
 }
 
 * {
@@ -40,6 +60,15 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Donezo-style shadows */
+.shadow-card {
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-card-hover {
+  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.12);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -51,15 +80,17 @@ body {
 }
 
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(47, 51, 80, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(164, 140, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .dark .glassmorphism {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(47, 51, 80, 0.5);
+  border: 1px solid rgba(164, 140, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .gradient-bg {
@@ -73,6 +104,64 @@ body {
   background-clip: text;
 }
 
+/* Enhanced Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Enhanced Gradient Utilities */
+.bg-gradient-radial {
+  background: radial-gradient(var(--tw-gradient-stops));
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -80,14 +169,17 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgb(var(--color-surface));
+  background: rgb(var(--color-bg));
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(var(--color-primary));
-  border-radius: 4px;
+  background: linear-gradient(180deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+  border-radius: 10px;
+  border: 1px solid rgb(var(--color-bg));
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--color-primary) / 0.8);
+  background: linear-gradient(180deg, rgb(var(--color-secondary)) 0%, rgb(var(--color-accent)) 100%);
+  box-shadow: 0 0 10px rgba(var(--color-primary), 0.3);
 }

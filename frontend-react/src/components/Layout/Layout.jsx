@@ -10,8 +10,16 @@ const Layout = () => {
   const { settings } = useSettings()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 relative overflow-hidden">
+    <div className="min-h-screen bg-[#1E2233] transition-colors duration-300 relative overflow-hidden">
+      {/* Ambient gradient background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] animate-pulse-slow" />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-secondary/8 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-accent/6 rounded-full blur-[90px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
+      </div>
+      
       <ParticleBackground enabled={settings.particlesEnabled} />
+      
       <div className="relative z-10">
         <Header />
         <div className="flex">

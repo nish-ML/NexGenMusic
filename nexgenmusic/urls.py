@@ -54,22 +54,22 @@ urlpatterns = [
     path('neon-login.html', TemplateView.as_view(template_name="neon-login.html"), name='neon_login'),
     path('neon-register.html', TemplateView.as_view(template_name="neon-register.html"), name='neon_register'),
     
-    path('dashboard/', TemplateView.as_view(template_name="premium-dashboard.html"), name='dashboard'),
+    path('dashboard/', TemplateView.as_view(template_name="dashboard_premium.html"), name='dashboard'),
     path('game/', TemplateView.as_view(template_name="game-with-layout.html"), name='game'),
     path('game-test/', TemplateView.as_view(template_name="game-test-simple.html"), name='game_test'),
     path('ai-generator/', TemplateView.as_view(template_name="premium_ai_generator.html"), name='ai_generator'),
-    path('spotify-recommendations/', TemplateView.as_view(template_name="premium-spotify.html"), name='spotify_recommendations'),
-    path('history/', TemplateView.as_view(template_name="premium-history.html"), name='history'),
-    path('about/', TemplateView.as_view(template_name="premium-about.html"), name='about'),
+    path('spotify-recommendations/', TemplateView.as_view(template_name="spotify_green.html"), name='spotify_recommendations'),
+    path('history/', TemplateView.as_view(template_name="history_green.html"), name='history'),
+    path('about/', TemplateView.as_view(template_name="about_green.html"), name='about'),
     
-    # Library pages - using premium templates
+    # Library pages - using green theme templates
     path('library/', TemplateView.as_view(template_name="library_premium.html"), name='library'),
-    path('library/favorites/', TemplateView.as_view(template_name="favorites_premium.html"), name='library_favorites'),
+    path('library/favorites/', TemplateView.as_view(template_name="favorites_green.html"), name='library_favorites'),
     path('library/playlists/', TemplateView.as_view(template_name="playlists_premium.html"), name='library_playlists'),
     
     # User profile pages
-    path('profile/', TemplateView.as_view(template_name="profile.html"), name='profile'),
-    path('settings/', TemplateView.as_view(template_name="settings.html"), name='settings'),
+    path('profile/', TemplateView.as_view(template_name="profile_green.html"), name='profile'),
+    path('settings/', TemplateView.as_view(template_name="settings_green.html"), name='settings'),
 ]
 
 # Serve static files in development

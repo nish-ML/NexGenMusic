@@ -1,28 +1,40 @@
-/* ===== CSS Variables for Theme ===== */
+/* ===== DONEZO GREEN THEME VARIABLES ===== */
 :root {
-    --bg-primary: #0a0e27;
-    --bg-secondary: #1a1f3a;
-    --bg-glass: rgba(255, 255, 255, 0.05);
-    --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --accent-primary: #667eea;
-    --accent-secondary: #764ba2;
-    --accent-success: #1db954;
-    --border-color: rgba(255, 255, 255, 0.1);
-    --shadow: rgba(0, 0, 0, 0.3);
-    --gradient-1: linear-gradient(135deg, #667eea, #764ba2);
-    --gradient-2: linear-gradient(135deg, #f093fb, #4facfe);
-    --gradient-3: linear-gradient(135deg, #1db954, #1ed760);
+    --bg-primary: #F6F7F9;
+    --bg-secondary: #FFFFFF;
+    --bg-glass: rgba(255, 255, 255, 0.9);
+    --text-primary: #121417;
+    --text-secondary: #5A5F6A;
+    --accent-primary: #0A8A4D;
+    --accent-secondary: #1BB673;
+    --accent-success: #0A8A4D;
+    --border-color: rgba(10, 138, 77, 0.2);
+    --shadow: rgba(10, 138, 77, 0.15);
+    --gradient-1: linear-gradient(135deg, #0A8A4D, #1BB673);
+    --gradient-2: linear-gradient(135deg, #1BB673, #0A8A4D);
+    --gradient-3: linear-gradient(135deg, #0A8A4D, #065A35);
 }
 
 [data-theme="light"] {
-    --bg-primary: #f5f7fa;
-    --bg-secondary: #ffffff;
-    --bg-glass: rgba(255, 255, 255, 0.8);
-    --text-primary: #1a1f3a;
-    --text-secondary: rgba(26, 31, 58, 0.7);
-    --border-color: rgba(0, 0, 0, 0.1);
-    --shadow: rgba(0, 0, 0, 0.1);
+    --bg-primary: #F6F7F9;
+    --bg-secondary: #FFFFFF;
+    --bg-glass: rgba(255, 255, 255, 0.9);
+    --text-primary: #121417;
+    --text-secondary: #5A5F6A;
+    --border-color: rgba(10, 138, 77, 0.2);
+    --shadow: rgba(10, 138, 77, 0.1);
+}
+
+[data-theme="dark"] {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-glass: rgba(30, 41, 59, 0.9);
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --accent-primary: #1BB673;
+    --accent-secondary: #0A8A4D;
+    --border-color: rgba(27, 182, 115, 0.3);
+    --shadow: rgba(27, 182, 115, 0.2);
 }
 
 /* ===== Reset & Base Styles ===== */
@@ -280,20 +292,20 @@ body {
     margin: 8px 0;
 }
 
-/* ===== Sidebar ===== */
+/* ===== Sidebar - Donezo Green Theme ===== */
 .sidebar {
     position: fixed;
     top: 70px;
     left: 0;
     width: 280px;
     height: calc(100vh - 70px);
-    background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
+    background: #F1F3F5;
     backdrop-filter: blur(20px);
-    border-right: 1px solid rgba(219, 234, 254, 0.3);
+    border-right: 1px solid #E9ECEF;
     padding: 30px 20px;
     z-index: 999;
     transition: all 0.3s ease;
-    box-shadow: 2px 0 12px rgba(219, 234, 254, 0.2);
+    box-shadow: 2px 0 12px rgba(10, 138, 77, 0.1);
 }
 
 .sidebar-nav {
@@ -307,7 +319,7 @@ body {
     align-items: center;
     gap: 15px;
     padding: 15px 20px;
-    color: rgba(30, 58, 138, 0.9);
+    color: #5A5F6A;
     text-decoration: none;
     border-radius: 15px;
     transition: all 0.3s ease;
@@ -315,15 +327,15 @@ body {
 }
 
 .nav-item:hover {
-    background: rgba(255, 255, 255, 0.3);
-    color: #1e3a8a;
+    background: rgba(10, 138, 77, 0.08);
+    color: #0A8A4D;
     transform: translateX(5px);
 }
 
 .nav-item.active {
-    background: rgba(255, 255, 255, 0.5);
-    color: #1e3a8a;
-    box-shadow: 0 5px 20px rgba(219, 234, 254, 0.5);
+    background: #0A8A4D;
+    color: white;
+    box-shadow: 0 5px 20px rgba(10, 138, 77, 0.3);
     font-weight: 600;
 }
 
@@ -335,7 +347,7 @@ body {
     transform: translateY(-50%);
     width: 4px;
     height: 60%;
-    background: white;
+    background: #1BB673;
     border-radius: 0 4px 4px 0;
 }
 

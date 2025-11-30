@@ -14,13 +14,13 @@
         }
 
         :root {
-            --lavender: #e0e7ff;
-            --baby-blue: #dbeafe;
-            --mint: #d1fae5;
-            --peach: #fed7aa;
-            --purple: #a855f7;
-            --pink: #ec4899;
-            --indigo: #6366f1;
+            --lavender: #E8F5E9;
+            --baby-blue: #C8E6C9;
+            --mint: #A5D6A7;
+            --peach: #81C784;
+            --purple: #2E7D32;
+            --pink: #4CAF50;
+            --indigo: #1B5E20;
         }
 
         body {
@@ -374,6 +374,95 @@
         </div>
     </div>
 
+    <!-- Privacy Modal -->
+    <div class="about-modal" id="privacyModal">
+        <div class="about-content">
+            <button class="close-modal" onclick="document.getElementById('privacyModal').classList.remove('show')" aria-label="Close">×</button>
+            <h2>🔒 Privacy Policy</h2>
+            <p><strong>Last Updated:</strong> November 2025</p>
+            
+            <h3 style="color: var(--indigo); font-size: 18px; margin-top: 24px; margin-bottom: 12px;">📋 Information We Collect:</h3>
+            <ul>
+                <li><strong>Account Information</strong> - Username, email address when you register</li>
+                <li><strong>Usage Data</strong> - Music preferences, generated tracks, listening history</li>
+                <li><strong>Device Information</strong> - Browser type, device type for optimization</li>
+            </ul>
+            
+            <h3 style="color: var(--indigo); font-size: 18px; margin-top: 24px; margin-bottom: 12px;">🛡️ How We Use Your Data:</h3>
+            <ul>
+                <li>To provide personalized music recommendations</li>
+                <li>To improve our AI music generation algorithms</li>
+                <li>To save your favorites and playlists</li>
+                <li>To communicate important updates</li>
+            </ul>
+            
+            <h3 style="color: var(--indigo); font-size: 18px; margin-top: 24px; margin-bottom: 12px;">🔐 Data Security:</h3>
+            <p>We implement industry-standard security measures to protect your personal information. Your data is encrypted and stored securely.</p>
+            
+            <h3 style="color: var(--indigo); font-size: 18px; margin-top: 24px; margin-bottom: 12px;">📧 Contact Us:</h3>
+            <p>For privacy concerns, contact us at: <a href="mailto:nish010906@gmail.com" style="color: var(--indigo);">nish010906@gmail.com</a></p>
+        </div>
+    </div>
+
+    <!-- Terms Modal -->
+    <div class="about-modal" id="termsModal">
+        <div class="about-content">
+            <button class="close-modal" onclick="document.getElementById('termsModal').classList.remove('show')" aria-label="Close">×</button>
+            <h2>📜 Terms of Service</h2>
+            <p><strong>Last Updated:</strong> November 2025</p>
+            
+            <h3 style="color: var(--indigo); font-size: 18px; margin-top: 24px; margin-bottom: 12px;">1. Acceptance of Terms</h3>
+            <p>By accessing and using NexGenMusic, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
+            
+            <h3 style="color: var(--indigo); font-size: 18px; margin-top: 24px; margin-bottom: 12px;">2. Use of Service</h3>
+            <ul>
+                <li>You must be at least 13 years old to use this service</li>
+                <li>You are responsible for maintaining the security of your account</li>
+                <li>You agree not to misuse or abuse the AI generation features</li>
+                <li>Generated music is for personal, non-commercial use unless otherwise specified</li>
+            </ul>
+            
+            <h3 style="color: var(--indigo); font-size: 18px; margin-top: 24px; margin-bottom: 12px;">3. Intellectual Property</h3>
+            <p>AI-generated music created through our platform grants you a personal license to use the content. The underlying AI technology remains the property of NexGenMusic.</p>
+            
+            <h3 style="color: var(--indigo); font-size: 18px; margin-top: 24px; margin-bottom: 12px;">4. Limitation of Liability</h3>
+            <p>NexGenMusic is provided "as is" without warranties. We are not liable for any damages arising from the use of our service.</p>
+            
+            <h3 style="color: var(--indigo); font-size: 18px; margin-top: 24px; margin-bottom: 12px;">5. Changes to Terms</h3>
+            <p>We reserve the right to modify these terms at any time. Continued use of the service constitutes acceptance of updated terms.</p>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="about-modal" id="forgotPasswordModal">
+        <div class="about-content" style="max-width: 450px;">
+            <button class="close-modal" onclick="document.getElementById('forgotPasswordModal').classList.remove('show')" aria-label="Close">×</button>
+            <h2>🔑 Reset Password</h2>
+            <p style="margin-bottom: 24px;">Enter your email address and we'll send you a link to reset your password.</p>
+            
+            <form id="forgotPasswordForm" onsubmit="handleForgotPassword(event)">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #475569;">Email Address</label>
+                    <input type="email" id="resetEmail" placeholder="Enter your email" required style="width: 100%; padding: 14px 16px; border: 2px solid #E5E7EB; border-radius: 12px; font-size: 15px; outline: none; transition: all 0.3s;" onfocus="this.style.borderColor='var(--indigo)'" onblur="this.style.borderColor='#E5E7EB'">
+                </div>
+                
+                <button type="submit" id="resetBtn" style="width: 100%; padding: 16px; background: linear-gradient(135deg, var(--indigo) 0%, var(--purple) 100%); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                    Send Reset Link
+                </button>
+            </form>
+            
+            <div id="resetSuccess" style="display: none; text-align: center; padding: 24px; background: #F0FDF4; border-radius: 12px; margin-top: 20px;">
+                <div style="font-size: 48px; margin-bottom: 12px;">✅</div>
+                <h3 style="color: #166534; margin-bottom: 8px;">Email Sent!</h3>
+                <p style="color: #15803d; font-size: 14px;">Check your inbox for the password reset link. If you don't see it, check your spam folder.</p>
+            </div>
+            
+            <p style="text-align: center; margin-top: 20px; font-size: 14px; color: #64748b;">
+                Remember your password? <a href="#" onclick="document.getElementById('forgotPasswordModal').classList.remove('show'); return false;" style="color: var(--indigo); font-weight: 600; text-decoration: none;">Back to Login</a>
+            </p>
+        </div>
+    </div>
+
     <!-- UI Overlay -->
     <div class="ui-overlay">
         <div class="form-container">
@@ -399,7 +488,7 @@
                             <input type="checkbox" id="remember">
                             <span>Remember me</span>
                         </label>
-                        <a href="#" style="color: var(--indigo); text-decoration: none; font-weight: 600;">Forgot password?</a>
+                        <a href="#" onclick="document.getElementById('forgotPasswordModal').classList.add('show'); return false;" style="color: var(--indigo); text-decoration: none; font-weight: 600;">Forgot password?</a>
                     </div>
 
                     <button type="submit" class="btn-primary">Sign In</button>
@@ -427,8 +516,8 @@
             
             // Scene
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0xe0e7ff);
-            scene.fog = new THREE.Fog(0xe0e7ff, 20, 60);
+            scene.background = new THREE.Color(0xE8F5E9);
+            scene.fog = new THREE.Fog(0xE8F5E9, 20, 60);
 
             // Camera
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -446,18 +535,18 @@
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
             scene.add(ambientLight);
 
-            const directionalLight1 = new THREE.DirectionalLight(0xa5b4fc, 1.2);
+            const directionalLight1 = new THREE.DirectionalLight(0x81C784, 1.2);
             directionalLight1.position.set(10, 15, 10);
             directionalLight1.castShadow = true;
             directionalLight1.shadow.mapSize.width = 2048;
             directionalLight1.shadow.mapSize.height = 2048;
             scene.add(directionalLight1);
 
-            const directionalLight2 = new THREE.DirectionalLight(0xfae8ff, 0.8);
+            const directionalLight2 = new THREE.DirectionalLight(0xC8E6C9, 0.8);
             directionalLight2.position.set(-10, 10, -5);
             scene.add(directionalLight2);
 
-            const pointLight = new THREE.PointLight(0xd1fae5, 0.6, 50);
+            const pointLight = new THREE.PointLight(0x4CAF50, 0.6, 50);
             pointLight.position.set(0, 8, 5);
             scene.add(pointLight);
 
@@ -485,7 +574,7 @@
         function createGround() {
             const groundGeometry = new THREE.PlaneGeometry(100, 100);
             const groundMaterial = new THREE.MeshStandardMaterial({
-                color: 0xdbeafe,
+                color: 0xC8E6C9,
                 roughness: 0.8,
                 metalness: 0.1
             });
@@ -502,7 +591,7 @@
             // Body
             const bodyGeometry = new THREE.SphereGeometry(0.8, 20, 20);
             const bodyMaterial = new THREE.MeshStandardMaterial({
-                color: 0xa5b4fc,
+                color: 0x81C784,
                 roughness: 0.3,
                 metalness: 0.2
             });
@@ -513,7 +602,7 @@
 
             // Head
             const headGeometry = new THREE.SphereGeometry(0.45, 16, 16);
-            const headMaterial = new THREE.MeshStandardMaterial({ color: 0xc7d2fe });
+            const headMaterial = new THREE.MeshStandardMaterial({ color: 0xA5D6A7 });
             const head = new THREE.Mesh(headGeometry, headMaterial);
             head.position.set(0, 1, 0.4);
             head.castShadow = true;
@@ -542,9 +631,9 @@
                 const angle = (i - 5) * 0.22;
                 const featherGeometry = new THREE.PlaneGeometry(0.5, 2);
                 const featherMaterial = new THREE.MeshStandardMaterial({
-                    color: i % 2 === 0 ? 0x6366f1 : 0xa855f7,
+                    color: i % 2 === 0 ? 0x1B5E20 : 0x2E7D32,
                     side: THREE.DoubleSide,
-                    emissive: i % 2 === 0 ? 0x6366f1 : 0xa855f7,
+                    emissive: i % 2 === 0 ? 0x1B5E20 : 0x2E7D32,
                     emissiveIntensity: 0.4,
                     transparent: true,
                     opacity: 0.95
@@ -648,7 +737,7 @@
         }
 
         function createBirds() {
-            const colors = [0x93c5fd, 0xbfdbfe, 0xdbeafe];
+            const colors = [0x81C784, 0xA5D6A7, 0xC8E6C9];
             for (let i = 0; i < 5; i++) {
                 const birdGroup = new THREE.Group();
 
@@ -718,7 +807,7 @@
                 
                 // Create emoji as a simple sphere with color
                 const geometry = new THREE.SphereGeometry(0.3, 16, 16);
-                const colors = [0xfbbf24, 0xec4899, 0xa855f7, 0x6366f1, 0x10b981, 0xf59e0b, 0x8b5cf6];
+                const colors = [0x1B5E20, 0x2E7D32, 0x4CAF50, 0x66BB6A, 0x81C784, 0xA5D6A7, 0xC8E6C9];
                 const material = new THREE.MeshStandardMaterial({
                     color: colors[i % colors.length],
                     emissive: colors[i % colors.length],
@@ -753,8 +842,8 @@
                 const height = 1 + Math.random() * 3;
                 const geometry = new THREE.BoxGeometry(0.3, height, 0.3);
                 const material = new THREE.MeshStandardMaterial({
-                    color: 0x6366f1,
-                    emissive: 0x6366f1,
+                    color: 0x1B5E20,
+                    emissive: 0x1B5E20,
                     emissiveIntensity: 0.5,
                     transparent: true,
                     opacity: 0.8
@@ -1092,6 +1181,39 @@
             renderer.render(scene, camera);
         }
 
+        // Forgot Password Handler
+        function handleForgotPassword(event) {
+            event.preventDefault();
+            const email = document.getElementById('resetEmail').value;
+            const btn = document.getElementById('resetBtn');
+            const form = document.getElementById('forgotPasswordForm');
+            const success = document.getElementById('resetSuccess');
+            
+            // Show loading state
+            btn.innerHTML = '<span style="display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite;"></span> Sending...';
+            btn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                form.style.display = 'none';
+                success.style.display = 'block';
+                
+                // Store reset request (in real app, this would be an API call)
+                const resetRequests = JSON.parse(localStorage.getItem('resetRequests') || '[]');
+                resetRequests.push({ email: email, timestamp: new Date().toISOString() });
+                localStorage.setItem('resetRequests', JSON.stringify(resetRequests));
+                
+                // Reset form after 5 seconds
+                setTimeout(() => {
+                    form.style.display = 'block';
+                    success.style.display = 'none';
+                    btn.innerHTML = 'Send Reset Link';
+                    btn.disabled = false;
+                    document.getElementById('resetEmail').value = '';
+                }, 5000);
+            }, 1500);
+        }
+
         // About Modal
         const aboutBtn = document.getElementById('aboutBtn');
         const aboutModal = document.getElementById('aboutModal');
@@ -1135,19 +1257,19 @@
                 © 2025 NexGenMusic – AI Music Creation Platform
             </p>
             <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 12px;">
-                <a href="/about/" style="color: #3b82f6; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">About</a>
-                <span style="color: #e2e8f0;">|</span>
-                <a href="mailto:nish010906@gmail.com" style="color: #3b82f6; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">Contact</a>
-                <span style="color: #e2e8f0;">|</span>
-                <a href="#" style="color: #3b82f6; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">Privacy</a>
-                <span style="color: #e2e8f0;">|</span>
-                <a href="#" style="color: #3b82f6; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">Terms</a>
+                <a href="#" onclick="document.getElementById('aboutModal').classList.add('show'); return false;" style="color: #1B5E20; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2E7D32'" onmouseout="this.style.color='#1B5E20'">About</a>
+                <span style="color: #C8E6C9;">|</span>
+                <a href="mailto:nish010906@gmail.com" style="color: #1B5E20; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2E7D32'" onmouseout="this.style.color='#1B5E20'">Contact</a>
+                <span style="color: #C8E6C9;">|</span>
+                <a href="#" onclick="document.getElementById('privacyModal').classList.add('show'); return false;" style="color: #1B5E20; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2E7D32'" onmouseout="this.style.color='#1B5E20'">Privacy</a>
+                <span style="color: #C8E6C9;">|</span>
+                <a href="#" onclick="document.getElementById('termsModal').classList.add('show'); return false;" style="color: #1B5E20; text-decoration: none; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#2E7D32'" onmouseout="this.style.color='#1B5E20'">Terms</a>
             </div>
             <div style="display: flex; justify-content: center; gap: 8px; align-items: center; font-size: 14px; color: #64748b;">
                 <span>Follow us:</span>
-                <a href="https://www.instagram.com/nish.1__/" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">Instagram</a>
-                <span style="color: #e2e8f0;">|</span>
-                <a href="https://github.com/nish-ML" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#3b82f6'">GitHub</a>
+                <a href="https://www.instagram.com/nish.1__/" target="_blank" rel="noopener noreferrer" style="color: #1B5E20; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#2E7D32'" onmouseout="this.style.color='#1B5E20'">Instagram</a>
+                <span style="color: #C8E6C9;">|</span>
+                <a href="https://github.com/nish-ML" target="_blank" rel="noopener noreferrer" style="color: #1B5E20; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#2E7D32'" onmouseout="this.style.color='#1B5E20'">GitHub</a>
             </div>
         </div>
     </footer>

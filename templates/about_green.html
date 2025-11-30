@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #1B5E20; --primary-light: #2E7D32; --accent: #4CAF50; --bg: #F5F7F5; --white: #FFFFFF; --text: #1A1A1A; --text-secondary: #6B7280; --text-muted: #9CA3AF; --border: #E5E7EB; --radius: 12px; --radius-lg: 16px; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        .app { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: var(--white); border-right: 1px solid var(--border); position: fixed; height: 100vh; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 24px 20px; border-bottom: 1px solid #F0F0F0; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+        .logo-icon { width: 40px; height: 40px; background: var(--primary); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
+        .logo-text { font-size: 18px; font-weight: 700; }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .nav-section { margin-bottom: 24px; }
+        .nav-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 0 12px; margin-bottom: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--radius); color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s; margin-bottom: 4px; }
+        .nav-item:hover { background: #F0FDF4; color: var(--primary); }
+        .nav-item.active { background: var(--primary); color: white; }
+        .nav-item svg { width: 20px; height: 20px; stroke: currentColor; }
+        .mobile-promo { margin: 12px; padding: 20px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border-radius: var(--radius-lg); color: white; }
+        .mobile-promo h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .mobile-promo p { font-size: 12px; opacity: 0.9; margin-bottom: 12px; }
+        .promo-btn { display: inline-block; background: white; color: var(--primary); padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; }
+        .main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; }
+        .header { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; cursor: pointer; }
+        .main-content { flex: 1; padding: 32px; overflow-y: auto; }
+        .page-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .page-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 32px; }
+        .card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 32px; margin-bottom: 24px; }
+        .card-title { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+        .card p { color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 32px; }
+        .feature-card { background: var(--bg); border-radius: var(--radius); padding: 24px; text-align: center; }
+        .feature-icon { width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; }
+        .feature-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+        .feature-text { font-size: 14px; color: var(--text-secondary); }
+        @media (max-width: 1024px) { .sidebar { display: none; } .main-wrapper { margin-left: 0; } .features-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="sidebar-header"><a href="/dashboard/" class="logo"><div class="logo-icon">♪</div><span class="logo-text">NexGenMusic</span></a></div>
+        <nav class="sidebar-nav">
+            <div class="nav-section"><div class="nav-title">Menu</div>
+                <a href="/dashboard/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6z"/></svg>Dashboard</a>
+                <a href="/ai-generator/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>AI Generator</a>
+                <a href="/spotify-recommendations/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"/></svg>Spotify</a>
+                <a href="/history/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>History</a>
+            </div>
+            <div class="nav-section"><div class="nav-title">General</div>
+                <a href="/about/" class="nav-item active"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>About</a>
+                <a href="/settings/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Settings</a>
+                <a href="#" class="nav-item" onclick="logout(); return false;"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>Logout</a>
+            </div>
+        </nav>
+        <div class="mobile-promo" style="background: linear-gradient(135deg, #0D3B12 0%, #1B5E20 100%);"><h4>📸 Connect on Instagram</h4><p>Follow for updates & more</p><a href="https://instagram.com/nish.1__" target="_blank" class="promo-btn" style="color: #1B5E20;">Follow @nish.1__</a></div>
+    </aside>
+    <div class="main-wrapper">
+        <header class="header"><div></div><div class="user-avatar" onclick="window.location.href='/profile/'">U</div></header>
+        <main class="main-content">
+            <h1 class="page-title">About NexGenMusic</h1>
+            <p class="page-subtitle">AI-powered music generation platform</p>
+            <div class="card">
+                <h2 class="card-title">Our Mission</h2>
+                <p>NexGenMusic is a revolutionary AI-powered music generation platform that enables anyone to create unique, professional-quality music in seconds. Our advanced machine learning algorithms analyze your mood, preferences, and style to generate personalized music tracks.</p>
+                <p>Whether you're a content creator, musician, or just someone who loves music, NexGenMusic provides the tools you need to bring your musical ideas to life.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card"><div class="feature-icon">🎵</div><h3 class="feature-title">AI Generation</h3><p class="feature-text">Create unique music with advanced AI</p></div>
+                <div class="feature-card"><div class="feature-icon">🎧</div><h3 class="feature-title">Spotify Integration</h3><p class="feature-text">Get personalized recommendations</p></div>
+                <div class="feature-card"><div class="feature-icon">📚</div><h3 class="feature-title">Music Library</h3><p class="feature-text">Organize and manage your tracks</p></div>
+            </div>
+        </main>
+    </div>
+</div>
+<script>
+function logout() { 
+    if (confirm('Are you sure you want to logout?')) {
+        // Only remove session tokens, keep user data
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('token');
+        window.location.href = '/'; 
+    }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #1B5E20; --primary-light: #2E7D32; --accent: #4CAF50; --bg: #F5F7F5; --white: #FFFFFF; --text: #1A1A1A; --text-secondary: #6B7280; --text-muted: #9CA3AF; --border: #E5E7EB; --radius: 12px; --radius-lg: 16px; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        .app { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: var(--white); border-right: 1px solid var(--border); position: fixed; height: 100vh; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 24px 20px; border-bottom: 1px solid #F0F0F0; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+        .logo-icon { width: 40px; height: 40px; background: var(--primary); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
+        .logo-text { font-size: 18px; font-weight: 700; }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .nav-section { margin-bottom: 24px; }
+        .nav-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 0 12px; margin-bottom: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--radius); color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s; margin-bottom: 4px; }
+        .nav-item:hover { background: #F0FDF4; color: var(--primary); }
+        .nav-item.active { background: var(--primary); color: white; }
+        .nav-item svg { width: 20px; height: 20px; stroke: currentColor; }
+        .mobile-promo { margin: 12px; padding: 20px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border-radius: var(--radius-lg); color: white; }
+        .mobile-promo h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .mobile-promo p { font-size: 12px; opacity: 0.9; margin-bottom: 12px; }
+        .promo-btn { display: inline-block; background: white; color: var(--primary); padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; }
+        .main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; }
+        .header { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; cursor: pointer; }
+        .main-content { flex: 1; padding: 32px; overflow-y: auto; }
+        .page-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .page-subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 32px; }
+        .card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-bottom: 24px; }
+        .card-header { padding: 20px 24px; border-bottom: 1px solid #F0F0F0; }
+        .card-title { font-size: 16px; font-weight: 600; }
+        .card-body { padding: 24px; }
+        .setting-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--border); }
+        .setting-item:last-child { border-bottom: none; }
+        .setting-info h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .setting-info p { font-size: 13px; color: var(--text-secondary); }
+        .toggle { width: 48px; height: 26px; background: var(--border); border-radius: 13px; position: relative; cursor: pointer; transition: all 0.2s; }
+        .toggle.active { background: var(--primary); }
+        .toggle::after { content: ''; position: absolute; width: 22px; height: 22px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .toggle.active::after { left: 24px; }
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--primary); color: white; padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 600; border: none; cursor: pointer; }
+        .btn-danger { display: inline-flex; align-items: center; gap: 8px; background: #EF4444; color: white; padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 600; border: none; cursor: pointer; }
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+        .input-group input, .input-group select { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; outline: none; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1); }
+        @media (max-width: 1024px) { .sidebar { display: none; } .main-wrapper { margin-left: 0; } }
+    </style>
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="sidebar-header"><a href="/dashboard/" class="logo"><div class="logo-icon">♪</div><span class="logo-text">NexGenMusic</span></a></div>
+        <nav class="sidebar-nav">
+            <div class="nav-section"><div class="nav-title">Menu</div>
+                <a href="/dashboard/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6z"/></svg>Dashboard</a>
+                <a href="/ai-generator/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>AI Generator</a>
+                <a href="/spotify-recommendations/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"/></svg>Spotify</a>
+                <a href="/history/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>History</a>
+            </div>
+            <div class="nav-section"><div class="nav-title">General</div>
+                <a href="/about/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>About</a>
+                <a href="/settings/" class="nav-item active"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Settings</a>
+                <a href="#" class="nav-item" onclick="logout(); return false;"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>Logout</a>
+            </div>
+        </nav>
+        <div class="mobile-promo" style="background: linear-gradient(135deg, #0D3B12 0%, #1B5E20 100%);"><h4>📸 Connect on Instagram</h4><p>Follow for updates & more</p><a href="https://instagram.com/nish.1__" target="_blank" class="promo-btn" style="color: #1B5E20;">Follow @nish.1__</a></div>
+    </aside>
+    <div class="main-wrapper">
+        <header class="header"><div></div><div class="user-avatar" id="userAvatar" onclick="window.location.href='/profile/'">U</div></header>
+        <main class="main-content">
+            <h1 class="page-title">Settings</h1>
+            <p class="page-subtitle">Manage your account and preferences</p>
+            
+            <!-- Profile Settings -->
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Profile Settings</h3></div>
+                <div class="card-body">
+                    <div class="input-group"><label>Display Name</label><input type="text" id="displayName" placeholder="Enter your name"></div>
+                    <div class="input-group"><label>Email</label><input type="email" id="emailInput" placeholder="Enter your email"></div>
+                    <button class="btn-primary" onclick="saveProfileSettings()">💾 Save Changes</button>
+                </div>
+            </div>
+            
+            <!-- Preferences -->
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Preferences</h3></div>
+                <div class="card-body">
+                    <div class="setting-item">
+                        <div class="setting-info"><h4>Email Notifications</h4><p>Receive updates about new features</p></div>
+                        <div class="toggle" id="emailNotif" onclick="toggleSetting('emailNotifications', this)"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info"><h4>Dark Mode</h4><p>Use dark theme (Coming Soon)</p></div>
+                        <div class="toggle" id="darkMode" onclick="toggleSetting('darkMode', this)"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info"><h4>Auto-play Music</h4><p>Automatically play generated music</p></div>
+                        <div class="toggle" id="autoPlay" onclick="toggleSetting('autoPlay', this)"></div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info"><h4>Show Notifications</h4><p>Display notification alerts</p></div>
+                        <div class="toggle" id="showNotif" onclick="toggleSetting('showNotifications', this)"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Music Quality -->
+            <div class="card">
+                <div class="card-header"><h3 class="card-title">Music Quality</h3></div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label>Audio Quality</label>
+                        <select id="audioQuality" onchange="saveSetting('audioQuality', this.value)">
+                            <option value="low">Low (128 kbps)</option>
+                            <option value="medium" selected>Medium (256 kbps)</option>
+                            <option value="high">High (320 kbps)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Default Genre</label>
+                        <select id="defaultGenre" onchange="saveSetting('defaultGenre', this.value)">
+                            <option value="">Any Genre</option>
+                            <option value="pop">Pop</option>
+                            <option value="rock">Rock</option>
+                            <option value="electronic">Electronic</option>
+                            <option value="jazz">Jazz</option>
+                            <option value="classical">Classical</option>
+                            <option value="hip-hop">Hip Hop</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Danger Zone -->
+            <div class="card" style="border-color: #FEE2E2;">
+                <div class="card-header" style="background: #FEF2F2;"><h3 class="card-title" style="color: #EF4444;">⚠️ Danger Zone</h3></div>
+                <div class="card-body">
+                    <div class="setting-item">
+                        <div class="setting-info"><h4>Clear All Data</h4><p>Remove all favorites, playlists, and history</p></div>
+                        <button class="btn-danger" onclick="clearAllData()">🗑️ Clear Data</button>
+                    </div>
+                    <div class="setting-item" style="border-bottom: none;">
+                        <div class="setting-info"><h4>Delete Account</h4><p>Permanently delete your account and all data</p></div>
+                        <button class="btn-danger" onclick="deleteAccount()">❌ Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+// Load settings on page load
+function loadSettings() {
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+    const userAvatar = localStorage.getItem('userAvatar');
+    
+    // Load profile data
+    document.getElementById('displayName').value = userData.username || '';
+    document.getElementById('emailInput').value = userData.email || '';
+    
+    // Load user avatar
+    const avatarEl = document.getElementById('userAvatar');
+    if (userAvatar) {
+        avatarEl.style.backgroundImage = `url(${userAvatar})`;
+        avatarEl.style.backgroundSize = 'cover';
+        avatarEl.style.backgroundPosition = 'center';
+        avatarEl.textContent = '';
+    } else if (userData.username) {
+        avatarEl.textContent = userData.username.charAt(0).toUpperCase();
+    }
+    
+    // Load preferences
+    if (settings.emailNotifications !== false) document.getElementById('emailNotif').classList.add('active');
+    if (settings.darkMode) document.getElementById('darkMode').classList.add('active');
+    if (settings.autoPlay !== false) document.getElementById('autoPlay').classList.add('active');
+    if (settings.showNotifications !== false) document.getElementById('showNotif').classList.add('active');
+    
+    // Load music quality settings
+    if (settings.audioQuality) document.getElementById('audioQuality').value = settings.audioQuality;
+    if (settings.defaultGenre) document.getElementById('defaultGenre').value = settings.defaultGenre;
+}
+
+// Save profile settings
+function saveProfileSettings() {
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    userData.username = document.getElementById('displayName').value;
+    userData.email = document.getElementById('emailInput').value;
+    localStorage.setItem('userData', JSON.stringify(userData));
+    showNotification('✅ Profile settings saved!');
+}
+
+// Toggle setting
+function toggleSetting(key, element) {
+    element.classList.toggle('active');
+    saveSetting(key, element.classList.contains('active'));
+}
+
+// Save individual setting
+function saveSetting(key, value) {
+    const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+    settings[key] = value;
+    localStorage.setItem('settings', JSON.stringify(settings));
+    showNotification('✅ Setting updated!');
+}
+
+// Clear all data
+function clearAllData() {
+    if (confirm('Are you sure you want to clear all your data? This will remove favorites, playlists, and history. Your account settings will remain.')) {
+        localStorage.removeItem('favorites');
+        localStorage.removeItem('playlists');
+        localStorage.removeItem('resetRequests');
+        showNotification('🗑️ All data cleared!');
+    }
+}
+
+// Delete account
+function deleteAccount() {
+    const confirmation = prompt('Type "DELETE" to confirm account deletion:');
+    if (confirmation === 'DELETE') {
+        localStorage.clear();
+        alert('Your account has been deleted.');
+        window.location.href = '/';
+    } else if (confirmation !== null) {
+        alert('Account deletion cancelled. Please type "DELETE" exactly to confirm.');
+    }
+}
+
+// Show notification
+function showNotification(message) {
+    const notif = document.createElement('div');
+    notif.style.cssText = 'position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: white; padding: 16px 24px; border-radius: 12px; font-weight: 600; z-index: 9999; animation: slideIn 0.3s ease;';
+    notif.textContent = message;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+}
+
+function logout() { 
+    if (confirm('Are you sure you want to logout?')) {
+        // Only remove session tokens, keep user data
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('token');
+        window.location.href = '/'; 
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', loadSettings);
+</script>
+</body>
+</html>

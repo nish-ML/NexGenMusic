@@ -5,324 +5,618 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Recommendations - NexGenMusic</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-<!-- Premium Header and Sidebar Component -->
+{% include 'includes/premium_header_sidebar.html' %}
+
 <style>
-    /* 3D Background Canvas */
-    #canvas3d {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-        pointer-events: none;
-    }
-    
-    /* Make content appear above 3D background */
-    .header, .main-layout {
-        position: relative;
-        z-index: 1;
-    }
-    
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    :root {
-        --bg-primary: #ffffff;
-        --bg-secondary: #f8f9fa;
-        --bg-hover: #f1f3f5;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --border-color: #e2e8f0;
-        --accent-blue: #3b82f6;
-        --accent-purple: #a855f7;
-        --accent-green: #10b981;
-        --accent-pink: #ec4899;
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-        --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 50%, #e1d1fa 100%);
-        color: #1e293b;
-        min-height: 100vh;
-        overflow-x: hidden;
-    }
-
-    /* Header - White */
-    .header {
-        background: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 16px 24px;
+    .page-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-bottom: 32px;
     }
 
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-size: 20px;
-        font-weight: 700;
-        color: #1e293b;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .logo:hover {
-        color: #3b82f6;
-        transform: scale(1.05);
-    }
-
-    .logo-icon {
+    .page-title {
         font-size: 28px;
-    }
-
-    .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-
-    .icon-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        color: var(--text-secondary);
-    }
-
-    .icon-btn:hover {
-        background: var(--bg-hover);
+        font-weight: 700;
         color: var(--text-primary);
     }
 
-    .user-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    .page-subtitle {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-top: 4px;
+    }
+
+    .header-actions-row {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-spotify {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #1DB954;
+        color: white;
+        padding: 12px 20px;
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-spotify:hover {
+        background: #1ed760;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+    }
+
+    .btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        color: var(--text-primary);
+        padding: 12px 20px;
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-outline:hover {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        padding: 24px;
+        border: 1px solid var(--border-color);
+        transition: all 0.2s ease;
+    }
+
+    .stat-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-card.spotify {
+        background: linear-gradient(135deg, #1DB954 0%, #191414 100%);
+        color: white;
+        border: none;
+    }
+
+    .stat-card.spotify .stat-label {
+        color: rgba(255,255,255,0.9);
+    }
+
+    .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .stat-icon {
+        width: 24px;
+        height: 24px;
+        color: var(--text-muted);
+    }
+
+    .stat-card.spotify .stat-icon {
+        color: rgba(255,255,255,0.8);
+    }
+
+    .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .stat-change {
+        font-size: 13px;
+        color: var(--accent-green);
+    }
+
+    .stat-card.spotify .stat-change {
+        color: rgba(255,255,255,0.8);
+    }
+
+    /* Content Grid */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+    }
+
+    .card {
+        background: white;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .card-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .card-body {
+        padding: 24px;
+    }
+
+    /* Mood Selector */
+    .mood-selector {
+        margin-bottom: 24px;
+    }
+
+    .mood-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .mood-chips {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .mood-chip {
+        padding: 10px 18px;
+        background: var(--bg-main);
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-secondary);
+    }
+
+    .mood-chip:hover {
+        background: #F0FDF4;
+        border-color: var(--primary-green);
+        color: var(--primary-green);
+    }
+
+    .mood-chip.active {
+        background: var(--primary-green);
+        border-color: var(--primary-green);
+        color: white;
+    }
+
+    /* Track List */
+    .track-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .track-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        border-bottom: 1px solid var(--border-light);
+        transition: all 0.2s ease;
+    }
+
+    .track-item:last-child {
+        border-bottom: none;
+    }
+
+    .track-item:hover {
+        background: #F0FDF4;
+    }
+
+    .track-cover {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--radius-sm);
+        background: linear-gradient(135deg, #1DB954, #191414);
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
+        font-size: 24px;
+        overflow: hidden;
     }
 
-    /* Main Layout */
-    .main-layout {
+    .track-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .track-info {
+        flex: 1;
+    }
+
+    .track-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+
+    .track-artist {
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+
+    .track-duration {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-right: 16px;
+    }
+
+    .track-actions {
         display: flex;
-        min-height: calc(100vh - 73px);
+        gap: 8px;
     }
 
-    /* Sidebar - White */
-    .sidebar {
-        width: 240px;
-        background: rgba(255, 255, 255, 0.98);
-        backdrop-filter: blur(10px);
-        border-right: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 24px 12px;
-        overflow-y: auto;
-        box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+    .track-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1px solid var(--border-color);
+        background: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        transition: all 0.2s ease;
     }
 
-    .nav-section {
-        margin-bottom: 24px;
+    .track-btn:hover {
+        border-color: var(--primary-green);
+        color: var(--primary-green);
     }
 
-    .nav-section-title {
-        font-size: 12px;
+    .track-btn.play {
+        background: #1DB954;
+        border-color: #1DB954;
+        color: white;
+    }
+
+    .track-btn.play:hover {
+        background: #1ed760;
+    }
+
+    /* Spotify Connect Card */
+    .spotify-connect {
+        background: linear-gradient(135deg, #191414 0%, #282828 100%);
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        color: white;
+        text-align: center;
+    }
+
+    .spotify-logo {
+        width: 64px;
+        height: 64px;
+        background: #1DB954;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 32px;
+    }
+
+    .spotify-connect h3 {
+        font-size: 18px;
         font-weight: 600;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        padding: 0 12px;
         margin-bottom: 8px;
     }
 
-    .nav-item {
+    .spotify-connect p {
+        font-size: 14px;
+        opacity: 0.8;
+        margin-bottom: 20px;
+    }
+
+    .btn-connect {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #1DB954;
+        color: white;
+        padding: 12px 24px;
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-connect:hover {
+        background: #1ed760;
+        transform: translateY(-2px);
+    }
+
+    /* Genre Tags */
+    .genre-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .genre-tag {
+        padding: 6px 12px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 16px;
+        font-size: 12px;
+        color: rgba(255,255,255,0.9);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 48px 24px;
+    }
+
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        background: #F0FDF4;
+        border-radius: 50%;
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 10px 12px;
-        border-radius: 8px;
-        color: #1e293b;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        font-size: 14px;
-        font-weight: 500;
+        justify-content: center;
+        margin: 0 auto 20px;
+        color: var(--primary-green);
     }
 
-    .nav-item:hover {
-        background: #f1f5f9;
-        color: #3b82f6;
-        transform: translateX(4px);
-    }
-
-    .nav-item.active {
-        background: #eff6ff;
-        color: #3b82f6;
+    .empty-title {
+        font-size: 18px;
         font-weight: 600;
-        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+        color: var(--text-primary);
+        margin-bottom: 8px;
     }
 
-    .nav-icon {
-        width: 20px;
-        height: 20px;
+    .empty-text {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 20px;
     }
 
-    /* Main Content */
-    .main-content {
-        flex: 1;
-        padding: 32px;
-        overflow-y: auto;
-    }
-
-    /* Responsive */
-    @media (max-width: 968px) {
-        .sidebar {
-            display: none;
+    @media (max-width: 1200px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
         }
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 
-        .main-content {
-            padding: 20px;
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .mood-chips {
+            gap: 8px;
+        }
+        .mood-chip {
+            padding: 8px 14px;
+            font-size: 13px;
         }
     }
 </style>
 
-<!-- 3D Background Canvas -->
-<canvas id="canvas3d"></canvas>
-
-<!-- Header -->
-<header class="header">
-    <a href="/dashboard/" class="logo">
-        <span class="logo-icon">🎵</span>
-        <span>NexGenMusic</span>
-    </a>
-    
-    <div class="header-actions">
-        <div class="user-avatar" onclick="window.location.href='/profile/'">U</div>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Spotify Recommendations</h1>
+        <p class="page-subtitle">Get personalized music recommendations based on your mood and preferences.</p>
     </div>
-</header>
-
-<!-- Main Layout -->
-<div class="main-layout">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <nav class="nav-section">
-            <div class="nav-section-title">Menu</div>
-            <a href="/dashboard/" class="nav-item" id="nav-dashboard">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>Home</span>
-            </a>
-            <a href="/ai-generator/" class="nav-item" id="nav-ai-generator">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                </svg>
-                <span>AI Generator</span>
-            </a>
-            <a href="/spotify-recommendations/" class="nav-item" id="nav-spotify" class="active">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
-                </svg>
-                <span>Spotify</span>
-            </a>
-            <a href="/history/" class="nav-item" id="nav-history">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span>History</span>
-            </a>
-        </nav>
-
-        <nav class="nav-section">
-            <div class="nav-section-title">Library</div>
-            <a href="/library/" class="nav-item" id="nav-library">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                </svg>
-                <span>My Library</span>
-            </a>
-            <a href="/library/favorites/" class="nav-item" id="nav-favorites">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                </svg>
-                <span>Favorites</span>
-            </a>
-            <a href="/library/playlists/" class="nav-item" id="nav-playlists">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
-                </svg>
-                <span>Playlists</span>
-            </a>
-        </nav>
-
-        <nav class="nav-section">
-            <div class="nav-section-title">Account</div>
-            <a href="/about/" class="nav-item" id="nav-about">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span>About</span>
-            </a>
-            <a href="#" class="nav-item" onclick="logout(); return false;">
-                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                </svg>
-                <span>Logout</span>
-            </a>
-        </nav>
-    </aside>
-    
-    <!-- Main Content (will be filled by each page) -->
-    <main class="main-content">
-
-        <div class="container">
-
-            <h1 style="font-size: 32px; font-weight: 700; margin-bottom: 24px;">🎧 Spotify Recommendations</h1>
-            <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-                <p style="color: #64748b; margin-bottom: 24px;">Get personalized music recommendations based on your mood and preferences.</p>
-                <div id="recommendations-container">
-                    <!-- Content will be loaded by JavaScript -->
-                </div>
-            </div>
-        
-        </div>
-    </main>
+    <div class="header-actions-row">
+        <button class="btn-spotify" id="connectSpotify">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+            </svg>
+            Connect Spotify
+        </button>
+        <button class="btn-outline">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            Refresh
+        </button>
+    </div>
 </div>
 
-<script src="/static/js/3d-background-premium.js"></script>
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card spotify">
+        <div class="stat-header">
+            <span class="stat-label">Recommendations</span>
+            <svg class="stat-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"/>
+            </svg>
+        </div>
+        <div class="stat-value" id="rec-count">0</div>
+        <div class="stat-change">Based on your mood</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Saved Tracks</span>
+            <svg class="stat-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
+            </svg>
+        </div>
+        <div class="stat-value" id="saved-count">0</div>
+        <div class="stat-change">From recommendations</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-header">
+            <span class="stat-label">Playlists Created</span>
+            <svg class="stat-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/>
+            </svg>
+        </div>
+        <div class="stat-value" id="playlist-count">0</div>
+        <div class="stat-change">This month</div>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="content-grid">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Mood-Based Recommendations</h3>
+            <button class="btn-outline" style="padding: 8px 16px; font-size: 13px;">Get More</button>
+        </div>
+        <div class="card-body">
+            <!-- Mood Selector -->
+            <div class="mood-selector">
+                <label class="mood-label">Select your current mood:</label>
+                <div class="mood-chips">
+                    <button class="mood-chip active" data-mood="happy">😊 Happy</button>
+                    <button class="mood-chip" data-mood="sad">😢 Sad</button>
+                    <button class="mood-chip" data-mood="energetic">⚡ Energetic</button>
+                    <button class="mood-chip" data-mood="chill">😌 Chill</button>
+                    <button class="mood-chip" data-mood="romantic">❤️ Romantic</button>
+                    <button class="mood-chip" data-mood="focus">🎯 Focus</button>
+                </div>
+            </div>
+
+            <!-- Track List -->
+            <div class="track-list" id="recommendations-container">
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"/>
+                        </svg>
+                    </div>
+                    <h4 class="empty-title">Connect to Spotify</h4>
+                    <p class="empty-text">Link your Spotify account to get personalized recommendations.</p>
+                    <button class="btn-spotify" onclick="connectSpotify()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                        </svg>
+                        Connect Spotify
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div>
+        <!-- Spotify Connect Card -->
+        <div class="spotify-connect">
+            <div class="spotify-logo">🎧</div>
+            <h3>Spotify Premium</h3>
+            <p>Connect your account for better recommendations and full playback.</p>
+            <button class="btn-connect" onclick="connectSpotify()">
+                Connect Account
+            </button>
+            <div class="genre-tags">
+                <span class="genre-tag">Pop</span>
+                <span class="genre-tag">Rock</span>
+                <span class="genre-tag">Hip Hop</span>
+                <span class="genre-tag">Electronic</span>
+                <span class="genre-tag">Jazz</span>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card" style="margin-top: 24px;">
+            <div class="card-header">
+                <h3 class="card-title">Quick Actions</h3>
+            </div>
+            <div class="card-body">
+                <div class="track-list">
+                    <a href="/ai-generator/" class="track-item" style="text-decoration: none;">
+                        <div class="track-cover" style="background: linear-gradient(135deg, var(--primary-green), var(--accent-green));">✨</div>
+                        <div class="track-info">
+                            <div class="track-name">AI Generator</div>
+                            <div class="track-artist">Create custom music</div>
+                        </div>
+                    </a>
+                    <a href="/library/playlists/" class="track-item" style="text-decoration: none;">
+                        <div class="track-cover" style="background: linear-gradient(135deg, #9333EA, #EC4899);">📁</div>
+                        <div class="track-info">
+                            <div class="track-name">My Playlists</div>
+                            <div class="track-artist">View collections</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    function logout() {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('token');
-        window.location.href = '/';
-    }
+// Mood chip selection
+document.querySelectorAll('.mood-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+        document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        // Trigger recommendation fetch based on mood
+        const mood = this.dataset.mood;
+        fetchRecommendations(mood);
+    });
+});
+
+function connectSpotify() {
+    // Redirect to Spotify OAuth
+    window.location.href = '/api/spotify/login/';
+}
+
+function fetchRecommendations(mood) {
+    console.log('Fetching recommendations for mood:', mood);
+    // Add your API call here
+}
+
+function logout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('token');
+    window.location.href = '/';
+}
 </script>
+
+{% include 'includes/premium_footer.html' %}
 </body>
 </html>

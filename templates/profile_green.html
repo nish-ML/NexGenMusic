@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - NexGenMusic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #1B5E20; --primary-light: #2E7D32; --primary-dark: #0D3B12; --accent: #4CAF50; --bg: #F5F7F5; --white: #FFFFFF; --text: #1A1A1A; --text-secondary: #6B7280; --text-muted: #9CA3AF; --border: #E5E7EB; --radius: 12px; --radius-lg: 16px; --error: #EF4444; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        .app { display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: var(--white); border-right: 1px solid var(--border); position: fixed; height: 100vh; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 24px 20px; border-bottom: 1px solid #F0F0F0; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+        .logo-icon { width: 40px; height: 40px; background: var(--primary); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; }
+        .logo-text { font-size: 18px; font-weight: 700; }
+        .sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+        .nav-section { margin-bottom: 24px; }
+        .nav-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; padding: 0 12px; margin-bottom: 8px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--radius); color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s; margin-bottom: 4px; }
+        .nav-item:hover { background: #F0FDF4; color: var(--primary); }
+        .nav-item.active { background: var(--primary); color: white; }
+        .nav-item svg { width: 20px; height: 20px; stroke: currentColor; }
+        .mobile-promo { margin: 12px; padding: 20px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border-radius: var(--radius-lg); color: white; }
+        .mobile-promo h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .mobile-promo p { font-size: 12px; opacity: 0.9; margin-bottom: 12px; }
+        .promo-btn { display: inline-block; background: white; color: var(--primary); padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; }
+        .main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; }
+        .header { background: var(--white); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+        .user-avatar-small { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; cursor: pointer; }
+        .main-content { flex: 1; padding: 32px; overflow-y: auto; }
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 28px; font-weight: 700; }
+        .page-subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--primary); color: white; padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; }
+        .btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); }
+        .btn-outline { display: inline-flex; align-items: center; gap: 8px; background: white; color: var(--text); padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 600; border: 1px solid var(--border); cursor: pointer; text-decoration: none; }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-danger { background: var(--error); color: white; }
+        .btn-danger:hover { background: #DC2626; }
+        .card { background: white; border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; margin-bottom: 24px; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid #F0F0F0; }
+        .card-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .card-body { padding: 24px; }
+        .profile-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+        @keyframes dance { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-10px) rotate(5deg); } }
+        @media (max-width: 1024px) { .sidebar { display: none; } .main-wrapper { margin-left: 0; } }
+        @media (max-width: 900px) { .profile-grid { grid-template-columns: 1fr; } }
+        
+        /* Avatar Modal */
+        .avatar-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .avatar-modal.show { display: flex !important; }
+        .avatar-modal-content { background: white; border-radius: 16px; padding: 32px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
+        .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .avatar-option { width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #E8F5E9, #C8E6C9); display: flex; align-items: center; justify-content: center; font-size: 36px; cursor: pointer; transition: all 0.2s; border: 3px solid transparent; }
+        .avatar-option:hover { transform: scale(1.1); border-color: var(--primary); box-shadow: 0 4px 12px rgba(27, 94, 32, 0.3); }
+        @media (max-width: 600px) { .avatar-grid { grid-template-columns: repeat(4, 1fr); } .avatar-option { width: 60px; height: 60px; font-size: 30px; } }
+    </style>
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="sidebar-header"><a href="/dashboard/" class="logo"><div class="logo-icon">♪</div><span class="logo-text">NexGenMusic</span></a></div>
+        <nav class="sidebar-nav">
+            <div class="nav-section"><div class="nav-title">Menu</div>
+                <a href="/dashboard/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6z"/></svg>Dashboard</a>
+                <a href="/ai-generator/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>AI Generator</a>
+                <a href="/spotify-recommendations/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"/></svg>Spotify</a>
+                <a href="/history/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>History</a>
+            </div>
+            <div class="nav-section"><div class="nav-title">Library</div>
+                <a href="/library/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"/></svg>My Library</a>
+                <a href="/library/favorites/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>Favorites</a>
+                <a href="/library/playlists/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"/></svg>Playlists</a>
+            </div>
+            <div class="nav-section"><div class="nav-title">General</div>
+                <a href="/settings/" class="nav-item"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Settings</a>
+                <a href="#" class="nav-item" onclick="logout(); return false;"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>Logout</a>
+            </div>
+        </nav>
+        <div class="mobile-promo" style="background: linear-gradient(135deg, #0D3B12 0%, #1B5E20 100%);"><h4>📸 Connect on Instagram</h4><p>Follow for updates & more</p><a href="https://instagram.com/nish.1__" target="_blank" class="promo-btn" style="color: #1B5E20;">Follow @nish.1__</a></div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="header">
+            <div style="font-size: 14px; color: var(--text-secondary);">👤 Manage your profile</div>
+            <div class="user-avatar-small" id="userAvatarHeader">U</div>
+        </header>
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">My Profile</h1>
+                <p class="page-subtitle">Manage your account settings and preferences</p>
+            </div>
+
+            <!-- Profile Hero -->
+            <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); border-radius: var(--radius-lg); padding: 40px; color: white; margin-bottom: 24px; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                <div style="position: absolute; bottom: -30px; left: -30px; width: 120px; height: 120px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+                <div style="display: flex; align-items: center; gap: 24px; position: relative; z-index: 1; flex-wrap: wrap;">
+                    <div id="profileAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--primary); font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.2);">U</div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <h2 id="profileName" style="font-size: 28px; font-weight: 700; margin-bottom: 4px;">User</h2>
+                        <p id="profileEmail" style="opacity: 0.9; margin-bottom: 12px;">user@example.com</p>
+                        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                            <div><span style="font-size: 24px; font-weight: 700;">24</span><span style="opacity: 0.8; margin-left: 6px;">Tracks</span></div>
+                            <div><span style="font-size: 24px; font-weight: 700;">5</span><span style="opacity: 0.8; margin-left: 6px;">Playlists</span></div>
+                            <div><span style="font-size: 24px; font-weight: 700;">12</span><span style="opacity: 0.8; margin-left: 6px;">Favorites</span></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn-outline" style="background: white; color: var(--primary); border: none;" onclick="document.getElementById('avatarInput').click()">📷 Upload Photo</button>
+                        <button class="btn-outline" style="background: white; color: var(--primary); border: none;" onclick="openAvatarSelector()">😊 Choose Avatar</button>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="changeAvatar(this)">
+                </div>
+                <div style="position: absolute; right: 40px; bottom: 10px; font-size: 50px; animation: dance 0.6s ease-in-out infinite;">🎵</div>
+            </div>
+
+            <div class="profile-grid">
+                <!-- Left Column -->
+                <div>
+                    <!-- Edit Profile -->
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">✏️ Edit Profile</h3></div>
+                        <div class="card-body">
+                            <form id="profileForm">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                                    <div><label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">First Name</label><input type="text" id="firstName" placeholder="Enter first name" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius); font-size: 14px; outline: none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"></div>
+                                    <div><label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Last Name</label><input type="text" id="lastName" placeholder="Enter last name" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius); font-size: 14px; outline: none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"></div>
+                                </div>
+                                <div style="margin-bottom: 16px;"><label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Username</label><input type="text" id="username" placeholder="Enter username" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius); font-size: 14px; outline: none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"></div>
+                                <div style="margin-bottom: 16px;"><label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Email</label><input type="email" id="email" placeholder="Enter email" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius); font-size: 14px; outline: none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"></div>
+                                <div style="margin-bottom: 20px;"><label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Bio</label><textarea id="bio" placeholder="Tell us about yourself..." rows="3" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius); font-size: 14px; outline: none; resize: vertical;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"></textarea></div>
+                                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">💾 Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">🔐 Change Password</h3></div>
+                        <div class="card-body">
+                            <form id="passwordForm">
+                                <div style="margin-bottom: 16px;"><label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Current Password</label><input type="password" id="currentPassword" placeholder="Enter current password" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius); font-size: 14px; outline: none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"></div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                                    <div><label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">New Password</label><input type="password" id="newPassword" placeholder="New password" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius); font-size: 14px; outline: none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"></div>
+                                    <div><label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Confirm Password</label><input type="password" id="confirmPassword" placeholder="Confirm password" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: var(--radius); font-size: 14px; outline: none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"></div>
+                                </div>
+                                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">🔑 Update Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div>
+                    <!-- Music Stats -->
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">📊 Music Stats</h3></div>
+                        <div class="card-body">
+                            <div style="display: flex; flex-direction: column; gap: 16px;">
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border-radius: var(--radius);"><span style="font-size: 28px;">🎵</span><div style="flex: 1;"><div style="font-size: 24px; font-weight: 700; color: var(--primary);">24</div><div style="font-size: 12px; color: var(--text-secondary);">Tracks Generated</div></div></div>
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--bg); border-radius: var(--radius);"><span style="font-size: 28px;">⏱️</span><div style="flex: 1;"><div style="font-size: 24px; font-weight: 700; color: var(--primary);">3.5h</div><div style="font-size: 12px; color: var(--text-secondary);">Listening Time</div></div></div>
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--bg); border-radius: var(--radius);"><span style="font-size: 28px;">🔥</span><div style="flex: 1;"><div style="font-size: 24px; font-weight: 700; color: var(--primary);">7</div><div style="font-size: 12px; color: var(--text-secondary);">Day Streak</div></div></div>
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--bg); border-radius: var(--radius);"><span style="font-size: 28px;">🎯</span><div style="flex: 1;"><div style="font-size: 24px; font-weight: 700; color: var(--primary);">Pop</div><div style="font-size: 12px; color: var(--text-secondary);">Top Genre</div></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">🕐 Recent Activity</h3></div>
+                        <div class="card-body">
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: var(--radius);"><div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; color: white;">🎵</div><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">Generated "Summer Vibes"</div><div style="font-size: 11px; color: var(--text-muted);">2 hours ago</div></div></div>
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: var(--radius);"><div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #1DB954, #191414); display: flex; align-items: center; justify-content: center; color: white;">🎧</div><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">Saved Spotify playlist</div><div style="font-size: 11px; color: var(--text-muted);">5 hours ago</div></div></div>
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border-radius: var(--radius);"><div style="width: 36px; height: 36px; border-radius: 8px; background: linear-gradient(135deg, #FF6B6B, #FF8E53); display: flex; align-items: center; justify-content: center; color: white;">❤️</div><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">Added to favorites</div><div style="font-size: 11px; color: var(--text-muted);">Yesterday</div></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="card" style="border-color: #FEE2E2;">
+                        <div class="card-header" style="background: #FEF2F2;"><h3 class="card-title" style="color: var(--error);">⚠️ Danger Zone</h3></div>
+                        <div class="card-body">
+                            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Once you delete your account, there is no going back.</p>
+                            <button class="btn-primary btn-danger" style="width: 100%; justify-content: center;" onclick="confirmDelete()">🗑️ Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Avatar Selector Modal -->
+<div id="avatarModal" class="avatar-modal">
+    <div class="avatar-modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h3 style="font-size: 20px; font-weight: 700; color: var(--primary);">Choose Your Avatar</h3>
+            <button onclick="closeAvatarSelector()" style="width: 36px; height: 36px; border-radius: 50%; background: #F5F7F5; border: none; cursor: pointer; font-size: 20px; color: #6B7280;">×</button>
+        </div>
+        
+        <div style="margin-bottom: 24px;">
+            <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #6B7280;">🎵 Music Themed</h4>
+            <div class="avatar-grid">
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎵')">🎵</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎶')">🎶</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎧')">🎧</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎤')">🎤</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎸')">🎸</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎹')">🎹</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎺')">🎺</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎻')">🎻</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🥁')">🥁</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎷')">🎷</div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 24px;">
+            <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #6B7280;">😊 Emojis</h4>
+            <div class="avatar-grid">
+                <div class="avatar-option" onclick="selectBuiltInAvatar('😊')">😊</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('😎')">😎</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🤩')">🤩</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('😇')">😇</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🥳')">🥳</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🤗')">🤗</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('😺')">😺</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🐶')">🐶</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🐱')">🐱</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🦊')">🦊</div>
+            </div>
+        </div>
+        
+        <div>
+            <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #6B7280;">🌟 Special</h4>
+            <div class="avatar-grid">
+                <div class="avatar-option" onclick="selectBuiltInAvatar('⭐')">⭐</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('✨')">✨</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🔥')">🔥</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('💎')">💎</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('👑')">👑</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎯')">🎯</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🚀')">🚀</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('💫')">💫</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🌈')">🌈</div>
+                <div class="avatar-option" onclick="selectBuiltInAvatar('🎨')">🎨</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function loadUserData() {
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    const userAvatar = localStorage.getItem('userAvatar');
+    
+    if (userData.username) {
+        document.getElementById('profileName').textContent = userData.username;
+        document.getElementById('username').value = userData.username || '';
+        
+        // Load avatar
+        const avatarEl = document.getElementById('profileAvatar');
+        const headerAvatarEl = document.getElementById('userAvatarHeader');
+        
+        if (userAvatar) {
+            avatarEl.style.backgroundImage = `url(${userAvatar})`;
+            avatarEl.style.backgroundSize = 'cover';
+            avatarEl.style.backgroundPosition = 'center';
+            avatarEl.textContent = '';
+            
+            headerAvatarEl.style.backgroundImage = `url(${userAvatar})`;
+            headerAvatarEl.style.backgroundSize = 'cover';
+            headerAvatarEl.style.backgroundPosition = 'center';
+            headerAvatarEl.textContent = '';
+        } else {
+            avatarEl.textContent = userData.username.charAt(0).toUpperCase();
+            headerAvatarEl.textContent = userData.username.charAt(0).toUpperCase();
+        }
+    }
+    if (userData.email) {
+        document.getElementById('profileEmail').textContent = userData.email;
+        document.getElementById('email').value = userData.email || '';
+    }
+    document.getElementById('firstName').value = userData.firstName || '';
+    document.getElementById('lastName').value = userData.lastName || '';
+    document.getElementById('bio').value = userData.bio || '';
+}
+
+document.getElementById('profileForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const userData = { username: document.getElementById('username').value, email: document.getElementById('email').value, firstName: document.getElementById('firstName').value, lastName: document.getElementById('lastName').value, bio: document.getElementById('bio').value };
+    localStorage.setItem('userData', JSON.stringify(userData));
+    document.getElementById('profileName').textContent = userData.username || 'User';
+    document.getElementById('profileAvatar').textContent = (userData.username || 'U').charAt(0).toUpperCase();
+    document.getElementById('userAvatarHeader').textContent = (userData.username || 'U').charAt(0).toUpperCase();
+    alert('Profile updated successfully!');
+});
+
+document.getElementById('passwordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const newPass = document.getElementById('newPassword').value;
+    const confirmPass = document.getElementById('confirmPassword').value;
+    if (newPass !== confirmPass) { alert('Passwords do not match!'); return; }
+    if (newPass.length < 6) { alert('Password must be at least 6 characters!'); return; }
+    alert('Password updated successfully!');
+    this.reset();
+});
+
+function changeAvatar(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const avatarData = e.target.result;
+            
+            // Update profile avatar
+            document.getElementById('profileAvatar').style.backgroundImage = `url(${avatarData})`;
+            document.getElementById('profileAvatar').style.backgroundSize = 'cover';
+            document.getElementById('profileAvatar').style.backgroundPosition = 'center';
+            document.getElementById('profileAvatar').textContent = '';
+            
+            // Update header avatar
+            document.getElementById('userAvatarHeader').style.backgroundImage = `url(${avatarData})`;
+            document.getElementById('userAvatarHeader').style.backgroundSize = 'cover';
+            document.getElementById('userAvatarHeader').style.backgroundPosition = 'center';
+            document.getElementById('userAvatarHeader').textContent = '';
+            
+            // Save to localStorage
+            localStorage.setItem('userAvatar', avatarData);
+            
+            // Show success message
+            const notification = document.createElement('div');
+            notification.style.cssText = 'position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: white; padding: 16px 24px; border-radius: 12px; font-weight: 600; z-index: 9999; animation: slideIn 0.3s ease;';
+            notification.textContent = '✅ Profile photo updated!';
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function confirmDelete() {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        localStorage.clear();
+        window.location.href = '/';
+    }
+}
+
+// Avatar Selector Functions
+function openAvatarSelector() {
+    document.getElementById('avatarModal').classList.add('show');
+}
+
+function closeAvatarSelector() {
+    document.getElementById('avatarModal').classList.remove('show');
+}
+
+function selectBuiltInAvatar(emoji) {
+    // Create a canvas to convert emoji to image
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 200;
+    const ctx = canvas.getContext('2d');
+    
+    // Draw gradient background
+    const gradient = ctx.createLinearGradient(0, 0, 200, 200);
+    gradient.addColorStop(0, '#E8F5E9');
+    gradient.addColorStop(1, '#C8E6C9');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 200, 200);
+    
+    // Draw emoji
+    ctx.font = '120px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(emoji, 100, 100);
+    
+    // Convert to data URL
+    const avatarData = canvas.toDataURL('image/png');
+    
+    // Update avatars
+    const profileAvatar = document.getElementById('profileAvatar');
+    const headerAvatar = document.getElementById('userAvatarHeader');
+    
+    profileAvatar.style.backgroundImage = `url(${avatarData})`;
+    profileAvatar.style.backgroundSize = 'cover';
+    profileAvatar.style.backgroundPosition = 'center';
+    profileAvatar.textContent = '';
+    
+    headerAvatar.style.backgroundImage = `url(${avatarData})`;
+    headerAvatar.style.backgroundSize = 'cover';
+    headerAvatar.style.backgroundPosition = 'center';
+    headerAvatar.textContent = '';
+    
+    // Save to localStorage
+    localStorage.setItem('userAvatar', avatarData);
+    localStorage.setItem('userAvatarEmoji', emoji);
+    
+    // Close modal
+    closeAvatarSelector();
+    
+    // Show success message
+    const notification = document.createElement('div');
+    notification.style.cssText = 'position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: white; padding: 16px 24px; border-radius: 12px; font-weight: 600; z-index: 9999;';
+    notification.textContent = '✅ Avatar updated!';
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('avatarModal');
+    if (event.target === modal) {
+        closeAvatarSelector();
+    }
+});
+
+function logout() { 
+    if (confirm('Are you sure you want to logout?')) {
+        // Only remove session tokens, keep user data
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('token');
+        window.location.href = '/'; 
+    }
+}
+document.addEventListener('DOMContentLoaded', loadUserData);
+</script>
+</body>
+</html>
