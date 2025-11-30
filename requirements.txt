@@ -5,13 +5,4 @@ drf-yasg
 spotipy
 python-dotenv
 textblob
-transformers
-torch
-numpy
-scikit-learn
-librosa
-soundfile
-scipy
-midiutil
 gunicorn
-
